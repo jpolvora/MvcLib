@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Diagnostics;
+using System.Linq;
+using MvcFromDb.Infra.Misc;
 
 namespace MvcFromDb.Infra.Entities
 {
@@ -23,6 +26,17 @@ namespace MvcFromDb.Infra.Entities
         public DbFileContext()
             : base("name=DbFileContext")
         {
+            var cfg = Config.ValueOrDefault("db-verbose", true);
+            if (cfg)
+            {
+                Database.Log = Log;
+            }
+        }
+
+        static void Log(string str)
+        {
+            if (str.StartsWith("-- Completed"))
+                Trace.WriteLine(str.Replace(Environment.NewLine, ""));
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

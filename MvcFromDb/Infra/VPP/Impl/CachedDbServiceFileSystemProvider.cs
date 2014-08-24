@@ -98,11 +98,15 @@ namespace MvcFromDb.Infra.VPP.Impl
                 return item;
             }
 
-            RemoveFileFromCache(virtualPath, false);
-
             item = _service.GetFileHash(path);
 
-            return CacheWrapper.Set(cacheKey, item, 5, false);
+            var vf = CacheWrapper.Get(GetCacheKeyForFile(path)) as CustomVirtualFile;
+            if (vf == null || vf.Hash != item)
+            {
+                RemoveFileFromCache(path, false);
+            }
+
+            return CacheWrapper.Set(cacheKey, item, 2, false);
         }
 
         public override IEnumerable<VirtualFileBase> LazyGetChildren(int key)
@@ -134,8 +138,9 @@ namespace MvcFromDb.Infra.VPP.Impl
             }
 
             var bytes = _service.GetFileBytes(path);
+            var hash = _service.GetFileHash(path);
 
-            item = new CustomVirtualFile(virtualPath, bytes);
+            item = new CustomVirtualFile(virtualPath, bytes, hash);
             if (!isSettingCache)
                 CacheWrapper.Set(cacheKey, item);
 
@@ -185,6 +190,7 @@ namespace MvcFromDb.Infra.VPP.Impl
         public static void RemoveFileFromCache(string path, bool isDir)
         {
             Trace.TraceInformation("RemoveFileFromCache: {0}", path);
+
             if (isDir)
             {
                 var key = GetCacheKeyForDir(path);

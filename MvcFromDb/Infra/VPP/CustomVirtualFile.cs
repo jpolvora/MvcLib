@@ -7,20 +7,21 @@ namespace MvcFromDb.Infra.VPP
     public class CustomVirtualFile : VirtualFile
     {
         private readonly byte[] _bytes;
+        public readonly string Hash;
 
         public bool IsBinary { get; private set; }
 
-        public CustomVirtualFile(string virtualPath, byte[] bytes)
+        public CustomVirtualFile(string virtualPath, byte[] bytes, string hash, bool isBinary = false)
             : base(virtualPath)
         {
             _bytes = bytes;
+            Hash = hash;
             IsBinary = true;
         }
 
-        public CustomVirtualFile(string virtualPath, string lines)
-            : base(virtualPath)
+        public CustomVirtualFile(string virtualPath, string lines, string hash)
+            : this(virtualPath, Encoding.UTF8.GetBytes(lines), hash, false)
         {
-            _bytes = Encoding.UTF8.GetBytes(lines);
         }
 
         public override Stream Open()
