@@ -46,28 +46,35 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         }
 
+        public override bool IsVirtualDir(string virtualPath)
+        {
+            return false;
+        }
+
         public override bool DirectoryExists(string virtualDir)
         {
-            var path = NormalizeFilePath(virtualDir);
+            return false;
 
-            var cacheKey = GetCacheKeyForDir(path);
-            var item = CacheWrapper.Get(cacheKey);
-            if (item != null)
-            {
-                return item is CustomVirtualDir;
-            }
+            //var path = NormalizeFilePath(virtualDir);
 
-            var result = _service.DirectoryExistsImpl(path);
-            if (result)
-            {
-                CacheWrapper.Set(cacheKey, GetDirectoryInternal(virtualDir, true));
-            }
-            else
-            {
-                CacheWrapper.Set(cacheKey, new DummyVirtualFile(true), 20, false);
-            }
+            //var cacheKey = GetCacheKeyForDir(path);
+            //var item = CacheWrapper.Get(cacheKey);
+            //if (item != null)
+            //{
+            //    return item is CustomVirtualDir;
+            //}
 
-            return result;
+            //var result = _service.DirectoryExistsImpl(path);
+            //if (result)
+            //{
+            //    CacheWrapper.Set(cacheKey, GetDirectoryInternal(virtualDir, true));
+            //}
+            //else
+            //{
+            //    CacheWrapper.Set(cacheKey, new DummyVirtualFile(true), 20, false);
+            //}
+
+            //return result;
         }
 
         public override CustomVirtualFile GetFile(string virtualPath)
