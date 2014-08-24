@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Web;
 using System.Web.Hosting;
 using MvcFromDb.Infra.Misc;
@@ -94,7 +95,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
             item = _service.GetFileHash(path);
 
-            return CacheWrapper.Set(cacheKey, item, 1, false);
+            return CacheWrapper.Set(cacheKey, item, 5, false);
         }
 
         public override IEnumerable<VirtualFileBase> LazyGetChildren(int key)
@@ -176,6 +177,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         public static void RemoveFileFromCache(string path, bool isDir)
         {
+            Trace.TraceInformation("RemoveFileFromCache: {0}", path);
             if (isDir)
             {
                 var key = GetCacheKeyForDir(path);
