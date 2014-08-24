@@ -92,21 +92,22 @@ namespace MvcFromDb.Infra.VPP.Impl
             var path = NormalizeFilePath(virtualPath);
             var cacheKey = GetCacheKeyForHash(path);
 
-            string item = CacheWrapper.Get(cacheKey);
-            if (item != null)
+            string hash = CacheWrapper.Get(cacheKey);
+            if (hash != null)
             {
-                return item;
+                return hash;
             }
 
-            item = _service.GetFileHash(path);
+            hash = _service.GetFileHash(path);
+            CacheWrapper.Set(cacheKey, hash, 2, false);
 
             var vf = CacheWrapper.Get(GetCacheKeyForFile(path)) as CustomVirtualFile;
-            if (vf == null || vf.Hash != item)
+            if (vf == null || vf.Hash != hash)
             {
-                RemoveFileFromCache(path, false);
+                RemoveFileFromCache(path, true, true, false);
             }
 
-            return CacheWrapper.Set(cacheKey, item, 2, false);
+            return hash;
         }
 
         public override IEnumerable<VirtualFileBase> LazyGetChildren(int key)
@@ -138,7 +139,7 @@ namespace MvcFromDb.Infra.VPP.Impl
             }
 
             var bytes = _service.GetFileBytes(path);
-            var hash = _service.GetFileHash(path);
+            var hash = GetFileHash(virtualPath);
 
             item = new CustomVirtualFile(virtualPath, bytes, hash);
             if (!isSettingCache)
@@ -187,20 +188,23 @@ namespace MvcFromDb.Infra.VPP.Impl
             return string.Format("H{0}:{1}", CacheKeySalt, path);
         }
 
-        public static void RemoveFileFromCache(string path, bool isDir)
+        public static void RemoveFileFromCache(string path, bool removeDir, bool removeFile, bool removeHash)
         {
             Trace.TraceInformation("RemoveFileFromCache: {0}", path);
 
-            if (isDir)
+            if (removeDir)
             {
                 var key = GetCacheKeyForDir(path);
                 CacheWrapper.Remove(key);
             }
-            else
+            if (removeFile)
             {
                 var key = GetCacheKeyForFile(path);
                 CacheWrapper.Remove(key);
+            }
 
+            if (removeHash)
+            {
                 var hash = GetCacheKeyForHash(path);
                 CacheWrapper.Remove(hash);
             }
