@@ -12,6 +12,7 @@ namespace MvcFromDb
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.RouteExistingFiles = false;
 
             routes.MapRoute(
                 name: "Default",

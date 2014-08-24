@@ -13,7 +13,10 @@ namespace MvcFromDb.Infra.VPP.Impl
         private readonly IDbService _service;
         private static readonly string CacheKeySalt = new Random().Next(0, 999).ToString("d3");
 
-
+        /*
+         * Usar ~/bundles/ para CSS e JS
+         * Caso contrário, utilizar StaticFileHandler no web.config
+         */
         private readonly string[] _allowedExtensions = { ".cshtml", ".js", ".css", ".xml", ".config" };
         private readonly string[] _ignoredFiles = { "precompiledapp.config" };
         private readonly string[] _ignoredDirectories = { "/bundles", "/app_localresources", "/app_browsers" };
