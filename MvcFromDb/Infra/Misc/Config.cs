@@ -6,6 +6,7 @@ namespace MvcFromDb.Infra.Misc
     {
         public static T ValueOrDefault<T>(string key, T defaultValue)
         {
+            key = "custom:" + key;
             var cfgValue = ConfigurationManager.AppSettings[key];
             if (string.IsNullOrEmpty(cfgValue))
             {
