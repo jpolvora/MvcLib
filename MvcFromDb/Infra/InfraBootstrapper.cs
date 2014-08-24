@@ -144,11 +144,11 @@ namespace MvcFromDb.Infra
             Trace.Indent();
             foreach (var type in types)
             {
-                if (type.IsAssignableFrom(typeof (WebPageExecutingBase)))
+                if (typeof (WebPageExecutingBase).IsAssignableFrom(type))
                 {
                     Trace.WriteLine(type.Name, "Razor View");
                 }
-                else if (type.IsAssignableFrom(typeof (IController)))
+                else if (typeof (IController).IsAssignableFrom(type))
                 {
                     Trace.WriteLine(type.Name, "Controller");
                 }
