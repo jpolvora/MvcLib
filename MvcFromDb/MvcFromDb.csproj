@@ -39,10 +39,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Desktop">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Desktop">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.0.7.4080704-beta\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\packages\Microsoft.Bcl.Metadata.1.0.12-alpha\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -92,6 +116,9 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebActivatorEx">
+      <HintPath>..\packages\WebActivatorEx.2.0.5\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -164,12 +191,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infra\CacheWrapper.cs" />
-    <Compile Include="Infra\Config.cs" />
-    <Compile Include="Infra\DbFile.cs" />
-    <Compile Include="Infra\Configuration.cs" />
-    <Compile Include="Infra\DbFileContext.cs" />
-    <Compile Include="Infra\TypeUtils.cs" />
+    <Compile Include="Infra\EntropiaBootstrapper.cs" />
+    <Compile Include="Infra\Misc\CacheWrapper.cs" />
+    <Compile Include="Infra\Misc\Config.cs" />
+    <Compile Include="Infra\Entities\DbFile.cs" />
+    <Compile Include="Infra\Entities\DbFileContextMigrationConfiguration.cs" />
+    <Compile Include="Infra\Entities\DbFileContext.cs" />
+    <Compile Include="Infra\Misc\StringExtensions.cs" />
+    <Compile Include="Infra\Misc\TypeUtils.cs" />
+    <Compile Include="Infra\Plugin\EntropiaCompiler.cs" />
+    <Compile Include="Infra\Plugin\PluginLoader.cs" />
+    <Compile Include="Infra\Plugin\PluginStorage.cs" />
+    <Compile Include="Infra\Plugin\RoslynWrapper.cs" />
     <Compile Include="Infra\VPP\CustomVirtualDir.cs" />
     <Compile Include="Infra\VPP\CustomVirtualFile.cs" />
     <Compile Include="Infra\VPP\Impl\DefaultDbService.cs" />

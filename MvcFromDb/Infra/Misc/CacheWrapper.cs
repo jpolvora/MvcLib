@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.Helpers;
 
-namespace MvcFromDb.Infra
+namespace MvcFromDb.Infra.Misc
 {
     public static class CacheWrapper
     {

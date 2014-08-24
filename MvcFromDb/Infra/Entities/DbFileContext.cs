@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 
-namespace MvcFromDb.Infra
+namespace MvcFromDb.Infra.Entities
 {
     public class DbFileContext : DbContext
     {

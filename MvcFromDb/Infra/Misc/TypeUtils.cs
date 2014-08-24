@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace MvcFromDb.Infra
+namespace MvcFromDb.Infra.Misc
 {
     public static class TypeUtils
     {

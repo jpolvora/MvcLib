@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using MvcFromDb.Infra;
+using MvcFromDb.Infra.Entities;
 using MvcFromDb.Infra.VPP;
 using MvcFromDb.Infra.VPP.Impl;
 
@@ -22,15 +23,6 @@ namespace MvcFromDb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            DbFileContext.Initialize();
-
-            //Trace.AutoFlush = true;
-
-            //Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "tracer.txt")));
-
-            var customvpp = new CustomVirtualPathProvider().AddImpl(new DbVirtualPathProvider(new DefaultDbService()));
-            HostingEnvironment.RegisterVirtualPathProvider(customvpp);
         }
     }
 }
