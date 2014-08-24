@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.WebPages;
 using MvcFromDb.Infra;
 using MvcFromDb.Infra.Entities;
 using MvcFromDb.Infra.Plugin;
@@ -138,6 +139,21 @@ namespace MvcFromDb.Infra
             }
 
             Trace.TraceInformation("Assembly Loaded... {0}", args.LoadedAssembly.Location);
+
+            var types = args.LoadedAssembly.GetExportedTypes();
+            Trace.Indent();
+            foreach (var type in types)
+            {
+                if (type.IsAssignableFrom(typeof (WebPageExecutingBase)))
+                {
+                    Trace.WriteLine(type.Name, "Razor View");
+                }
+                else if (type.IsAssignableFrom(typeof (IController)))
+                {
+                    Trace.WriteLine(type.Name, "Controller");
+                }
+            }
+            Trace.Unindent();
 
             var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
             if (path.IndexOf(PluginLoader.PluginFolder.FullName, 0, StringComparison.InvariantCultureIgnoreCase) >= 0)
