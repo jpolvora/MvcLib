@@ -26,5 +26,11 @@ namespace MvcFromDb.Controllers
 
             return View();
         }
+
+        public ActionResult Reset()
+        {
+            HttpRuntime.UnloadAppDomain();
+            return new HttpStatusCodeResult(200);
+        }
     }
 }
