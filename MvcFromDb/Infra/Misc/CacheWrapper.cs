@@ -43,13 +43,14 @@ namespace MvcFromDb.Infra.Misc
             return Enabled ? WebCache.Get(GetSaltedKey(key)) : null;
         }
 
-        public static void Set(string key, object value, int duration = 20, bool sliding = true)
+        public static T Set<T>(string key, T value, int duration = 20, bool sliding = true)
+            where T: class
         {
             if (string.IsNullOrEmpty(key))
-                return;
+                return default(T);
 
-            if (value == null)
-                return;
+            if (value == null)  
+                return default(T);
 
             var sKey = GetSaltedKey(key);
             CacheKeys.AddOrUpdate(sKey, s => value != null, (s, b) => value != null);
@@ -57,6 +58,8 @@ namespace MvcFromDb.Infra.Misc
             {
                 WebCache.Set(sKey, value, duration, sliding);
             }
+
+            return value;
         }
 
         public static object Remove(string key)

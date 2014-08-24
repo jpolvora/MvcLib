@@ -90,11 +90,11 @@ namespace MvcFromDb.Infra.VPP.Impl
                 return item;
             }
 
+            RemoveFileFromCache(virtualPath, false);
+
             item = _service.GetFileHash(path);
 
-            CacheWrapper.Set(cacheKey, item);
-
-            return item;
+            return CacheWrapper.Set(cacheKey, item, 1, false);
         }
 
         public override IEnumerable<VirtualFileBase> LazyGetChildren(int key)
