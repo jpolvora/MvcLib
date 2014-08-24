@@ -1,0 +1,178 @@
+iisexpress.exe Information: 0 : Using CacheWrapper: True
+iisexpress.exe Information: 0 : FileExistsImpl('/_appstart.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/') = True
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/') = 1
+iisexpress.exe Information: 0 : GetDirectoryId('/') = 1
+iisexpress.exe Information: 0 : DirectoryExists ~/ exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : DirectoryExists ~/ exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.cshtml') = True
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/index.cshtml') = 1473 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/index.cshtml') = 1473 lenght
+iisexpress.exe Information: 0 : FileExists ~/Views/Home/Index.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists ~/Views/Home/Index.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.mobile.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.mobile.cshtml') = False
+iisexpress.exe Information: 0 : FileExists /Views/Home/Index.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists /Views/Home/Index.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views/home') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views/home') = 21
+iisexpress.exe Information: 0 : GetDirectory /Views/Home/ on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetChildren('21') = 3
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/about.cshtml') = 149 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/contact.cshtml') = 454 lenght
+iisexpress.exe Information: 0 : GetFile /Views/Home/Index.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFile /Views/Home/About.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFile /Views/Home/Contact.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Home/About.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/home/about.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Home/About.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Home/Index.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/home/index.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Home/Index.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Home/Contact.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/home/contact.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Home/Contact.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/_viewstart.cshtml') = True
+iisexpress.exe Information: 0 : FileExistsImpl('/views/_viewstart.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/_viewstart.cshtml') = 54 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/_viewstart.cshtml') = 54 lenght
+iisexpress.exe Information: 0 : FileExists ~/Views/_ViewStart.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists ~/Views/_ViewStart.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists /Views/_ViewStart.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists /Views/_ViewStart.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views') = 2
+iisexpress.exe Information: 0 : GetDirectory /Views/ on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetChildren('2') = 6
+iisexpress.exe Information: 0 : GetFileBytes('/views/web.config') = 1702 lenght
+iisexpress.exe Information: 0 : GetDirectoryId('/views/account') = 5
+iisexpress.exe Information: 0 : GetDirectoryId('/views/manage') = 25
+iisexpress.exe Information: 0 : GetDirectoryId('/views/shared') = 32
+iisexpress.exe Information: 0 : GetFile /Views/_ViewStart.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/_ViewStart.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/_viewstart.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/_ViewStart.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExistsImpl('/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_layout.cshtml') = True
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_layout.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_layout.cshtml') = 1665 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_layout.cshtml') = 1665 lenght
+iisexpress.exe Information: 0 : FileExists ~/Views/Shared/_Layout.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists ~/Views/Shared/_Layout.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists /Views/Shared/_Layout.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists /Views/Shared/_Layout.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetDirectory /Views/Shared/ on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetChildren('32') = 4
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/error.cshtml') = 198 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/lockout.cshtml') = 244 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_loginpartial.cshtml') = 904 lenght
+iisexpress.exe Information: 0 : GetFile /Views/Shared/Lockout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFile /Views/Shared/_LoginPartial.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFile /Views/Shared/_Layout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFile /Views/Shared/Error.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Shared/_Layout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_layout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Shared/_Layout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Shared/Error.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/error.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Shared/Error.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Shared/Lockout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/lockout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Shared/Lockout.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash /Views/Shared/_LoginPartial.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_loginpartial.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetCacheDependency /Views/Shared/_LoginPartial.cshtml on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_loginpartial.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_loginpartial.cshtml') = False
+iisexpress.exe Information: 0 : FileExists ~/Views/Shared/_LoginPartial.cshtml exists on DbVirtualPathProvider
+iisexpress.exe Information: 0 : FileExists ~/Views/Shared/_LoginPiisexpress.exe Information: 0 : DbVirtualPathProvider Initialized with CacheKey generated: 613
+iisexpress.exe Information: 0 : Using CacheWrapper: True
+iisexpress.exe Information: 0 : FileExistsImpl('/_appstart.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/') = 1
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/index.cshtml') = 1473 lenght
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.mobile.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views/home') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views/home') = 21
+iisexpress.exe Information: 0 : GetChildren('21') = 3
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/about.cshtml') = 149 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/contact.cshtml') = 454 lenght
+iisexpress.exe Information: 0 : GetFileHash('/views/home/about.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/home/index.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/home/contact.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/_viewstart.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/_viewstart.cshtml') = 54 lenght
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views') = 2
+iisexpress.exe Information: 0 : GetChildren('2') = 6
+iisexpress.exe Information: 0 : GetFileBytes('/views/web.config') = 1702 lenght
+iisexpress.exe Information: 0 : GetDirectoryId('/views/account') = 5
+iisexpress.exe Information: 0 : GetDirectoryId('/views/manage') = 25
+iisexpress.exe Information: 0 : GetDirectoryId('/views/shared') = 32
+iisexpress.exe Information: 0 : GetFileHash('/views/_viewstart.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_layout.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_layout.cshtml') = 1665 lenght
+iisexpress.exe Information: 0 : GetChildren('32') = 4
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/error.cshtml') = 198 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/lockout.cshtml') = 244 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_loginpartial.cshtml') = 904 lenght
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_layout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/error.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/lockout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_loginpartial.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_loginpartial.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_loginpartial.mobile.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/jquery') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/bootstrap') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/modernizr') = False
+iisexpress.exe Information: 0 : DbVirtualPathProvider Initialized with CacheKey generated: 498
+iisexpress.exe Information: 0 : Using CacheWrapper: True
+iisexpress.exe Information: 0 : FileExistsImpl('/_appstart.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/') = 1
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/index.cshtml') = 1473 lenght
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/index.mobile.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views/home') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views/home') = 21
+iisexpress.exe Information: 0 : GetChildren('21') = 3
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/about.cshtml') = 149 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/home/contact.cshtml') = 454 lenght
+iisexpress.exe Information: 0 : GetFileHash('/views/home/about.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/home/index.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/home/contact.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/_viewstart.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/_viewstart.cshtml') = 54 lenght
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/views') = True
+iisexpress.exe Information: 0 : GetDirectoryId('/views') = 2
+iisexpress.exe Information: 0 : GetChildren('2') = 6
+iisexpress.exe Information: 0 : GetFileBytes('/views/web.config') = 1702 lenght
+iisexpress.exe Information: 0 : GetDirectoryId('/views/account') = 5
+iisexpress.exe Information: 0 : GetDirectoryId('/views/manage') = 25
+iisexpress.exe Information: 0 : GetDirectoryId('/views/shared') = 32
+iisexpress.exe Information: 0 : GetFileHash('/views/_viewstart.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/_viewstart.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_layout.cshtml') = True
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_layout.cshtml') = 1665 lenght
+iisexpress.exe Information: 0 : GetChildren('32') = 4
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/error.cshtml') = 198 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/lockout.cshtml') = 244 lenght
+iisexpress.exe Information: 0 : GetFileBytes('/views/shared/_loginpartial.cshtml') = 904 lenght
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_layout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/error.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/lockout.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : GetFileHash('/views/shared/_loginpartial.cshtml') = 21:31:12
+iisexpress.exe Information: 0 : FileExistsImpl('/views/home/_loginpartial.cshtml') = False
+iisexpress.exe Information: 0 : FileExistsImpl('/views/shared/_loginpartial.mobile.cshtml') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/modernizr') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/jquery') = False
+iisexpress.exe Information: 0 : DirectoryExistsImpl('/bundles/bootstrap') = False
