@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Mvc;
 
 namespace MvcFromDb.Controllers
@@ -29,6 +30,7 @@ namespace MvcFromDb.Controllers
 
         public ActionResult Reset()
         {
+            Infra.Misc.CacheWrapper.Clear();
             HttpRuntime.UnloadAppDomain();
             return new HttpStatusCodeResult(200);
         }
