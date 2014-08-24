@@ -11,16 +11,16 @@ using MvcFromDb.Infra.Entities;
 
 namespace MvcFromDb.Infra.Plugin
 {
-    public class EntropiaCompiler
+    public class Kompiler
     {
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
             var ws = new CustomWorkspace();
 
-            var projectId = ProjectId.CreateNewId("");
+            var projectId = ProjectId.CreateNewId();
 
             var project = ws.AddSolution(SolutionInfo.Create(SolutionId.CreateNewId(), new VersionStamp()))
-                .AddProject(ProjectInfo.Create(projectId, new VersionStamp(), "", "", LanguageNames.CSharp))
+                .AddProject(ProjectInfo.Create(projectId, new VersionStamp(), "CustomAssembly", "CustomAssembly", LanguageNames.CSharp, compilationOptions: new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary)))
                 .AddMetadataReferences(projectId, RoslynWrapper.DefaultReferences)
                 .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)).Projects.First();
 

@@ -67,15 +67,15 @@ namespace MvcFromDb.Infra.Plugin
                 try
                 {
                     //compile dbfiles and get assembly to load
-                    var dict = EntropiaCompiler.LoadSourceCodeFromDb();
+                    var dict = Kompiler.LoadSourceCodeFromDb();
                     if (dict.Count > 0) //somente se houver arquivos .cs
                     {
                         byte[] buffer;
-                        string result = EntropiaCompiler.CreateSolutionAndCompile(dict, out buffer);
+                        string result = Kompiler.CreateSolutionAndCompile(dict, out buffer);
                         if (string.IsNullOrEmpty(result))
                         {
                             assemblies.Add(CompiledAssemblyName, buffer);
-                            EntropiaCompiler.SaveAssemblyToDataBase(CompiledAssemblyName, buffer);
+                            Kompiler.SaveAssemblyToDataBase(CompiledAssemblyName, buffer);
                         }
                         else
                         {

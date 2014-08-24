@@ -193,7 +193,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infra\EntropiaBootstrapper.cs" />
+    <Compile Include="Infra\InfraBootstrapper.cs" />
     <Compile Include="Infra\Misc\CacheWrapper.cs" />
     <Compile Include="Infra\Misc\Config.cs" />
     <Compile Include="Infra\Entities\DbFile.cs" />
@@ -201,7 +201,7 @@
     <Compile Include="Infra\Entities\DbFileContext.cs" />
     <Compile Include="Infra\Misc\StringExtensions.cs" />
     <Compile Include="Infra\Misc\TypeUtils.cs" />
-    <Compile Include="Infra\Plugin\EntropiaCompiler.cs" />
+    <Compile Include="Infra\Plugin\Kompiler.cs" />
     <Compile Include="Infra\Plugin\PluginLoader.cs" />
     <Compile Include="Infra\Plugin\PluginStorage.cs" />
     <Compile Include="Infra\Plugin\RoslynWrapper.cs" />

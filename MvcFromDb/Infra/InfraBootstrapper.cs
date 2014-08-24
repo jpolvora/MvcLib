@@ -12,12 +12,12 @@ using MvcFromDb.Infra.Plugin;
 using MvcFromDb.Infra.VPP;
 using MvcFromDb.Infra.VPP.Impl;
 
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(EntropiaBootstrapper), "PreStart")]
-[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(EntropiaBootstrapper), "PostStart")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(InfraBootstrapper), "PreStart")]
+[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(InfraBootstrapper), "PostStart")]
 
 namespace MvcFromDb.Infra
 {
-    public class EntropiaBootstrapper
+    public class InfraBootstrapper
     {
         private static bool _initialized;
 
