@@ -5,9 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using MvcFromDb.Infra.Entities;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
+using Roslyn.Services;
 
 namespace MvcFromDb.Infra.Plugin
 {
@@ -15,14 +16,12 @@ namespace MvcFromDb.Infra.Plugin
     {
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
-            var ws = new CustomWorkspace();
 
-            var projectId = ProjectId.CreateNewId();
-
-            var project = ws.AddSolution(SolutionInfo.Create(SolutionId.CreateNewId(), new VersionStamp()))
-                .AddProject(ProjectInfo.Create(projectId, new VersionStamp(), "CustomAssembly", "CustomAssembly", LanguageNames.CSharp, compilationOptions: new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary)))
-                .AddMetadataReferences(projectId, RoslynWrapper.DefaultReferences)
-                .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)).Projects.First();
+            IProject project = Solution.Create(SolutionId.CreateNewId())
+                .AddCSharpProject(PluginLoader.CompiledAssemblyName, "CustomAssembly")
+                .Solution.Projects.Single()
+                .AddMetadataReferences(RoslynWrapper.DefaultReferences)
+                .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             foreach (var file in files)
             {
@@ -40,11 +39,7 @@ namespace MvcFromDb.Infra.Plugin
             {
                 using (var stream = new MemoryStream())
                 {
-                    Compilation comp;
-                    if (!project.TryGetCompilation(out comp))
-                    {
-                        return "";
-                    }
+                    var comp = project.GetCompilation();
 
                     var result = comp.Emit(stream);
 
@@ -53,7 +48,7 @@ namespace MvcFromDb.Infra.Plugin
                         StringBuilder sb = new StringBuilder();
                         foreach (var diagnostic in result.Diagnostics)
                         {
-                            sb.AppendLine(diagnostic.GetMessage());
+                            sb.AppendLine(diagnostic.Info.GetMessage());
                         }
 
                         return sb.ToString();

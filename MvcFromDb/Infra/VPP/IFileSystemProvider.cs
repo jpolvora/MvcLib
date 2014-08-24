@@ -3,7 +3,7 @@ using System.Web.Hosting;
 
 namespace MvcFromDb.Infra.VPP
 {
-    public interface IVirtualPathProvider
+    public interface IFileSystemProvider
     {
         /// <summary>
         /// Custom initialization

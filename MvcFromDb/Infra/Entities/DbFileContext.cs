@@ -7,7 +7,13 @@ namespace MvcFromDb.Infra.Entities
     {
         public DbSet<DbFile> DbFiles { get; set; }
 
-        public static void Initialize() { }
+        public static void Initialize()
+        {
+            using (var db = new DbFileContext())
+            {
+                db.Database.Initialize(false);
+            }
+        }
 
         static DbFileContext()
         {

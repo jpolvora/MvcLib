@@ -6,32 +6,26 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using Roslyn.Compilers;
+using Roslyn.Compilers.CSharp;
 
 namespace MvcFromDb.Infra.Plugin
 {
     public class RoslynWrapper
     {
-
-
         public static List<MetadataReference> DefaultReferences = new List<MetadataReference>
         {
-            new MetadataFileReference(typeof(object).Assembly.Location),
-            new MetadataFileReference(typeof(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException).Assembly.Location),
-
-            //MetadataReference. CreateAssemblyReference("mscorlib"),
-            //MetadataReference.CreateAssemblyReference("System"),
-            //MetadataReference.CreateAssemblyReference("System.Core"),
-            //MetadataReference.CreateAssemblyReference("System.Data"),
-            //MetadataReference.CreateAssemblyReference("System.Linq"),
-            //MetadataReference.CreateAssemblyReference("Microsoft.CSharp"),
+            MetadataReference. CreateAssemblyReference("mscorlib"),
+            MetadataReference.CreateAssemblyReference("System"),
+            MetadataReference.CreateAssemblyReference("System.Core"),
+            MetadataReference.CreateAssemblyReference("System.Data"),
+            MetadataReference.CreateAssemblyReference("System.Linq"),
+            MetadataReference.CreateAssemblyReference("Microsoft.CSharp"),
             new MetadataFileReference(typeof (HttpContext).Assembly.Location), //self
             new MetadataFileReference(typeof (RoslynWrapper).Assembly.Location), //self
             new MetadataFileReference(typeof (Controller).Assembly.Location),
             new MetadataFileReference(typeof (WebPage).Assembly.Location),
-            new MetadataFileReference(typeof (DbContext).Assembly.Location), //ef
-            
+            new MetadataFileReference(typeof (DbContext).Assembly.Location), //ef    
             
         };
 
@@ -41,13 +35,13 @@ namespace MvcFromDb.Infra.Plugin
 
 
             // The MyClassInAString is where your code goes
-            var syntaxTree = SyntaxFactory.ParseSyntaxTree(myCode);
+            var syntaxTree = SyntaxTree.ParseText(myCode);
 
             // Use Roslyn to compile the code into a DLL
-            var compiledCode = CSharpCompilation.Create(assemblyName,
+            var compiledCode = Compilation.Create(assemblyName,
+                new CompilationOptions(kind),
                 new[] { syntaxTree },
-                DefaultReferences,
-                new CSharpCompilationOptions(kind)
+                DefaultReferences
                 );
 
             //return buffer;
@@ -61,7 +55,7 @@ namespace MvcFromDb.Infra.Plugin
             {
                 foreach (var diagnostic in compileResult.Diagnostics)
                 {
-                    sb.AppendLine(diagnostic.GetMessage());
+                    sb.AppendLine(diagnostic.Info.GetMessage());
                 }
             }
             stream.Flush();

@@ -34,7 +34,8 @@ namespace MvcFromDb.Infra
 
             //Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "tracer.txt")));
 
-            var customvpp = new CustomVirtualPathProvider().AddImpl(new DbVirtualPathProvider(new DefaultDbService()));
+            var customvpp = new CustomVirtualPathProvider()
+                .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService()));
             HostingEnvironment.RegisterVirtualPathProvider(customvpp);
 
 

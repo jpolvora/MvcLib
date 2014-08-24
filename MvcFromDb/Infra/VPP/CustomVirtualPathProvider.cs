@@ -7,12 +7,11 @@ using System.Web.Hosting;
 
 namespace MvcFromDb.Infra.VPP
 {
-
     public class CustomVirtualPathProvider : VirtualPathProvider
     {
-        private readonly List<IVirtualPathProvider> _providers = new List<IVirtualPathProvider>();
+        private readonly List<IFileSystemProvider> _providers = new List<IFileSystemProvider>();
 
-        public CustomVirtualPathProvider AddImpl(IVirtualPathProvider provider)
+        public CustomVirtualPathProvider AddImpl(IFileSystemProvider provider)
         {
             _providers.Add(provider);
             return this;
