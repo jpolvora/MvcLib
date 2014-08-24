@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Hosting;
@@ -12,56 +13,10 @@ namespace MvcFromDb.Infra.VPP.Impl
         private readonly IDbService _service;
         private static readonly string CacheKeySalt = new Random().Next(0, 999).ToString("d3");
 
-        public static string GetCacheKeyForFile(string path)
-        {
-            var isAbsolute = VirtualPathUtility.IsAbsolute(path);
-            if (!isAbsolute)
-                path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(path).ToLowerInvariant());
-
-            //f = file
-            return string.Format("F{0}:{1}", CacheKeySalt, path);
-        }
-
-        public static string GetCacheKeyForDir(string path)
-        {
-            var isAbsolute = VirtualPathUtility.IsAbsolute(path);
-            if (!isAbsolute)
-                path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(path).ToLowerInvariant());
-
-            //d = dir
-            return string.Format("D{0}:{1}", CacheKeySalt, path);
-        }
-
-        public static string GetCacheKeyForHash(string path)
-        {
-            var isAbsolute = VirtualPathUtility.IsAbsolute(path);
-            if (!isAbsolute)
-                path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(path).ToLowerInvariant());
-
-            //h = hash
-            return string.Format("H{0}:{1}", CacheKeySalt, path);
-        }
-
-        public static void RemoveFileFromCache(string path, bool isDir)
-        {
-            if (isDir)
-            {
-                var key = GetCacheKeyForDir(path);
-                CacheWrapper.Remove(key);
-            }
-            else
-            {
-                var key = GetCacheKeyForFile(path);
-                CacheWrapper.Remove(key);
-
-                var hash = GetCacheKeyForHash(path);
-                CacheWrapper.Remove(hash);
-            }
-        }
 
         private readonly string[] _allowedExtensions = { ".cshtml", ".js", ".css", ".xml", ".config" };
         private readonly string[] _ignoredFiles = { "precompiledapp.config" };
-        private readonly string[] _ignoredDirectories = { "/content", "/scripts", "/app_localresources", "/app_browsers" };
+        private readonly string[] _ignoredDirectories = { "/bundles", "/app_localresources", "/app_browsers" };
 
         public DbVirtualPathProvider(IDbService service)
         {
@@ -100,7 +55,6 @@ namespace MvcFromDb.Infra.VPP.Impl
             }
 
             return false;
-            //return virtualDir.StartsWith(_virtualRootPath);
         }
 
         public bool IsVirtualFile(string virtualPath)
@@ -113,16 +67,20 @@ namespace MvcFromDb.Infra.VPP.Impl
              */
             try
             {
-                var directory = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.GetDirectory(virtualPath));
-                var directoryWithExtension = VirtualPathUtility.GetExtension(directory);
-                if (!string.IsNullOrEmpty(directoryWithExtension))
-                    return false;
-
                 var extension = VirtualPathUtility.GetExtension(virtualPath);
                 if (string.IsNullOrEmpty(extension))
                     return false;
 
+                var directory = VirtualPathUtility.ToAbsolute(VirtualPathUtility.GetDirectory(virtualPath));
+
+                var dirHasExtension = !string.IsNullOrEmpty(VirtualPathUtility.GetExtension(directory));
+                if (dirHasExtension)
+                    return false;
+
                 var fileName = VirtualPathUtility.GetFileName(virtualPath);
+
+                if (string.IsNullOrEmpty(fileName))
+                    return false;
 
                 if (_ignoredFiles.Any(x => x.Equals(fileName, StringComparison.InvariantCultureIgnoreCase)))
                     return false;
@@ -130,12 +88,7 @@ namespace MvcFromDb.Infra.VPP.Impl
                 if (!_allowedExtensions.Any(x => x.Equals(extension, StringComparison.InvariantCultureIgnoreCase)))
                     return false;
 
-                var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualPath).ToLowerInvariant());
-                var dir = VirtualPathUtility.GetDirectory(path);
-                if (string.IsNullOrEmpty(dir))
-                    return true;
-
-                if (_ignoredDirectories.Any(dir.Contains))
+                if (_ignoredDirectories.Any(directory.Contains))
                     return false;
 
                 return true;
@@ -152,7 +105,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         public bool FileExists(string virtualPath)
         {
-            var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualPath).ToLowerInvariant());
+            var path = NormalizeFilePath(virtualPath);
 
             var cacheKey = GetCacheKeyForFile(path);
             var item = CacheWrapper.Get(cacheKey);
@@ -176,7 +129,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         public bool DirectoryExists(string virtualDir)
         {
-            var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualDir).ToLowerInvariant());
+            var path = NormalizeFilePath(virtualDir);
 
             var cacheKey = GetCacheKeyForDir(path);
             var item = CacheWrapper.Get(cacheKey);
@@ -205,7 +158,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         private CustomVirtualFile GetFileInternal(string virtualPath, bool isSettingCache)
         {
-            var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualPath).ToLowerInvariant());
+            var path = NormalizeFilePath(virtualPath);
 
             var cacheKey = GetCacheKeyForFile(path);
 
@@ -231,7 +184,8 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         private CustomVirtualDir GetDirectoryInternal(string virtualDir, bool isSettingCache)
         {
-            var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualDir).ToLowerInvariant());
+            var path = NormalizeFilePath(virtualDir);
+
             var cacheKey = GetCacheKeyForDir(path);
 
             var item = CacheWrapper.Get(cacheKey);
@@ -252,7 +206,7 @@ namespace MvcFromDb.Infra.VPP.Impl
 
         public string GetFileHash(string virtualPath)
         {
-            var path = VirtualPathUtility.RemoveTrailingSlash(VirtualPathUtility.ToAbsolute(virtualPath).ToLowerInvariant());
+            var path = NormalizeFilePath(virtualPath);
             var cacheKey = GetCacheKeyForHash(path);
 
             string item = CacheWrapper.Get(cacheKey);
@@ -283,5 +237,50 @@ namespace MvcFromDb.Infra.VPP.Impl
                 }
             }
         }
+
+        public static string GetCacheKeyForFile(string path)
+        {
+            //f = file
+            return string.Format("F{0}:{1}", CacheKeySalt, path);
+        }
+
+        public static string GetCacheKeyForDir(string path)
+        {
+            //d = dir
+            return string.Format("D{0}:{1}", CacheKeySalt, path);
+        }
+
+        public static string GetCacheKeyForHash(string path)
+        {
+            //h = hash
+            return string.Format("H{0}:{1}", CacheKeySalt, path);
+        }
+
+        public static void RemoveFileFromCache(string path, bool isDir)
+        {
+            if (isDir)
+            {
+                var key = GetCacheKeyForDir(path);
+                CacheWrapper.Remove(key);
+            }
+            else
+            {
+                var key = GetCacheKeyForFile(path);
+                CacheWrapper.Remove(key);
+
+                var hash = GetCacheKeyForHash(path);
+                CacheWrapper.Remove(hash);
+            }
+        }
+
+        public static string NormalizeFilePath(string virtualPath)
+        {
+            var absolute = VirtualPathUtility.ToAbsolute(virtualPath);
+
+            var result = VirtualPathUtility.RemoveTrailingSlash(absolute);
+
+            return result.ToLowerInvariant();
+        }
+
     }
 }

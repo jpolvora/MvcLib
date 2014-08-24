@@ -52,14 +52,10 @@ namespace MvcFromDb.Infra
                 return;
 
             var sKey = GetSaltedKey(key);
+            CacheKeys.AddOrUpdate(sKey, s => value != null, (s, b) => value != null);
             if (Enabled)
             {
                 WebCache.Set(sKey, value, duration, sliding);
-                CacheKeys.AddOrUpdate(sKey, s => value != null, (s, b) => value != null);
-            }
-            else
-            {
-                CacheKeys.AddOrUpdate(sKey, s => value != null, (s, b) => value != null);
             }
         }
 

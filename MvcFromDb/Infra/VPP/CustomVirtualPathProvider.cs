@@ -18,8 +18,6 @@ namespace MvcFromDb.Infra.VPP
             return this;
         }
 
-        private readonly TraceSource _source = new TraceSource("CustomVirtualPathProvider", SourceLevels.All);
-
         public CustomVirtualPathProvider()
         {
         }
@@ -40,7 +38,7 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    _source.TraceEvent(TraceEventType.Information, 0, "FileExists {0} exists on {1}", virtualPath, provider.GetType().Name);
+                    Trace.TraceInformation("File '{0}' found at {1}", virtualPath, provider.GetType().Name);
                     return true;
                 }
             }
@@ -54,7 +52,7 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualDir(virtualDir) && provider.DirectoryExists(virtualDir))
                 {
-                    _source.TraceEvent(TraceEventType.Information, 0, "DirectoryExists {0} exists on {1}", virtualDir, provider.GetType().Name);
+                    Trace.TraceInformation("Directory '{0}' fount at {1}", virtualDir, provider.GetType().Name);
                     return true;
                 }
             }
@@ -68,7 +66,7 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualDir(virtualDir) && provider.DirectoryExists(virtualDir))
                 {
-                    _source.TraceEvent(TraceEventType.Verbose, 0, "GetDirectory {0} on {1}", virtualDir, provider.GetType().Name);
+                    Trace.TraceInformation("Fetching directory '{0}' from {1}", virtualDir, provider.GetType().Name);
                     return provider.GetDirectory(virtualDir);
                 }
             }
@@ -81,7 +79,7 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    _source.TraceEvent(TraceEventType.Verbose, 0, "GetFile {0} on {1}", virtualPath, provider.GetType().Name);
+                    Trace.TraceInformation("Fetching file '{0}' from {1}", virtualPath, provider.GetType().Name);
                     return provider.GetFile(virtualPath);
                 }
             }
@@ -95,7 +93,7 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    _source.TraceEvent(TraceEventType.Verbose, 0, "GetFileHash {0} on {1}", virtualPath, provider.GetType().Name);
+                    Trace.TraceInformation("Getting hash for file '{0}' from {1}", virtualPath, provider.GetType().Name);
                     return provider.GetFileHash(virtualPath);
                 }
             }
@@ -108,7 +106,6 @@ namespace MvcFromDb.Infra.VPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    _source.TraceEvent(TraceEventType.Verbose, 0, "GetCacheDependency {0} on {1}", virtualPath, provider.GetType().Name);
                     return null;
                 }
             }
