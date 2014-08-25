@@ -7,6 +7,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcFromDb.Infra;
 using MvcFromDb.Infra.Entities;
 using MvcFromDb.Infra.Plugin;
@@ -29,19 +30,17 @@ namespace MvcFromDb.Infra
 
             Trace.TraceInformation("RUNNING PRE_START ... Assembly: {0}", webName);
 
+            DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
+
             DbFileContext.Initialize();
 
-            //Trace.AutoFlush = true;
+            Trace.AutoFlush = true;
 
             //Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "tracer.txt")));
 
             var customvpp = new CustomVirtualPathProvider()
                 .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService()));
             HostingEnvironment.RegisterVirtualPathProvider(customvpp);
-
-
-
-            //DynamicModuleUtility.RegisterModule(typeof(EntropiaHttpModule));
 
 
             //EntropiaSection.Initialize();
@@ -144,11 +143,11 @@ namespace MvcFromDb.Infra
             Trace.Indent();
             foreach (var type in types)
             {
-                if (typeof (WebPageExecutingBase).IsAssignableFrom(type))
+                if (typeof(WebPageExecutingBase).IsAssignableFrom(type))
                 {
                     Trace.WriteLine(type.Name, "Razor View");
                 }
-                else if (typeof (IController).IsAssignableFrom(type))
+                else if (typeof(IController).IsAssignableFrom(type))
                 {
                     Trace.WriteLine(type.Name, "Controller");
                 }
