@@ -96,26 +96,17 @@ NoteNote	The MapRequestHandler, LogRequest, and PostLogRequest events are suppor
             var rid = _application.Context.Items[REQUEST_ID];
             Trace.TraceInformation("[{0}]:[{1}] Evento {2}, Handler: [{3}], User: {4}", _application.Context.CurrentNotification, rid, eventName, _application.Context.CurrentHandler, _application.User != null ? _application.User.Identity.Name : "-");
 
-            switch (_application.Context.CurrentNotification)
+            //case RequestNotification.PreExecuteRequestHandler:
+
+            var mvcHandler = _application.Context.Handler as MvcHandler;
+            if (mvcHandler != null)
             {
-                case RequestNotification.PreExecuteRequestHandler:
-                    {
-                        var mvcHandler = _application.Context.Handler as MvcHandler;
-                        if (mvcHandler != null)
-                        {
-                            var handler = mvcHandler;
-                            var controller = handler.RequestContext.RouteData.GetRequiredString("controller");
-                            var action = handler.RequestContext.RouteData.GetRequiredString("action");
-                            var area = handler.RequestContext.RouteData.DataTokens["area"];
-                            Trace.TraceInformation("Entering MVC Pipeline. Area: {0}, Controller: {1}, Action: {2}", area,
-                                controller, action);
-                        }
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
+                var controller = mvcHandler.RequestContext.RouteData.GetRequiredString("controller");
+                var action = mvcHandler.RequestContext.RouteData.GetRequiredString("action");
+                var area = mvcHandler.RequestContext.RouteData.DataTokens["area"];
+
+                Trace.TraceInformation("Entering MVC Pipeline. Area: '{0}', Controller: '{1}', Action: '{2}'", area,
+                    controller, action);
             }
         }
 
