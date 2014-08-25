@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using MvcFromDb.Infra;
 
 namespace MvcFromDb
 {
@@ -8,6 +9,7 @@ namespace MvcFromDb
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new MvcTracerFilter());
         }
     }
 }

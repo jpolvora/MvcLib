@@ -189,6 +189,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infra\MvcTracerFilter.cs" />
     <Compile Include="Infra\TracerHttpModule.cs" />
     <Compile Include="Infra\InfraBootstrapper.cs" />
     <Compile Include="Infra\Misc\CacheWrapper.cs" />
