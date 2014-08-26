@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using MvcLib.Common;
 
 namespace ConsoleApplication1
 {
@@ -30,11 +31,15 @@ namespace ConsoleApplication1
                                     db.Database.ExecuteSqlCommand("DELETE FROM DbFiles");
                                     db.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('DbFiles', RESEED, 0)"" ");
 
-                                    var root = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\db");
+                                    var setDirStr = Config.ValueOrDefault("dumpDir", "..\\..\\..\\MvcFromDb");
+
+                                    Directory.SetCurrentDirectory(setDirStr);
+                                    var root = new DirectoryInfo(Directory.GetCurrentDirectory());
 
                                     if (!root.Exists)
-                                        root.Create();
-
+                                    {
+                                        throw new Exception("Invalid directory " + root.FullName);
+                                    }
                                     WriteFilesToDatabase(db, new Uri(root.FullName), root, null);
 
                                     db.Database.ExecuteSqlCommand(@"EXEC sp_msforeachtable ""ALTER TABLE ? CHECK CONSTRAINT all""");
@@ -84,6 +89,12 @@ namespace ConsoleApplication1
                 dirName = root.Name;
             }
 
+            foreach (var ignoredDirectory in IgnoredDirectories)
+            {
+                if (virtualPath.StartsWith(ignoredDirectory, StringComparison.OrdinalIgnoreCase))
+                    return;
+            }
+
             var dbFile = new DbFile
             {
                 IsDirectory = true,
@@ -97,8 +108,12 @@ namespace ConsoleApplication1
 
             foreach (var fi in root.EnumerateFiles())
             {
-                //var bytes = File.ReadAllBytes(fi.FullName);
-                var text = File.ReadAllText(fi.FullName, Encoding.UTF8);
+                bool ignore = IgnoredExtensions.Any(ignoredExtension => fi.Extension.StartsWith(ignoredExtension));
+
+                if (ignore)
+                    continue;
+                
+                Console.WriteLine(fi.FullName);
 
                 var dbFileFolder = new DbFile
                 {
@@ -107,8 +122,19 @@ namespace ConsoleApplication1
                     Extension = fi.Extension,
                     VirtualPath = Path.Combine(virtualPath, fi.Name).Replace('\\', '/'),
                     ParentId = dbFile.Id,
-                    Texto = text
                 };
+
+                if (IsTextFile(fi.Extension))
+                {
+                    var text = File.ReadAllText(fi.FullName, Encoding.UTF8);
+                    dbFileFolder.Texto = text;
+                }
+                else
+                {
+                    var bytes = File.ReadAllBytes(fi.FullName);
+                    dbFileFolder.Bytes = bytes;
+                    dbFileFolder.IsBinary = true;
+                }
 
                 ctx.DbFiles.Add(dbFileFolder);
                 ctx.SaveChanges();
@@ -118,6 +144,14 @@ namespace ConsoleApplication1
             {
                 WriteFilesToDatabase(ctx, initialUri, di, dbFile.Id);
             }
+        }
+
+        private static readonly string[] IgnoredDirectories = { "/bin", "/App_", "/obj", "/properties", "/_" };
+        private static readonly string[] IgnoredExtensions = { ".csproj", ".user", ".dll", ".xml" };
+        private static readonly string[] TextExtensions = { ".txt", ".xml", ".cshtml", ".js", ".html", ".css" };
+        private static bool IsTextFile(string extension)
+        {
+            return TextExtensions.Any(extension.StartsWith); //remove the dot "."
         }
     }
 }
