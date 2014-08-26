@@ -23,7 +23,7 @@ namespace MvcLib.DbFileSystem
         }
 
         public DbFileContext()
-            : base("name=DbFileContext")
+            : base(Config.ValueOrDefault("CustomContextKey", "DbFileContext"))
         {
             var cfg = Config.ValueOrDefault("CustomDbFileContextVerbose", true);
             if (cfg)

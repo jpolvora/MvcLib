@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuditableEntity.cs" />
     <Compile Include="DbFile.cs" />
     <Compile Include="DbFileContext.cs" />
     <Compile Include="DbFileContextMigrationConfiguration.cs" />

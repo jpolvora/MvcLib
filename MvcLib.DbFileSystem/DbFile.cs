@@ -1,23 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MvcLib.DbFileSystem
 {
-    public abstract class AuditableEntity
-    {
-        public DateTime Created { get; set; }
-
-        public DateTime? Modified { get; set; }
-    }
-
-    public abstract class AuditableEntity<TKey> : AuditableEntity
-    {
-        [Key]
-        public TKey Id { get; set; }
-    }
-
     public class DbFile : AuditableEntity<int>
     {
         public DbFile()
