@@ -14,7 +14,7 @@ namespace MvcLib.Common.Mvc
 
         public override void ExecutePageHierarchy()
         {
-            if (IsAjax || string.IsNullOrEmpty(Layout))
+            if (IsAjax || string.IsNullOrWhiteSpace(Layout))
             {
                 base.ExecutePageHierarchy();
                 return;
