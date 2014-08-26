@@ -68,16 +68,20 @@ namespace MvcLib.PluginCompiler
 
             if (!assemblies.ContainsKey(CompiledAssemblyName))
             {
-                byte[] buffer;
-                var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
-                if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
+                using (DisposableTimer.StartNew("Assembly Compilation"))
                 {
-                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");
-                    assemblies.Add(CompiledAssemblyName, buffer);
-                }
-                else
-                {
-                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: Bytes:{0}, Msg:{1}", buffer.Length, msg);
+                    byte[] buffer;
+                    var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
+                    if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
+                    {
+                        Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");
+                        assemblies.Add(CompiledAssemblyName, buffer);
+                    }
+                    else
+                    {
+                        Trace.TraceInformation("[PluginLoader]: DB Compilation Result: Bytes:{0}, Msg:{1}",
+                            buffer.Length, msg);
+                    }
                 }
             }
 

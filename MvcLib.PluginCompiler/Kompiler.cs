@@ -15,7 +15,7 @@ namespace MvcLib.PluginCompiler
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
             IProject project = Solution.Create(SolutionId.CreateNewId())
-                .AddCSharpProject(PluginLoader.CompiledAssemblyName, "CustomAssembly")
+                .AddCSharpProject(PluginLoader.CompiledAssemblyName, PluginLoader.CompiledAssemblyName + ".dll")
                 .Solution.Projects.Single()
                 .AddMetadataReferences(RoslynWrapper.DefaultReferences)
                 .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
