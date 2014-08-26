@@ -10,6 +10,7 @@ using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcFromDb.Infra;
 using MvcLib.Bootstrapper;
 using MvcLib.Common;
+using MvcLib.Common.Cache;
 using MvcLib.Common.Mvc;
 using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
@@ -47,7 +48,7 @@ namespace MvcLib.Bootstrapper
             DbFileContext.Initialize();
 
             var customvpp = new CustomVirtualPathProvider()
-                .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService()));
+                .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new FileSystemCache()));
             HostingEnvironment.RegisterVirtualPathProvider(customvpp);
 
 

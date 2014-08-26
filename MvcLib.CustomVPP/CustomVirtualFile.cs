@@ -1,12 +1,14 @@
 ﻿using System.IO;
 using System.Text;
 using System.Web.Hosting;
+using MvcLib.Common.Cache;
 
 namespace MvcLib.CustomVPP
 {
-    public class CustomVirtualFile : VirtualFile
+    public class CustomVirtualFile : VirtualFile, ICacheableBytes
     {
-        private readonly byte[] _bytes;
+
+        public byte[] Bytes { get; private set; }
         public readonly string Hash;
 
         public bool IsBinary { get; private set; }
@@ -14,9 +16,9 @@ namespace MvcLib.CustomVPP
         public CustomVirtualFile(string virtualPath, byte[] bytes, string hash, bool isBinary = false)
             : base(virtualPath)
         {
-            _bytes = bytes;
+            Bytes = bytes;
             Hash = hash;
-            IsBinary = true;
+            IsBinary = isBinary;
         }
 
         public CustomVirtualFile(string virtualPath, string lines, string hash)
@@ -26,7 +28,9 @@ namespace MvcLib.CustomVPP
 
         public override Stream Open()
         {
-            return new MemoryStream(_bytes ?? new byte[0]);
+            return new MemoryStream(Bytes ?? new byte[0]);
         }
+
+        
     }
 }

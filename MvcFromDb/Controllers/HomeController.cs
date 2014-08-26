@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using MvcLib.Common;
+using MvcLib.Common.Cache;
 
 namespace MvcFromDb.Controllers
 {
@@ -27,7 +28,7 @@ namespace MvcFromDb.Controllers
 
         public ActionResult Reset()
         {
-            CacheWrapper.Clear();
+            WebCacheWrapper.Instance.Clear();
             HttpRuntime.UnloadAppDomain();
             return RedirectToAction("Index", new { q = "Reset success" });
         }

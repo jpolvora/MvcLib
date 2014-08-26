@@ -18,6 +18,15 @@ namespace MvcLib.CustomVPP
         public readonly string[] _ignoredFiles = { "precompiledapp.config" };
         public readonly string[] _ignoredDirectories = { "/bundles", "/app_localresources", "/app_browsers" };
 
+        protected static string NormalizeFilePath(string virtualPath)
+        {
+            var absolute = VirtualPathUtility.ToAbsolute(virtualPath);
+
+            var result = VirtualPathUtility.RemoveTrailingSlash(absolute);
+
+            return result.ToLowerInvariant();
+        }
+
         protected AbstractFileSystemProvider()
         {
 
