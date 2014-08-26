@@ -22,7 +22,7 @@ namespace MvcFromDb
             //Debug.Write(object.Equals(factory, f));
             //ControllerBuilder.Current.SetControllerFactory(factory);
 
-            var traceOutput = Server.MapPath("~/traceOutput.txt");
+            var traceOutput = Server.MapPath("~/traceOutput.log");
             Trace.Listeners.Add(new TextWriterTraceListener(traceOutput));
 
 

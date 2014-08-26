@@ -108,11 +108,12 @@ namespace ConsoleApplication1
 
             foreach (var fi in root.EnumerateFiles())
             {
-                bool ignore = IgnoredExtensions.Any(ignoredExtension => fi.Extension.StartsWith(ignoredExtension));
+                bool ignore = IgnoredExtensions.Any(ignoredExtension => fi.Extension.StartsWith(ignoredExtension))
+                              || IgnoredFiles.Any(x => x.Equals(fi.Name, StringComparison.OrdinalIgnoreCase));
 
                 if (ignore)
                     continue;
-                
+
                 Console.WriteLine(fi.FullName);
 
                 var dbFileFolder = new DbFile
@@ -146,8 +147,9 @@ namespace ConsoleApplication1
             }
         }
 
-        private static readonly string[] IgnoredDirectories = { "/bin", "/App_", "/obj", "/properties", "/_" };
-        private static readonly string[] IgnoredExtensions = { ".csproj", ".user", ".dll", ".xml" };
+        private static readonly string[] IgnoredDirectories = { "/bin", "/App_", "/obj", "/properties", "/_", "/content", "/scripts", "/fonts" };
+        private static readonly string[] IgnoredExtensions = { ".csproj", ".user", ".dll", ".config", ".log" };
+        private static readonly string[] IgnoredFiles = { "global.asax", "global.asax.cs" };
         private static readonly string[] TextExtensions = { ".txt", ".xml", ".cshtml", ".js", ".html", ".css" };
         private static bool IsTextFile(string extension)
         {
