@@ -57,6 +57,7 @@ namespace MvcFromDb.Infra
                 RenderView(_errorViewPath, model, response);
             }
 
+            Trace.TraceInformation("[CustomError]: Will end response now (avoid Transfer Handler)");
             response.End();
         }
 

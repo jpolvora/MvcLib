@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
+using System.Web.WebPages;
+using MvcLib.Common;
+using MvcLib.Common.Mvc;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Services;
@@ -12,12 +18,33 @@ namespace MvcLib.PluginCompiler
 {
     public class Kompiler
     {
+        public static List<MetadataReference> DefaultReferences = new List<MetadataReference>
+        {
+            MetadataReference. CreateAssemblyReference("mscorlib"),
+            MetadataReference.CreateAssemblyReference("System"),
+            MetadataReference.CreateAssemblyReference("System.Core"),
+            MetadataReference.CreateAssemblyReference("System.Data"),
+            MetadataReference.CreateAssemblyReference("System.Linq"),
+            MetadataReference.CreateAssemblyReference("Microsoft.CSharp"),
+            MetadataReference.CreateAssemblyReference("System.Web"),
+            MetadataReference.CreateAssemblyReference("System.ComponentModel.DataAnnotations"),
+            new MetadataFileReference(typeof (Task).Assembly.Location), //self
+            new MetadataFileReference(typeof (RoslynWrapper).Assembly.Location), //self
+            new MetadataFileReference(typeof (Controller).Assembly.Location),
+            new MetadataFileReference(typeof (WebPage).Assembly.Location),
+            new MetadataFileReference(typeof (DbContext).Assembly.Location), //ef    
+            new MetadataFileReference(typeof (CacheWrapper).Assembly.Location), //ef    
+            new MetadataFileReference(typeof (ViewRenderer).Assembly.Location), //ef    
+        };
+
+
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
             IProject project = Solution.Create(SolutionId.CreateNewId())
                 .AddCSharpProject(PluginLoader.CompiledAssemblyName, PluginLoader.CompiledAssemblyName + ".dll")
                 .Solution.Projects.Single()
-                .AddMetadataReferences(RoslynWrapper.DefaultReferences)
+                .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp6))
+                .AddMetadataReferences(DefaultReferences)
                 .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             foreach (var file in files)

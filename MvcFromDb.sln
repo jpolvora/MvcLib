@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.HttpModules", "MvcLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.Common.Mvc", "MvcLib.Common.Mvc\MvcLib.Common.Mvc.csproj", "{4550BC11-B931-4872-87FD-726957542EFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcFromDbMinimal", "MvcFromDbMinimal\MvcFromDbMinimal.csproj", "{2B825E62-05B1-41AE-8400-4375F2AC3052}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{4550BC11-B931-4872-87FD-726957542EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4550BC11-B931-4872-87FD-726957542EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4550BC11-B931-4872-87FD-726957542EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
