@@ -57,6 +57,7 @@ namespace MvcFromDb.Infra
             {
                 var html = ViewRenderer.RenderView(_errorViewPath, model);
                 response.Write(html);
+                response.End();
             }
             catch (Exception ex)
             {
