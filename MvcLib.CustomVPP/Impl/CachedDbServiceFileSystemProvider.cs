@@ -46,37 +46,37 @@ namespace MvcLib.CustomVPP.Impl
 
         }
 
-        public override bool IsVirtualDir(string virtualPath)
-        {
-            return false;
-        }
+        //public override bool IsVirtualDir(string virtualPath)
+        //{
+        //    return false;
+        //}
 
 
         //todo: eager load all files in directory
         public override bool DirectoryExists(string virtualDir)
         {
-            return false;
+           // return false;
 
-            //var path = NormalizeFilePath(virtualDir);
+            var path = NormalizeFilePath(virtualDir);
 
-            //var cacheKey = GetCacheKeyForDir(path);
-            //var item = CacheWrapper.Get(cacheKey);
-            //if (item != null)
-            //{
-            //    return item is CustomVirtualDir;
-            //}
+            var cacheKey = GetCacheKeyForDir(path);
+            var item = CacheWrapper.Get(cacheKey);
+            if (item != null)
+            {
+                return item is CustomVirtualDir;
+            }
 
-            //var result = _service.DirectoryExistsImpl(path);
-            //if (result)
-            //{
-            //    CacheWrapper.Set(cacheKey, GetDirectoryInternal(virtualDir, true));
-            //}
-            //else
-            //{
-            //    CacheWrapper.Set(cacheKey, new DummyVirtualFile(true), 20, false);
-            //}
+            var result = _service.DirectoryExistsImpl(path);
+            if (result)
+            {
+                CacheWrapper.Set(cacheKey, GetDirectoryInternal(virtualDir, true));
+            }
+            else
+            {
+                CacheWrapper.Set(cacheKey, new DummyVirtualFile(true), 20, false);
+            }
 
-            //return result;
+            return result;
         }
 
         public override CustomVirtualFile GetFile(string virtualPath)
