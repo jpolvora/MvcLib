@@ -4,11 +4,13 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcFromDb.Infra;
 using MvcLib.Bootstrapper;
 using MvcLib.Common;
+using MvcLib.Common.Mvc;
 using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
@@ -91,6 +93,8 @@ namespace MvcLib.Bootstrapper
             _initialized = true;
 
             Trace.TraceInformation("RUNNING POST_START ...");
+
+            GlobalFilters.Filters.Add(new MvcTracerFilter());
 
             var application = HttpContext.Current.ApplicationInstance;
 

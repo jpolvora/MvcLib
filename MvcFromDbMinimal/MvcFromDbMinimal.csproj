@@ -179,10 +179,6 @@
       <Project>{741f4607-7d76-481f-9d5e-015fbb95aa84}</Project>
       <Name>MvcLib.Bootstrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Common.Mvc\MvcLib.Common.Mvc.csproj">
-      <Project>{4550bc11-b931-4872-87fd-726957542efa}</Project>
-      <Name>MvcLib.Common.Mvc</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

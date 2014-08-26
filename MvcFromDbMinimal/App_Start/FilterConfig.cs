@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using MvcLib.Common.Mvc;
 
 namespace MvcFromDbMinimal
 {
@@ -8,7 +7,6 @@ namespace MvcFromDbMinimal
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new MvcTracerFilter());
         }
     }
 }
