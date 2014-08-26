@@ -61,6 +61,18 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="MvcLib.Bootstrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\compiled_libs\MvcLib.Bootstrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\compiled_libs\MvcLib.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.Common.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\compiled_libs\MvcLib.Common.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -173,20 +185,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MvcLib.Bootstrapper\MvcLib.Bootstrapper.csproj">
-      <Project>{741f4607-7d76-481f-9d5e-015fbb95aa84}</Project>
-      <Name>MvcLib.Bootstrapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Common.Mvc\MvcLib.Common.Mvc.csproj">
-      <Project>{4550bc11-b931-4872-87fd-726957542efa}</Project>
-      <Name>MvcLib.Common.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Common\MvcLib.Common.csproj">
-      <Project>{7ea8cab5-30b9-4069-a8c5-d553ca4016b0}</Project>
-      <Name>MvcLib.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

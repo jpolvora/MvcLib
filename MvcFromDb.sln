@@ -35,6 +35,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.Common.Mvc", "MvcLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcFromDbMinimal", "MvcFromDbMinimal\MvcFromDbMinimal.csproj", "{2B825E62-05B1-41AE-8400-4375F2AC3052}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{74470227-5CEB-46BD-B378-62546360513C}"
+	ProjectSection(SolutionItems) = preProject
+		compiled_libs\MvcLib.Bootstrapper.dll = compiled_libs\MvcLib.Bootstrapper.dll
+		compiled_libs\MvcLib.Common.dll = compiled_libs\MvcLib.Common.dll
+		compiled_libs\MvcLib.Common.Mvc.dll = compiled_libs\MvcLib.Common.Mvc.dll
+		compiled_libs\MvcLib.CustomVPP.dll = compiled_libs\MvcLib.CustomVPP.dll
+		compiled_libs\MvcLib.DbFileSystem.dll = compiled_libs\MvcLib.DbFileSystem.dll
+		compiled_libs\MvcLib.HttpModules.dll = compiled_libs\MvcLib.HttpModules.dll
+		compiled_libs\MvcLib.PluginCompiler.dll = compiled_libs\MvcLib.PluginCompiler.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
