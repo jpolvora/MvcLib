@@ -26,12 +26,21 @@ namespace MvcLib.FsDump
             using (var ctx = new DbFileContext())
             {
                 var dbFiles = ctx.DbFiles
-                    .Where(x => !x.IsHidden && !x.IsDirectory && x.Extension != ".dll" && x.Extension != ".cs")
+                    .Where(x => !x.IsHidden && !x.IsDirectory && x.Extension != ".dll")
                     .ToList();
 
                 foreach (var dbFile in dbFiles)
                 {
-                    var localpath = dirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
+                    string localpath;
+                    if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
+                    {
+                        //copia p/ app_code
+                        localpath = dirInfo.FullName + "\\App_Code\\" + dbFile.Name + ".cs";
+                    }
+                    else
+                    {
+                        localpath = dirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
+                    }
                     var dir = Path.GetDirectoryName(localpath);
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);

@@ -137,6 +137,8 @@
     <Content Include="Scripts\dummy.txt" />
     <Content Include="Views\Web.config" />
     <Content Include="_files\dummy.txt" />
+    <Content Include="_plugins\dummy.txt" />
+    <Content Include="Views\appcode.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -150,6 +152,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Code\TesteController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -172,9 +175,7 @@
       <Name>MvcLib.FsDump</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="_plugins\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
