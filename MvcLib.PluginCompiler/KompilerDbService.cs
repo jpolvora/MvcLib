@@ -26,6 +26,7 @@ namespace MvcLib.PluginCompiler
             }
             catch (Exception ex)
             {
+                result = ex.Message;
                 Trace.TraceError("Erro durante a compilação do projeto no banco de dados. \r\n" + ex.Message);
             }
 
@@ -47,6 +48,9 @@ namespace MvcLib.PluginCompiler
 
                 foreach (var dbFile in csharpFiles)
                 {
+                    if (string.IsNullOrWhiteSpace(dbFile.Texto))
+                        continue;
+
                     dict.Add(dbFile.VirtualPath, Encoding.UTF8.GetBytes(dbFile.Texto));
                 }
             }

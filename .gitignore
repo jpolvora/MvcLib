@@ -159,3 +159,4 @@ $RECYCLE.BIN/
 /MvcFromDb/traceOutput.txt
 /MvcFromDb/Views_
 /MvcFromDb/_plugins
+/MvcFromDbMinimal/_plugins/compiledassembly.dll

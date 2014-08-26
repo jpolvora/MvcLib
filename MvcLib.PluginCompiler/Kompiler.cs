@@ -28,7 +28,10 @@ namespace MvcLib.PluginCompiler
             MetadataReference.CreateAssemblyReference("Microsoft.CSharp"),
             MetadataReference.CreateAssemblyReference("System.Web"),
             MetadataReference.CreateAssemblyReference("System.ComponentModel.DataAnnotations"),
-            new MetadataFileReference(typeof (Task).Assembly.Location), //self
+            new MetadataFileReference(typeof (Roslyn.Services.Solution).Assembly.Location), //self
+            new MetadataFileReference(typeof (Roslyn.Compilers.CSharp.Compilation).Assembly.Location), //self
+            new MetadataFileReference(typeof (Roslyn.Compilers.Common.CommonCompilation).Assembly.Location), //self
+            new MetadataFileReference(typeof (Roslyn.Scripting.Session).Assembly.Location), //self
             new MetadataFileReference(typeof (RoslynWrapper).Assembly.Location), //self
             new MetadataFileReference(typeof (Controller).Assembly.Location),
             new MetadataFileReference(typeof (WebPage).Assembly.Location),
@@ -43,7 +46,7 @@ namespace MvcLib.PluginCompiler
             IProject project = Solution.Create(SolutionId.CreateNewId())
                 .AddCSharpProject(PluginLoader.CompiledAssemblyName, PluginLoader.CompiledAssemblyName + ".dll")
                 .Solution.Projects.Single()
-                .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp6))
+                .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp5))
                 .AddMetadataReferences(DefaultReferences)
                 .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

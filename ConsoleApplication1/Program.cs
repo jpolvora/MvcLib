@@ -150,7 +150,7 @@ namespace ConsoleApplication1
         private static readonly string[] IgnoredDirectories = { "/bin", "/App_", "/obj", "/properties", "/_", "/content", "/scripts", "/fonts" };
         private static readonly string[] IgnoredExtensions = { ".csproj", ".user", ".dll", ".config", ".log" };
         private static readonly string[] IgnoredFiles = { "global.asax", "global.asax.cs" };
-        private static readonly string[] TextExtensions = { ".txt", ".xml", ".cshtml", ".js", ".html", ".css" };
+        private static readonly string[] TextExtensions = { ".txt", ".xml", ".cshtml", ".js", ".html", ".css", ".cs", ".csx" };
         private static bool IsTextFile(string extension)
         {
             return TextExtensions.Any(extension.StartsWith); //remove the dot "."
