@@ -8,6 +8,7 @@ using System.Web.Routing;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcFromDb.Infra;
 using MvcLib.Bootstrapper;
+using MvcLib.Common;
 using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
@@ -54,7 +55,8 @@ namespace MvcLib.Bootstrapper
 
             AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
 
-            PluginLoader.Initialize();
+            var forceRecompilation = Config.ValueOrDefault("CustomForceRecompilation", true);
+            PluginLoader.Initialize(forceRecompilation);
 
             //config routing
             //var routes = RouteTable.Routes;

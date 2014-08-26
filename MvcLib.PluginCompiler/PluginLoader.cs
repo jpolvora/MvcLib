@@ -48,7 +48,7 @@ namespace MvcLib.PluginCompiler
             PluginFolder = new DirectoryInfo(HostingEnvironment.MapPath(privatePath));
         }
 
-        public static void Initialize()
+        public static void Initialize(bool forceRecompile = false)
         {
             var assemblies = new Dictionary<string, byte[]>();
             using (var ctx = new DbFileContext())
@@ -58,6 +58,9 @@ namespace MvcLib.PluginCompiler
                     .ToList();
                 foreach (var s in files)
                 {
+                    if (forceRecompile && s.Name.Equals(CompiledAssemblyName))
+                        continue;
+
                     Trace.TraceInformation("[PluginLoader]: Found assembly from Database: {0}", s.VirtualPath);
                     assemblies.Add(s.Name, s.Bytes);
                 }
@@ -67,10 +70,14 @@ namespace MvcLib.PluginCompiler
             {
                 byte[] buffer;
                 var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
-                Trace.TraceInformation("[PluginLoader]: DB Compilation Result: {0}", msg);
-                if (string.IsNullOrWhiteSpace(msg))
+                if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
                 {
+                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");
                     assemblies.Add(CompiledAssemblyName, buffer);
+                }
+                else
+                {
+                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: Bytes:{0}, Msg:{1}", buffer.Length, msg);
                 }
             }
 
