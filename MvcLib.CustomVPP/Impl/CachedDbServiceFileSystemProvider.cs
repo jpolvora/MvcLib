@@ -51,6 +51,8 @@ namespace MvcLib.CustomVPP.Impl
             return false;
         }
 
+
+        //todo: eager load all files in directory
         public override bool DirectoryExists(string virtualDir)
         {
             return false;
@@ -104,7 +106,7 @@ namespace MvcLib.CustomVPP.Impl
             var vf = CacheWrapper.Get(GetCacheKeyForFile(path)) as CustomVirtualFile;
             if (vf == null || vf.Hash != hash)
             {
-                RemoveFileFromCache(path, true, true, false);
+                RemoveFromCache(path, true, true, false);
             }
 
             return hash;
@@ -188,9 +190,9 @@ namespace MvcLib.CustomVPP.Impl
             return string.Format("H{0}:{1}", CacheKeySalt, path);
         }
 
-        public static void RemoveFileFromCache(string path, bool removeDir, bool removeFile, bool removeHash)
+        public static void RemoveFromCache(string path, bool removeDir, bool removeFile, bool removeHash)
         {
-            Trace.TraceInformation("RemoveFileFromCache: {0}", path);
+            Trace.TraceInformation("RemoveFromCache: {0}", path);
 
             if (removeDir)
             {

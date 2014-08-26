@@ -34,10 +34,6 @@ namespace MvcLib.Bootstrapper
 
             DbFileContext.Initialize();
 
-            Trace.AutoFlush = true;
-
-            //Trace.Listeners.Add(new TextWriterTraceListener(Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "tracer.txt")));
-
             var customvpp = new CustomVirtualPathProvider()
                 .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService()));
             HostingEnvironment.RegisterVirtualPathProvider(customvpp);

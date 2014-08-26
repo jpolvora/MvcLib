@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Caching;
+﻿using System.Web;
 using System.Web.Mvc;
 using MvcLib.Common;
 
@@ -33,7 +29,7 @@ namespace MvcFromDb.Controllers
         {
             CacheWrapper.Clear();
             HttpRuntime.UnloadAppDomain();
-            return new HttpStatusCodeResult(200);
+            return RedirectToAction("Index", new { q = "Reset success" });
         }
     }
 }
