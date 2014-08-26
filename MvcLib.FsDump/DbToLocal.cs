@@ -35,7 +35,7 @@ namespace MvcLib.FsDump
                     if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
                     {
                         //copia p/ app_code
-                        localpath = dirInfo.FullName + "\\App_Code\\" + dbFile.Name + ".cs";
+                        localpath = Path.Combine(dirInfo.FullName, string.Format("App_Code{0}", dbFile.VirtualPath.Replace("/","\\")));
                     }
                     else
                     {
