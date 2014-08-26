@@ -48,7 +48,9 @@ namespace MvcLib.Bootstrapper
             DbFileContext.Initialize();
 
             var customvpp = new CustomVirtualPathProvider()
-                .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new FileSystemCache()));
+                .AddImpl(new LazyDbFileSystemProviderImpl(new DefaultDbService()));
+
+                //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
             HostingEnvironment.RegisterVirtualPathProvider(customvpp);
 
 
