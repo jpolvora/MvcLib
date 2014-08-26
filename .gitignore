@@ -156,8 +156,8 @@ $RECYCLE.BIN/
 !packages/Microsoft.Bcl.Build*/tools/Microsoft.Bcl.Build.targets
 *.DotSettings
 *.rar
-/MvcFromDb/traceOutput.txt
-/MvcFromDb/Views_
-/MvcFromDb/_plugins
-/MvcFromDbMinimal/_plugins/compiledassembly.dll
+traceOutput.txt
+_plugins
+
 *.dll
+/MvcFromDbMinimal/_files

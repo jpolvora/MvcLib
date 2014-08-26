@@ -7,14 +7,10 @@ namespace MvcLib.CustomVPP
 {
     public class LazyDbFileSystemProviderImpl : AbstractFileSystemProvider
     {
-        private readonly IDbService _service;
-        readonly Dictionary<string, bool> _cache = new Dictionary<string, bool>();
-
         private readonly string _path;
 
-        public LazyDbFileSystemProviderImpl(IDbService service)
+        public LazyDbFileSystemProviderImpl()
         {
-            _service = service;
             _path = HostingEnvironment.MapPath("~/_files");
             if (!Directory.Exists(_path))
                 Directory.CreateDirectory(_path);
@@ -30,50 +26,36 @@ namespace MvcLib.CustomVPP
         public override bool FileExists(string virtualPath)
         {
             var cacheKey = NormalizeFilePath(virtualPath);
+            var path = KeyToCache(cacheKey);
 
-            if (!_cache.ContainsKey(virtualPath))
-            {
-                var r = _service.FileExistsImpl(cacheKey);
-                _cache[cacheKey] = r;
-                return r;
-            }
-
-            return _cache[cacheKey];
+            return File.Exists(path);
         }
 
         public override string GetFileHash(string virtualPath)
         {
-            var cacheKey = NormalizeFilePath(virtualPath);
-            return _service.GetFileHash(cacheKey);
+            return null;
         }
 
         public override CustomVirtualFile GetFile(string virtualPath)
         {
             var cacheKey = NormalizeFilePath(virtualPath);
             var path = KeyToCache(cacheKey);
-            byte[] bytes;
-
-            if (!File.Exists(path))
-            {
-                bytes = _service.GetFileBytes(cacheKey);
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
-                File.WriteAllBytes(path, bytes);
-            }
-            else
-            {
-                bytes = File.ReadAllBytes(path);
-            }
+            byte[] bytes = File.ReadAllBytes(path);
+            
             return new CustomVirtualFile(virtualPath, bytes, DateTime.Now.ToString());
         }
 
         public override bool DirectoryExists(string virtualDir)
         {
-            return false;
+            var cacheKey = NormalizeFilePath(virtualDir);
+            var path = KeyToCache(cacheKey);
+
+            return Directory.Exists(path);
         }
 
         public override CustomVirtualDir GetDirectory(string virtualDir)
         {
-            return null;
+            return new CustomVirtualDir(virtualDir, () => LazyGetChildren(0));
         }
 
         public override IEnumerable<VirtualFileBase> LazyGetChildren(int key)
