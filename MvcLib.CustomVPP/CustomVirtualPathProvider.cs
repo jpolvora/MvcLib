@@ -106,5 +106,10 @@ namespace MvcLib.CustomVPP
                 ? null 
                 : Previous.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
         }
+
+        public override string CombineVirtualPaths(string basePath, string relativePath)
+        {
+            return base.CombineVirtualPaths(basePath, relativePath);
+        }
     }
 }

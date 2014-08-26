@@ -17,8 +17,8 @@ namespace MvcLib.FsDump
         {
             Trace.TraceInformation("[DbToLocal]: Starting...");
 
-            var root = HostingEnvironment.MapPath("~/");
-            var dirInfo = new DirectoryInfo(root.Substring(0, root.Length - 1));
+            var root = Path.GetFullPath(HostingEnvironment.MapPath("~/"));
+            var dirInfo = new DirectoryInfo(root);
             if (!dirInfo.Exists)
                 dirInfo.Create();
 
@@ -40,7 +40,7 @@ namespace MvcLib.FsDump
                     {
                         var fi = new FileInfo(localpath);
                         var mod = dbFile.Modified.HasValue ? dbFile.Modified.Value : dbFile.Created;
-                        if (fi.LastWriteTime >= mod)
+                        if (fi.LastWriteTime > mod)
                             continue;
                         Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}", fi.FullName);
                         try

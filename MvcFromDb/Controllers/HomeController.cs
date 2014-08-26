@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using MvcLib.Common;
 using MvcLib.Common.Cache;
+using MvcLib.FsDump;
 
 namespace MvcFromDb.Controllers
 {
@@ -31,6 +32,13 @@ namespace MvcFromDb.Controllers
             WebCacheWrapper.Instance.Clear();
             HttpRuntime.UnloadAppDomain();
             return RedirectToAction("Index", new { q = "Reset success" });
+        }
+
+        public ActionResult Refresh()
+        {
+            DbToLocal.Execute();
+            
+            return RedirectToAction("Index", new { q = "Refresh success" });
         }
     }
 }

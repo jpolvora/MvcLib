@@ -11,6 +11,7 @@ using System.Web.WebPages;
 using MvcLib.Common;
 using MvcLib.Common.Cache;
 using MvcLib.Common.Mvc;
+using MvcLib.FsDump;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Services;
@@ -39,6 +40,7 @@ namespace MvcLib.PluginCompiler
             new MetadataFileReference(typeof (DbContext).Assembly.Location), //ef    
             new MetadataFileReference(typeof (WebCacheWrapper).Assembly.Location), //ef    
             new MetadataFileReference(typeof (ViewRenderer).Assembly.Location), //ef    
+            new MetadataFileReference(typeof (DbToLocal).Assembly.Location), //ef    
         };
 
 

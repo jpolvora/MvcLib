@@ -50,10 +50,10 @@ namespace MvcLib.Bootstrapper
 
             if (Config.ValueOrDefault("CustomVPP", false))
             {
-                var customvpp = new CustomVirtualPathProvider()
-                    //.AddImpl(new LazyDbFileSystemProviderImpl());
-                    .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
-                HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+                //var customvpp = new RemapVpp();
+                //.AddImpl(new LazyDbFileSystemProviderImpl());
+                //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
+                //HostingEnvironment.RegisterVirtualPathProvider(customvpp);
             }
 
             if (Config.ValueOrDefault("DumpToLocal", false))

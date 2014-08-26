@@ -121,6 +121,10 @@
       <Project>{969929c3-2898-49b8-9ec8-de7a28884524}</Project>
       <Name>MvcLib.DbFileSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MvcLib.FsDump\MvcLib.FsDump.csproj">
+      <Project>{3971d9ad-bb07-4675-babf-471be04e2490}</Project>
+      <Name>MvcLib.FsDump</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
