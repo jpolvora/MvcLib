@@ -28,9 +28,9 @@ namespace MvcLib.Bootstrapper
         public static void PreStart()
         {
             var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
-            var listener = new TextWriterTraceListener(traceOutput, "MvcLibTextTracer")
+            var listener = new TextWriterTraceListener(traceOutput, "StartupListener")
             {
-                TraceOutputOptions = TraceOptions.Timestamp
+                TraceOutputOptions = TraceOptions.DateTime
             };
 
             Trace.Listeners.Add(listener);
@@ -124,6 +124,8 @@ namespace MvcLib.Bootstrapper
                 var route = (Route)routeBase;
                 Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
             }
+
+            Trace.Listeners.Remove("StartupListener");
         }
 
         private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
