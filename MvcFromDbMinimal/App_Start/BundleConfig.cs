@@ -1,4 +1,6 @@
-﻿using System.Web.Optimization;
+﻿using System;
+using System.Web.Optimization;
+using MvcLib.Common;
 
 namespace MvcFromDbMinimal
 {
@@ -28,8 +30,8 @@ namespace MvcFromDbMinimal
 
             // Set EnableOptimizations to false for debugging. For more information,
             // visit http://go.microsoft.com/fwlink/?LinkId=301862
-            
-            BundleTable.EnableOptimizations = true;
+
+            BundleTable.EnableOptimizations = !Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

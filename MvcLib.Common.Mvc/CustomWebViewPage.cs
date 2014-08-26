@@ -22,7 +22,7 @@ namespace MvcLib.Common.Mvc
 
             using (DisposableTimer.StartNew(GetType().Name))
             {
-                using (this.BeginChunk("div", VirtualPath))
+                using (this.BeginChunk("div", VirtualPath, "section"))
                 {
                     base.ExecutePageHierarchy();
                 }
@@ -31,7 +31,7 @@ namespace MvcLib.Common.Mvc
 
         public HelperResult RenderSectionEx(string name, bool required = false)
         {
-            using (this.BeginChunk("div", "RenderSection: " + name))
+            using (this.BeginChunk("div", "RenderSection: " + name, "section"))
             {
                 return RenderSection(name, false);
             }
