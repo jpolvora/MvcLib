@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcFromDb", "MvcFromDb\MvcFromDb.csproj", "{B0658039-9733-4B6D-A09F-C5B6CAF64A10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcFromDbMinimal", "MvcFromDbMinimal\MvcFromDbMinimal.csproj", "{2B825E62-05B1-41AE-8400-4375F2AC3052}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B0658039-9733-4B6D-A09F-C5B6CAF64A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0658039-9733-4B6D-A09F-C5B6CAF64A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0658039-9733-4B6D-A09F-C5B6CAF64A10}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0658039-9733-4B6D-A09F-C5B6CAF64A10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B825E62-05B1-41AE-8400-4375F2AC3052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
