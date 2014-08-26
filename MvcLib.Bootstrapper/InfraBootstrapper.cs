@@ -159,12 +159,11 @@ namespace MvcLib.Bootstrapper
             Trace.TraceInformation("Assembly Loaded... {0}", args.LoadedAssembly.Location);
 
             var types = args.LoadedAssembly.GetExportedTypes();
-            Trace.Indent();
+
             foreach (var type in types)
             {
-                Trace.WriteLine(type.Name);
+                Trace.TraceInformation("Type exported: {0}", type.FullName);
             }
-            Trace.Unindent();
 
             var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
             if (path.IndexOf(PluginLoader.PluginFolder.FullName, 0, StringComparison.InvariantCultureIgnoreCase) >= 0)

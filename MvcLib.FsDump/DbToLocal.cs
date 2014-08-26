@@ -17,20 +17,21 @@ namespace MvcLib.FsDump
         {
             Trace.TraceInformation("[DbToLocal]: Starting...");
 
-            var _path = HostingEnvironment.MapPath("~/");
-            if (!Directory.Exists(_path))
-                Directory.CreateDirectory(_path);
+            var root = HostingEnvironment.MapPath("~/");
+            var dirInfo = new DirectoryInfo(root.Substring(0, root.Length - 1));
+            if (!dirInfo.Exists)
+                dirInfo.Create();
 
             //procurar por todos os arquivos CS no DbFileSystem
             using (var ctx = new DbFileContext())
             {
                 var dbFiles = ctx.DbFiles
-                    .Where(x => !x.IsHidden && !x.IsDirectory)
+                    .Where(x => !x.IsHidden && !x.IsDirectory && x.Extension != ".dll" && x.Extension != ".cs")
                     .ToList();
 
                 foreach (var dbFile in dbFiles)
                 {
-                    var localpath = _path + dbFile.VirtualPath.Replace("/", "\\");
+                    var localpath = dirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
                     var dir = Path.GetDirectoryName(localpath);
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
@@ -55,9 +56,9 @@ namespace MvcLib.FsDump
                     Trace.TraceInformation("[DbToLocal]:Copiando arquivo: {0}", localpath);
                     try
                     {
-                    if (dbFile.IsBinary && dbFile.Bytes.Length > 0)
-                        File.WriteAllBytes(localpath, dbFile.Bytes);
-                    else File.WriteAllText(localpath, dbFile.Texto);
+                        if (dbFile.IsBinary && dbFile.Bytes.Length > 0)
+                            File.WriteAllBytes(localpath, dbFile.Bytes);
+                        else File.WriteAllText(localpath, dbFile.Texto);
                     }
                     catch (Exception ex)
                     {
