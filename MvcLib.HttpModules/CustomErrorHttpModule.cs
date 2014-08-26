@@ -50,14 +50,23 @@ namespace MvcFromDb.Infra
             bool useController = !string.IsNullOrWhiteSpace(_errorController);
             if (useController)
             {
-               RenderController(application.Context, _errorController, model);
+                RenderController(application.Context, _errorController, model);
+            }
+            else
+            {
+                RenderView(_errorViewPath, model, response);
             }
 
+            response.End();
+        }
+
+        private static void RenderView(string errorViewPath, ErrorModel model, HttpResponse response)
+        {
             try
             {
-                var html = ViewRenderer.RenderView(_errorViewPath, model);
+                var html = ViewRenderer.RenderView(errorViewPath, model);
                 response.Write(html);
-                response.End();
+                
             }
             catch (Exception ex)
             {
