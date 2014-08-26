@@ -27,6 +27,15 @@ namespace MvcLib.Bootstrapper
 
         public static void PreStart()
         {
+            var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
+            var listener = new TextWriterTraceListener(traceOutput, "MvcLibTextTracer")
+            {
+                TraceOutputOptions = TraceOptions.Timestamp
+            };
+
+            Trace.Listeners.Add(listener);
+            Trace.AutoFlush = true;
+
             Assembly web = Assembly.GetExecutingAssembly();
             AssemblyName webName = web.GetName();
 

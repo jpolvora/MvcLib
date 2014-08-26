@@ -133,6 +133,7 @@ NoteNote	The MapRequestHandler, LogRequest, and PostLogRequest events are suppor
         private void OnEndRequest(object sender, EventArgs e)
         {
             StopTimer();
+            Trace.Flush();
 
             var context = _application.Context;
             var handler = context.Handler;
@@ -155,6 +156,7 @@ NoteNote	The MapRequestHandler, LogRequest, and PostLogRequest events are suppor
         private void OnError(object sender, EventArgs e)
         {
             StopTimer();
+            Trace.Flush();
 
             var rid = _application.Context.Items[RequestId];
             Trace.TraceInformation("[{0}]:[{1}] Evento {2}, Handler: [{3}], User: {4}", _application.Context.CurrentNotification, rid, "Error", _application.Context.CurrentHandler, _application.User != null ? _application.User.Identity.Name : "-");

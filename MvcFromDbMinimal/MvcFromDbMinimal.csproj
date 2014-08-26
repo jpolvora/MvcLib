@@ -164,6 +164,7 @@
   <ItemGroup>
     <Folder Include="Content\" />
     <Folder Include="Scripts\" />
+    <Folder Include="_plugins\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

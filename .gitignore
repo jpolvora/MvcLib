@@ -160,3 +160,4 @@ $RECYCLE.BIN/
 /MvcFromDb/Views_
 /MvcFromDb/_plugins
 /MvcFromDbMinimal/_plugins/compiledassembly.dll
+*.dll

@@ -17,7 +17,7 @@ namespace MvcLib.PluginCompiler
 
     public class PluginLoader
     {
-        public const string CompiledAssemblyName = "compiledassembly";
+        public const string CompiledAssemblyName = "db-compiled-assembly";
 
         public static readonly DirectoryInfo PluginFolder;
 
