@@ -15,6 +15,7 @@ using MvcLib.Common.Mvc;
 using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
+using MvcLib.FsDump;
 using MvcLib.PluginCompiler;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(InfraBootstrapper), "PreStart")]
@@ -47,16 +48,18 @@ namespace MvcLib.Bootstrapper
 
             DbFileContext.Initialize();
 
-            var customvpp = new CustomVirtualPathProvider()
-                .AddImpl(new LazyDbFileSystemProviderImpl(new DefaultDbService()));
+            if (Config.ValueOrDefault("CustomVPP", false))
+            {
+                var customvpp = new CustomVirtualPathProvider()
+                    //.AddImpl(new LazyDbFileSystemProviderImpl());
+                    .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
+                HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+            }
 
-                //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
-            HostingEnvironment.RegisterVirtualPathProvider(customvpp);
-
-
-            //EntropiaSection.Initialize();
-
-            //todo: CHECK if is Full Trust
+            if (Config.ValueOrDefault("DumpToLocal", false))
+            {
+                DbToLocal.Execute();
+            }
 
             if (AppDomain.CurrentDomain.IsFullyTrusted)
             {
