@@ -17,7 +17,7 @@ namespace MvcLib.PluginCompiler
 
     public class PluginLoader
     {
-        public const string CompiledAssemblyName = "compiledassembly.dll";
+        public const string CompiledAssemblyName = "compiledassembly";
 
         public static readonly DirectoryInfo PluginFolder;
 
@@ -58,34 +58,19 @@ namespace MvcLib.PluginCompiler
                     .ToList();
                 foreach (var s in files)
                 {
-                    assemblies.Add(string.Format("{0}{1}", s.Name, s.Extension), s.Bytes);
+                    Trace.TraceInformation("[PluginLoader]: Found assembly from Database: {0}", s.VirtualPath);
+                    assemblies.Add(s.Name, s.Bytes);
                 }
             }
 
             if (!assemblies.ContainsKey(CompiledAssemblyName))
             {
-                try
+                byte[] buffer;
+                var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
+                Trace.TraceInformation("[PluginLoader]: DB Compilation Result: {0}", msg);
+                if (string.IsNullOrWhiteSpace(msg))
                 {
-                    //compile dbfiles and get assembly to load
-                    var dict = Kompiler.LoadSourceCodeFromDb();
-                    if (dict.Count > 0) //somente se houver arquivos .cs
-                    {
-                        byte[] buffer;
-                        string result = Kompiler.CreateSolutionAndCompile(dict, out buffer);
-                        if (string.IsNullOrEmpty(result))
-                        {
-                            assemblies.Add(CompiledAssemblyName, buffer);
-                            Kompiler.SaveAssemblyToDataBase(CompiledAssemblyName, buffer);
-                        }
-                        else
-                        {
-                            Trace.TraceError("Erro durante a compilação do projeto no banco de dados. \r\n" + result);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message, ex);
+                    assemblies.Add(CompiledAssemblyName, buffer);
                 }
             }
 
@@ -108,7 +93,7 @@ namespace MvcLib.PluginCompiler
 
                 foreach (var assembly in assemblies)
                 {
-                    var fullFileName = Path.Combine(PluginFolder.FullName, assembly.Key);
+                    var fullFileName = Path.Combine(PluginFolder.FullName, assembly.Key + ".dll");
 
                     File.WriteAllBytes(fullFileName, assembly.Value);
                 }

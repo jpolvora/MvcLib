@@ -158,3 +158,4 @@ $RECYCLE.BIN/
 *.rar
 /MvcFromDb/traceOutput.txt
 /MvcFromDb/Views_
+/MvcFromDb/_plugins

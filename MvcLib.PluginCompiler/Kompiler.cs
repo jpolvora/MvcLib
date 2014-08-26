@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using MvcLib.DbFileSystem;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Services;
@@ -16,7 +14,6 @@ namespace MvcLib.PluginCompiler
     {
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
-
             IProject project = Solution.Create(SolutionId.CreateNewId())
                 .AddCSharpProject(PluginLoader.CompiledAssemblyName, "CustomAssembly")
                 .Solution.Projects.Single()
@@ -48,7 +45,8 @@ namespace MvcLib.PluginCompiler
                         StringBuilder sb = new StringBuilder();
                         foreach (var diagnostic in result.Diagnostics)
                         {
-                            sb.AppendLine(diagnostic.Info.GetMessage());
+                            sb.AppendFormat("{0} - {1}", diagnostic.Info.Severity, diagnostic.Info.GetMessage())
+                                .AppendLine();
                         }
 
                         return sb.ToString();
@@ -62,69 +60,6 @@ namespace MvcLib.PluginCompiler
             catch (Exception ex)
             {
                 return ex.Message;
-            }
-
-        }
-
-        public static string CreateAndSaveAssemblyFromDbFiles(string assName)
-        {
-            Byte[] buffer;
-            var dict = LoadSourceCodeFromDb();
-            var result = CreateSolutionAndCompile(dict, out buffer);
-
-            if (!String.IsNullOrEmpty(result)) return result;
-
-            SaveAssemblyToDataBase(assName, buffer);
-
-            return result;
-        }
-
-        public static Dictionary<string, byte[]> LoadSourceCodeFromDb()
-        {
-            var dict = new Dictionary<string, byte[]>();
-
-            //procurar por todos os arquivos CS no DbFileSystem
-            using (var ctx = new DbFileContext())
-            {
-                var csharpFiles = ctx.DbFiles
-                    .Where(x => !x.IsHidden && !x.IsDirectory && x.Extension.Equals(".cs", StringComparison.InvariantCultureIgnoreCase))
-                    .Select(s => new { s.VirtualPath, s.Texto })
-                    .ToList();
-
-                foreach (var dbFile in csharpFiles)
-                {
-                    dict.Add(dbFile.VirtualPath, Encoding.UTF8.GetBytes(dbFile.Texto));
-                }
-            }
-
-            return dict;
-        }
-
-        public static void SaveAssemblyToDataBase(string assName, byte[] buffer)
-        {
-            using (var ctx = new DbFileContext())
-            {
-                var root = ctx.DbFiles.Include(x => x.Children).First(x => x.IsDirectory && x.ParentId == null && x.Name == null && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
-                var existingFile = root.Children.FirstOrDefault(x => x.VirtualPath.Equals("/" + PluginLoader.CompiledAssemblyName, StringComparison.InvariantCultureIgnoreCase));
-                if (existingFile != null)
-                {
-                    ctx.DbFiles.Remove(existingFile);
-                    ctx.SaveChanges();
-                }
-
-                var file = new DbFile
-                {
-                    ParentId = root.Id,
-                    IsDirectory = false,
-                    Name = assName,
-                    Extension = ".dll",
-                    IsBinary = true
-                };
-                file.VirtualPath = "/" + file.Name + ".dll";
-                file.Bytes = buffer;
-
-                ctx.DbFiles.Add(file);
-                ctx.SaveChanges();
             }
         }
     }
