@@ -155,3 +155,6 @@ $RECYCLE.BIN/
 !.nuget/NuGet.exe
 !packages/Microsoft.Bcl.Build*/tools/Microsoft.Bcl.Build.targets
 *.DotSettings
+*.rar
+/MvcFromDb/traceOutput.txt
+/MvcFromDb/Views_

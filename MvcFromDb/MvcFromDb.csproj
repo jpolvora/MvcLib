@@ -189,30 +189,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infra\ErrorHttpModule.cs" />
-    <Compile Include="Infra\MvcTracerFilter.cs" />
-    <Compile Include="Infra\TracerHttpModule.cs" />
-    <Compile Include="Infra\InfraBootstrapper.cs" />
-    <Compile Include="Infra\Misc\CacheWrapper.cs" />
-    <Compile Include="Infra\Misc\Config.cs" />
-    <Compile Include="Infra\Entities\DbFile.cs" />
-    <Compile Include="Infra\Entities\DbFileContextMigrationConfiguration.cs" />
-    <Compile Include="Infra\Entities\DbFileContext.cs" />
-    <Compile Include="Infra\Misc\StringExtensions.cs" />
-    <Compile Include="Infra\Misc\TypeUtils.cs" />
-    <Compile Include="Infra\Plugin\Kompiler.cs" />
-    <Compile Include="Infra\Plugin\PluginLoader.cs" />
-    <Compile Include="Infra\Plugin\PluginStorage.cs" />
-    <Compile Include="Infra\Plugin\RoslynWrapper.cs" />
-    <Compile Include="Infra\VPP\AbstractFileSystemProvider.cs" />
-    <Compile Include="Infra\VPP\CustomVirtualDir.cs" />
-    <Compile Include="Infra\VPP\CustomVirtualFile.cs" />
-    <Compile Include="Infra\VPP\Impl\DefaultDbService.cs" />
-    <Compile Include="Infra\VPP\CustomVirtualPathProvider.cs" />
-    <Compile Include="Infra\VPP\Impl\CachedDbServiceFileSystemProvider.cs" />
-    <Compile Include="Infra\VPP\IDbService.cs" />
-    <Compile Include="Infra\VPP\Impl\DummyVirtualFile.cs" />
-    <Compile Include="Infra\VPP\IFileSystemProvider.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -228,6 +204,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Views\Shared\customerror.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -284,13 +261,27 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Infra\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvcLib.Bootstrapper\MvcLib.Bootstrapper.csproj">
+      <Project>{741f4607-7d76-481f-9d5e-015fbb95aa84}</Project>
+      <Name>MvcLib.Bootstrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvcLib.Common.Mvc\MvcLib.Common.Mvc.csproj">
+      <Project>{4550BC11-B931-4872-87FD-726957542EFA}</Project>
+      <Name>MvcLib.Common.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvcLib.Common\MvcLib.Common.csproj">
+      <Project>{7ea8cab5-30b9-4069-a8c5-d553ca4016b0}</Project>
+      <Name>MvcLib.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

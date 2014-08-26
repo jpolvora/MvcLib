@@ -1,6 +1,5 @@
-﻿using System.Web;
-using System.Web.Mvc;
-using MvcFromDb.Infra;
+﻿using System.Web.Mvc;
+using MvcLib.Common.Mvc;
 
 namespace MvcFromDb
 {
