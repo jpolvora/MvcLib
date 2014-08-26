@@ -35,7 +35,7 @@ namespace MvcLib.FsDump
                     if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
                     {
                         //copia p/ app_code
-                        localpath = Path.Combine(dirInfo.FullName, string.Format("App_Code{0}", dbFile.VirtualPath.Replace("/","\\")));
+                        localpath = Path.Combine(dirInfo.FullName, string.Format("App_Code{0}", dbFile.VirtualPath.Replace("/", "\\")));
                     }
                     else
                     {
@@ -49,7 +49,7 @@ namespace MvcLib.FsDump
                     {
                         var fi = new FileInfo(localpath);
                         var mod = dbFile.Modified.HasValue ? dbFile.Modified.Value : dbFile.Created;
-                        if (fi.LastWriteTime > mod)
+                        if (fi.LastWriteTime.ToUniversalTime() > mod.ToUniversalTime())
                             continue;
                         Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}", fi.FullName);
                         try

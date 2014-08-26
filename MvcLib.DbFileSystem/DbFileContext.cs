@@ -51,12 +51,12 @@ namespace MvcLib.DbFileSystem
                 switch (auditable.State)
                 {
                     case EntityState.Added:
-                        auditable.Entity.Created = DateTime.Now;
+                        auditable.Entity.Created = DateTime.UtcNow;
                         auditable.Entity.Modified = null;
                         break;
                     case EntityState.Modified:
                         auditable.Property(x => x.Created).IsModified = false;
-                        auditable.Entity.Modified = DateTime.Now;
+                        auditable.Entity.Modified = DateTime.UtcNow;
                         break;
                 }
             }
