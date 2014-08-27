@@ -39,9 +39,14 @@ namespace MvcLib.Bootstrapper
 
             Trace.TraceInformation("Custom Framework RUNNING PRE_START ... Entry: {0}", web.GetName());
 
-            DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
-            DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
-
+            if (Config.ValueOrDefault("TracerHttpModule", true))
+            {
+                DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
+            }
+            if (Config.ValueOrDefault("CustomErrorHttpModule", true))
+            {
+                DynamicModuleUtility.RegisterModule(typeof (CustomErrorHttpModule));
+            }
             DbFileContext.Initialize();
 
             if (Config.ValueOrDefault("CustomVPP", false))
