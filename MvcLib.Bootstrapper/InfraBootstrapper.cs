@@ -45,7 +45,7 @@ namespace MvcLib.Bootstrapper
             }
             if (Config.ValueOrDefault("CustomErrorHttpModule", true))
             {
-                DynamicModuleUtility.RegisterModule(typeof (CustomErrorHttpModule));
+                DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
             }
             DbFileContext.Initialize();
 
@@ -110,7 +110,10 @@ namespace MvcLib.Bootstrapper
 
             Trace.TraceInformation("RUNNING POST_START ...");
 
-            GlobalFilters.Filters.Add(new MvcTracerFilter());
+            if (Config.ValueOrDefault("MvcTracerFilter", true))
+            {
+                GlobalFilters.Filters.Add(new MvcTracerFilter());
+            }
 
             var application = HttpContext.Current.ApplicationInstance;
 
