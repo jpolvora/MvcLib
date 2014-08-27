@@ -14,7 +14,9 @@ namespace MvcLib.PluginLoader
 
         internal static void Register(string fileName)
         {
-            if (Assemblies.ContainsKey(fileName)) return;
+            if (Assemblies.ContainsKey(fileName))
+                Assemblies.Remove(fileName);
+
             try
             {
                 var loadingAssembly = Assembly.LoadFile(fileName);
@@ -29,7 +31,11 @@ namespace MvcLib.PluginLoader
 
         internal static void Register(Assembly assembly)
         {
-            if (Assemblies.ContainsKey(assembly.FullName)) return;
+            if (Assemblies.ContainsKey(assembly.FullName))
+            {
+                Assemblies.Remove(assembly.FullName);
+                //BuildManager. Remove ???
+            }
 
             Assemblies.Add(assembly.FullName, assembly);
             BuildManager.AddReferencedAssembly(assembly);
@@ -37,8 +43,8 @@ namespace MvcLib.PluginLoader
 
         internal static Assembly FindAssembly(string fullName)
         {
-            return Assemblies.ContainsKey(fullName) 
-                ? Assemblies[fullName] 
+            return Assemblies.ContainsKey(fullName)
+                ? Assemblies[fullName]
                 : null;
         }
 

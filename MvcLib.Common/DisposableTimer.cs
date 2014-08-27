@@ -6,7 +6,6 @@ namespace MvcLib.Common
 {
     public class DisposableTimer : IDisposable
     {
-        private readonly string _caller;
         private readonly string _msg;
 
         private readonly Stopwatch _stopwatch;
@@ -24,12 +23,10 @@ namespace MvcLib.Common
 
         private DisposableTimer(string caller, string msg, Action<double> callback)
         {
-
-            _caller = caller;
             _msg = msg;
             _callback = callback;
 
-            Trace.TraceInformation("[Begin Timer]:{0}, Caller: {1}", _msg, _caller);
+            Trace.TraceInformation("[Begin Timer]:{0}, Initialized by: {1}", _msg, caller);
             Trace.Indent();
             _stopwatch = Stopwatch.StartNew();
         }
@@ -46,7 +43,7 @@ namespace MvcLib.Common
             }
             else
             {
-                Trace.TraceInformation("[End Timer]:{0}, Completed: {1} ms", _msg, ms.ToString("R"));
+                Trace.TraceInformation("[End Timer]:{0}, Completed: {1}ms", _msg, ms.ToString("##.000"));
             }
         }
     }

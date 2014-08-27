@@ -10,6 +10,6 @@ namespace MvcLib.CustomVPP
         byte[] GetFileBytes(string path);
         int GetDirectoryId(string path);
         string GetFileHash(string path);
-        List<Tuple<string, bool>> GetChildren(int parentId);
+        IEnumerable<Tuple<string, bool>> GetChildren(int parentId);
     }
 }

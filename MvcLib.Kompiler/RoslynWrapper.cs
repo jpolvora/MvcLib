@@ -15,10 +15,10 @@ namespace MvcLib.Kompiler
         public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
         {
             IProject project = Solution.Create(SolutionId.CreateNewId())
-                .AddCSharpProject(Kompiler.CompiledAssemblyName, Kompiler.CompiledAssemblyName + ".dll")
+                .AddCSharpProject(EntryPoint.CompiledAssemblyName, EntryPoint.CompiledAssemblyName + ".dll")
                 .Solution.Projects.Single()
                 .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp5))
-                .AddMetadataReferences(Kompiler.DefaultReferences)
+                .AddMetadataReferences(EntryPoint.DefaultReferences)
                 .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             foreach (var file in files)
@@ -75,7 +75,7 @@ namespace MvcLib.Kompiler
             var compiledCode = Compilation.Create(assemblyName,
                 new CompilationOptions(kind),
                 new[] { syntaxTree },
-                Kompiler.DefaultReferences
+                EntryPoint.DefaultReferences
                 );
 
             //return buffer;

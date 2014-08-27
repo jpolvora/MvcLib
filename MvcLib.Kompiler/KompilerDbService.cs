@@ -4,13 +4,14 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using MvcLib.Common;
 using MvcLib.DbFileSystem;
 
 namespace MvcLib.Kompiler
 {
-    class KompilerDbService
+    public class KompilerDbService
     {
-        public static string TryCreateAndSaveAssemblyFromDbFiles(string assName, out byte[] buffer)
+        internal static string TryCreateAndSaveAssemblyFromDbFiles(string assName, out byte[] buffer)
         {
             string result = "";
             try
@@ -20,7 +21,11 @@ namespace MvcLib.Kompiler
 
                 if (!String.IsNullOrEmpty(result)) return result;
 
-                SaveCompiledCustomAssembly(assName, buffer);
+                if (!Config.ValueOrDefault("KompilerForceRecompilation", false))
+                {
+                    //só salva no banco se compilação forçada for False
+                    SaveCompiledCustomAssembly(assName, buffer);
+                }
 
                 return result;
             }
@@ -34,7 +39,7 @@ namespace MvcLib.Kompiler
             return result;
         }
 
-        public static Dictionary<string, byte[]> LoadSourceCodeFromDb()
+        internal static Dictionary<string, byte[]> LoadSourceCodeFromDb()
         {
             var dict = new Dictionary<string, byte[]>();
 
@@ -58,17 +63,35 @@ namespace MvcLib.Kompiler
             return dict;
         }
 
-        public static void SaveCompiledCustomAssembly(string assName, byte[] buffer)
+        public static bool ExistsCompiledAssembly()
         {
             using (var ctx = new DbFileContext())
             {
-                var root = ctx.DbFiles.Include(x => x.Children).First(x => x.IsDirectory && x.ParentId == null && x.Name == null && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
-                var existingFile = root.Children.FirstOrDefault(x => x.VirtualPath.Equals("/" + Kompiler.CompiledAssemblyName + ".dll", StringComparison.InvariantCultureIgnoreCase));
+                return ctx.DbFiles.Any(x => x.VirtualPath.Equals("/" + EntryPoint.CompiledAssemblyName + ".dll", StringComparison.InvariantCultureIgnoreCase));
+            }
+        }
+
+        public static void RemoveExistingCompiledAssemblyFromDb()
+        {
+            using (var ctx = new DbFileContext())
+            {
+                var existingFile = ctx.DbFiles.FirstOrDefault(x => x.VirtualPath.Equals("/" + EntryPoint.CompiledAssemblyName + ".dll", StringComparison.InvariantCultureIgnoreCase));
                 if (existingFile != null)
                 {
                     ctx.DbFiles.Remove(existingFile);
                     ctx.SaveChanges();
+                    Trace.TraceInformation("[Kompiler]: Compiled Assembly Found and removed.");
                 }
+            }
+        }
+
+        internal static void SaveCompiledCustomAssembly(string assName, byte[] buffer)
+        {
+            RemoveExistingCompiledAssemblyFromDb();
+
+            using (var ctx = new DbFileContext())
+            {
+                var root = ctx.DbFiles.Include(x => x.Children).First(x => x.IsDirectory && x.ParentId == null && x.Name == null && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
 
                 var file = new DbFile
                 {

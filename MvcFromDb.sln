@@ -42,8 +42,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{74470227-5
 		compiled_libs\MvcLib.Common.Mvc.dll = compiled_libs\MvcLib.Common.Mvc.dll
 		compiled_libs\MvcLib.CustomVPP.dll = compiled_libs\MvcLib.CustomVPP.dll
 		compiled_libs\MvcLib.DbFileSystem.dll = compiled_libs\MvcLib.DbFileSystem.dll
+		compiled_libs\MvcLib.FsDump.dll = compiled_libs\MvcLib.FsDump.dll
 		compiled_libs\MvcLib.HttpModules.dll = compiled_libs\MvcLib.HttpModules.dll
-		compiled_libs\MvcLib.PluginCompiler.dll = compiled_libs\MvcLib.PluginCompiler.dll
+		compiled_libs\MvcLib.Kompiler.dll = compiled_libs\MvcLib.Kompiler.dll
+		compiled_libs\MvcLib.PluginLoader.dll = compiled_libs\MvcLib.PluginLoader.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.FsDump", "MvcLib.FsDump\MvcLib.FsDump.csproj", "{3971D9AD-BB07-4675-BABF-471BE04E2490}"
@@ -51,6 +53,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AD1F491-7ACE-4860-A2A4-9BC8C4D0DE5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.Kompiler", "MvcLib.Kompiler\MvcLib.Kompiler.csproj", "{03B91668-CF22-48FB-8853-82ABFA6E2A27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostWebApp", "HostWebApp\HostWebApp.csproj", "{A35D26EA-E869-4FDE-BB67-E88C2D892DCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +110,10 @@ Global
 		{03B91668-CF22-48FB-8853-82ABFA6E2A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03B91668-CF22-48FB-8853-82ABFA6E2A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03B91668-CF22-48FB-8853-82ABFA6E2A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A35D26EA-E869-4FDE-BB67-E88C2D892DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A35D26EA-E869-4FDE-BB67-E88C2D892DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A35D26EA-E869-4FDE-BB67-E88C2D892DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A35D26EA-E869-4FDE-BB67-E88C2D892DCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,7 +23,9 @@ namespace MvcLib.Common
 
         static Config()
         {
-            IsInDebugMode = ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase);
+            var environment = ValueOrDefault("Environment", "Debug");
+            Trace.TraceInformation("Environment is {0}", environment);
+            IsInDebugMode = environment.Equals("Debug", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

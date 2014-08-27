@@ -45,7 +45,7 @@ namespace MvcLib.CustomVPP.Impl
                     .Select(s => s.Texto)
                     .FirstOrDefault() ?? string.Empty;
 
-                Trace.TraceInformation("GetFileBytes('{0}') = {1} lenght", path, str.Length);
+                Trace.TraceInformation("GetFileBytes('{0}') = {1} length", path, str.Length);
                 return Encoding.UTF8.GetBytes(str);
             }
         }
@@ -92,19 +92,17 @@ namespace MvcLib.CustomVPP.Impl
             }
         }
 
-        public List<Tuple<string, bool>> GetChildren(int parentId)
+        public IEnumerable<Tuple<string, bool>> GetChildren(int parentId)
         {
             using (var ctx = new DbFileContext())
             {
                 var child = ctx.DbFiles
                     .Where(x => x.Id == parentId)
-                    //.SelectMany(s => s.Children.Select(t => new Tuple<string, bool>(t.VirtualPath, t.IsDirectory)))
                     .SelectMany(s => s.Children.Select(t => new { t.VirtualPath, t.IsDirectory }))
                     .ToList()
-                    .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory))
-                    .ToList();
+                    .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory));
 
-                Trace.TraceInformation("GetChildren('{0}') = {1}", parentId, child.Count);
+                Trace.TraceInformation("GetChildren('{0}') = {1}", parentId, child.Count());
                 return child;
             }
         }

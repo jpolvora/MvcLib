@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace MvcFromDb
+namespace HostWebApp
 {
     public class FilterConfig
     {

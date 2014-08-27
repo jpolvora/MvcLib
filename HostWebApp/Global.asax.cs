@@ -1,28 +1,19 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Roslyn.Compilers;
+using MvcLib.Kompiler;
 
-namespace MvcFromDbMinimal
+namespace HostWebApp
 {
     public class Global : System.Web.HttpApplication
     {
-
         protected void Application_Start(object sender, EventArgs e)
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            //EntryPoint.DefaultReferences.AddRange(
-            //   new[]
-            //    {
-            //        new MetadataFileReference(typeof (ApplicationUser).Assembly.Location),
-            //        new MetadataFileReference(typeof (ApplicationUserManager).Assembly.Location),
-            //    });
         }
 
         protected void Session_Start(object sender, EventArgs e)
