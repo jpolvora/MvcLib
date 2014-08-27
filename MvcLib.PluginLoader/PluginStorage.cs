@@ -33,12 +33,13 @@ namespace MvcLib.PluginLoader
         {
             if (Assemblies.ContainsKey(assembly.FullName))
             {
-                Assemblies.Remove(assembly.FullName);
-                //BuildManager. Remove ???
+                return;
             }
 
             Assemblies.Add(assembly.FullName, assembly);
             BuildManager.AddReferencedAssembly(assembly);
+
+            Trace.TraceInformation("[PluginLoader]:Plugin registered: {0}", assembly.FullName);
         }
 
         internal static Assembly FindAssembly(string fullName)

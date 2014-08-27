@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-using MvcFromDb.Infra;
 using MvcLib.Common;
 using MvcLib.Common.Cache;
 using MvcLib.Common.Mvc;
@@ -15,6 +14,7 @@ using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
 using MvcLib.FsDump;
+using MvcLib.HttpModules;
 using MvcLib.PluginLoader;
 using EntryPoint = MvcLib.Bootstrapper.EntryPoint;
 

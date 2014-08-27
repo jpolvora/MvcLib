@@ -6,7 +6,7 @@ using System.Web.Routing;
 using MvcLib.Common;
 using MvcLib.Common.Mvc;
 
-namespace MvcFromDb.Infra
+namespace MvcLib.HttpModules
 {
     public class CustomErrorHttpModule : IHttpModule
     {

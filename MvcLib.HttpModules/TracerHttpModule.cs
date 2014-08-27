@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MvcLib.Common;
 
-namespace MvcFromDb.Infra
+namespace MvcLib.HttpModules
 {
     //http://msdn.microsoft.com/en-us/library/bb470252(v=vs.100).aspx
 
@@ -57,8 +59,20 @@ NoteNote	The MapRequestHandler, LogRequest, and PostLogRequest events are suppor
             return string.Format("{0} = {1}", _counter, base.ToString());
         }
 
+        private static string[] _eventsToTrace = new string[0];
+
+        static bool MustLog(string eventName)
+        {
+            if (_eventsToTrace.Length == 0)
+                return true;
+
+            return _eventsToTrace.Any(x => x.Equals(eventName, StringComparison.OrdinalIgnoreCase));
+        }
+
         public void Init(HttpApplication on)
         {
+            _eventsToTrace = Config.ValueOrDefault("TracerHttpModuleEvents", "").Split(',');
+
             _counter++;
             Trace.TraceInformation("Init: {0}", this);
 
@@ -92,6 +106,9 @@ NoteNote	The MapRequestHandler, LogRequest, and PostLogRequest events are suppor
 
         private void LogNotification(object sender, string eventName)
         {
+            if (!MustLog(eventName))
+                return;
+
             var rid = _application.Context.Items[RequestId];
             Trace.TraceInformation("[{0}]:[{1}] Evento {2}, Handler: [{3}], User: {4}", _application.Context.CurrentNotification, rid, eventName, _application.Context.CurrentHandler, _application.User != null ? _application.User.Identity.Name : "-");
 
