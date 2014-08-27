@@ -24,10 +24,12 @@ namespace MvcLib.Common
 
         private DisposableTimer(string caller, string msg, Action<double> callback)
         {
+
             _caller = caller;
             _msg = msg;
             _callback = callback;
 
+            Trace.TraceInformation("[DisposableTimer]:{0}, Caller: {1}", _msg, _caller);
             _stopwatch = Stopwatch.StartNew();
         }
 
@@ -42,7 +44,7 @@ namespace MvcLib.Common
             }
             else
             {
-                Trace.TraceInformation("[DisposableTimer]:{0}, Caller: {1}, Elapsed: {2:##.000} ms", _msg, _caller, ms);
+                Trace.TraceInformation("[DisposableTimer]:{0}, Caller: {1}, Completed: {2:##.000} ms", _msg, _caller, ms);
             }
         }
     }

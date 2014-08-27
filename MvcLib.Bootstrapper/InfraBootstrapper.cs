@@ -37,68 +37,71 @@ namespace MvcLib.Bootstrapper
 
             Assembly web = Assembly.GetExecutingAssembly();
 
-            Trace.TraceInformation("Custom Framework RUNNING PRE_START ... Entry: {0}", web.GetName());
-
-            if (Config.ValueOrDefault("TracerHttpModule", true))
+            using (
+                DisposableTimer.StartNew(string.Format("Custom Framework RUNNING PRE_START ... Entry: {0}",
+                    web.GetName())))
             {
-                DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
+                if (Config.ValueOrDefault("TracerHttpModule", true))
+                {
+                    DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
+                }
+                if (Config.ValueOrDefault("CustomErrorHttpModule", true))
+                {
+                    DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
+                }
+                DbFileContext.Initialize();
+
+                if (Config.ValueOrDefault("CustomVPP", false))
+                {
+                    //var customvpp = new RemapVpp();
+                    //.AddImpl(new LazyDbFileSystemProviderImpl());
+                    //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
+                    //HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+                }
+
+                if (Config.ValueOrDefault("DumpToLocal", false))
+                {
+                    DbToLocal.Execute();
+                }
+
+                if (AppDomain.CurrentDomain.IsFullyTrusted)
+                {
+                    AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
+                }
+                else
+                {
+                    Trace.TraceWarning("We are not in FULL TRUST! We must use private probing path in Web.Config");
+                }
+
+                AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
+
+                var forceRecompilation = Config.ValueOrDefault("CustomForceRecompilation", true);
+                PluginLoader.Initialize(forceRecompilation);
+
+                //config routing
+                //var routes = RouteTable.Routes;
+
+                //if (EntropiaSection.Instance.InsertRoutesDefaults)
+                //{
+                //    routes.RouteExistingFiles = false;
+                //    routes.LowercaseUrls = true;
+                //    routes.AppendTrailingSlash = true;
+
+                //    routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+                //    routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
+                //    routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|js|txt|png|gif|jpg|jpeg|bmp)(/.*)?" });
+
+                //    routes.IgnoreRoute("Content/{*pathInfo}");
+                //    routes.IgnoreRoute("Scripts/{*pathInfo}");
+                //    routes.IgnoreRoute("Bundles/{*pathInfo}");
+                //}
+
+                //if (EntropiaSection.Instance.EnableDumpLog)
+                //{
+                //    var endpoint = EntropiaSection.Instance.DumpLogEndPoint;
+                //    routes.MapHttpHandler<DumpHandler>(endpoint);
+                //}
             }
-            if (Config.ValueOrDefault("CustomErrorHttpModule", true))
-            {
-                DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
-            }
-            DbFileContext.Initialize();
-
-            if (Config.ValueOrDefault("CustomVPP", false))
-            {
-                //var customvpp = new RemapVpp();
-                //.AddImpl(new LazyDbFileSystemProviderImpl());
-                //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
-                //HostingEnvironment.RegisterVirtualPathProvider(customvpp);
-            }
-
-            if (Config.ValueOrDefault("DumpToLocal", false))
-            {
-                DbToLocal.Execute();
-            }
-
-            if (AppDomain.CurrentDomain.IsFullyTrusted)
-            {
-                AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
-            }
-            else
-            {
-                Trace.TraceWarning("We are not in FULL TRUST! We must use private probing path in Web.Config");
-            }
-
-            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
-
-            var forceRecompilation = Config.ValueOrDefault("CustomForceRecompilation", true);
-            PluginLoader.Initialize(forceRecompilation);
-
-            //config routing
-            //var routes = RouteTable.Routes;
-
-            //if (EntropiaSection.Instance.InsertRoutesDefaults)
-            //{
-            //    routes.RouteExistingFiles = false;
-            //    routes.LowercaseUrls = true;
-            //    routes.AppendTrailingSlash = true;
-
-            //    routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            //    routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
-            //    routes.IgnoreRoute("{*staticfile}", new { staticfile = @".*\.(css|js|txt|png|gif|jpg|jpeg|bmp)(/.*)?" });
-
-            //    routes.IgnoreRoute("Content/{*pathInfo}");
-            //    routes.IgnoreRoute("Scripts/{*pathInfo}");
-            //    routes.IgnoreRoute("Bundles/{*pathInfo}");
-            //}
-
-            //if (EntropiaSection.Instance.EnableDumpLog)
-            //{
-            //    var endpoint = EntropiaSection.Instance.DumpLogEndPoint;
-            //    routes.MapHttpHandler<DumpHandler>(endpoint);
-            //}
         }
 
         public static void PostStart()
@@ -108,36 +111,39 @@ namespace MvcLib.Bootstrapper
 
             _initialized = true;
 
-            Trace.TraceInformation("RUNNING POST_START ...");
-
-            if (Config.ValueOrDefault("MvcTracerFilter", true))
+            using (DisposableTimer.StartNew("RUNNING POST_START ..."))
             {
-                GlobalFilters.Filters.Add(new MvcTracerFilter());
-            }
 
-            var application = HttpContext.Current.ApplicationInstance;
 
-            var modules = application.Modules;
-            foreach (var module in modules)
-            {
-                Trace.TraceInformation("Module Loaded: {0}", module);
-            }
+                if (Config.ValueOrDefault("MvcTracerFilter", true))
+                {
+                    GlobalFilters.Filters.Add(new MvcTracerFilter());
+                }
 
-            //dump routes
-            var routes = RouteTable.Routes;
+                var application = HttpContext.Current.ApplicationInstance;
 
-            var i = routes.Count;
-            Trace.TraceInformation("Found {0} routes in RouteTable", i);
+                var modules = application.Modules;
+                foreach (var module in modules)
+                {
+                    Trace.TraceInformation("Module Loaded: {0}", module);
+                }
 
-            foreach (var routeBase in routes)
-            {
-                var route = (Route)routeBase;
-                Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
-            }
+                //dump routes
+                var routes = RouteTable.Routes;
 
-            if (!Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase))
-            {
-                Trace.Listeners.Remove("StartupListener");
+                var i = routes.Count;
+                Trace.TraceInformation("Found {0} routes in RouteTable", i);
+
+                foreach (var routeBase in routes)
+                {
+                    var route = (Route)routeBase;
+                    Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
+                }
+
+                if (!Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase))
+                {
+                    Trace.Listeners.Remove("StartupListener");
+                }
             }
         }
 
