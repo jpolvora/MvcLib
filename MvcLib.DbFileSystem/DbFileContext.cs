@@ -22,14 +22,22 @@ namespace MvcLib.DbFileSystem
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
         }
 
-        public DbFileContext()
-            : base(Config.ValueOrDefault("CustomContextKey", "DbFileContext"))
+        public DbFileContext(string connStrKey)
+            : base(connStrKey)
         {
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
+
             var cfg = Config.ValueOrDefault("CustomDbFileContextVerbose", true);
             if (cfg)
             {
                 Database.Log = Log;
             }
+        }
+
+        public DbFileContext()
+            : this(Config.ValueOrDefault("DbFileContextKey", "DbFileContext"))
+        {
         }
 
         static void Log(string str)
