@@ -30,11 +30,14 @@ namespace MvcLib.Bootstrapper
 
         public static void PreStart()
         {
-            var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
-            var listener = new DelimitedListTraceListener(traceOutput, "StartupListener");
+            if (Config.IsInDebugMode)
+            {
+                var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
+                var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
 
-            Trace.Listeners.Add(listener);
-            Trace.AutoFlush = true;
+                Trace.Listeners.Add(listener);
+                Trace.AutoFlush = true;
+            }
 
             var executingAssembly = Assembly.GetExecutingAssembly();
 
@@ -75,7 +78,7 @@ namespace MvcLib.Bootstrapper
                     PluginLoader.PluginLoader.Initialize();
 
                     Kompiler.Kompiler.AddReferences(PluginStorage.GetAssemblies().ToArray());
-                    Kompiler.Kompiler.AddReferences(typeof(Controller), typeof(WebPageRenderingBase),  typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
+                    Kompiler.Kompiler.AddReferences(typeof(Controller), typeof(WebPageRenderingBase), typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
 
                     Kompiler.Kompiler.Initialize();
                 }
@@ -140,7 +143,7 @@ namespace MvcLib.Bootstrapper
                     Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
                 }
 
-                if (!Config.IsInDebugMode)
+                if (Config.IsInDebugMode)
                 {
                     Trace.Listeners.Remove("StartupListener");
                 }
