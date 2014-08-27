@@ -48,10 +48,10 @@ namespace MvcLib.FsDump
                     if (File.Exists(localpath))
                     {
                         var fi = new FileInfo(localpath);
-                        var mod = dbFile.Modified.HasValue ? dbFile.Modified.Value : dbFile.Created;
-                        if (fi.LastWriteTime.ToUniversalTime() > mod.ToUniversalTime())
+
+                        if (fi.LastWriteTimeUtc > dbFile.LastWriteUtc)
                             continue;
-                        Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}", fi.FullName);
+                        Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}/{1}", fi.FullName, fi.LastAccessTimeUtc);
                         try
                         {
                             File.Delete(localpath);
@@ -62,7 +62,7 @@ namespace MvcLib.FsDump
                         }
                     }
 
-                    Trace.TraceInformation("[DbToLocal]:Copiando arquivo: {0}", localpath);
+                    Trace.TraceInformation("[DbToLocal]:Copiando arquivo: {0} to {1}/{2}", dbFile.VirtualPath, localpath, dbFile.LastWriteUtc);
                     try
                     {
                         if (dbFile.IsBinary && dbFile.Bytes.Length > 0)

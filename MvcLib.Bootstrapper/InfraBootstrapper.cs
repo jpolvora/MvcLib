@@ -30,18 +30,14 @@ namespace MvcLib.Bootstrapper
         public static void PreStart()
         {
             var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
-            var listener = new TextWriterTraceListener(traceOutput, "StartupListener")
-            {
-                TraceOutputOptions = TraceOptions.DateTime
-            };
+            var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
 
             Trace.Listeners.Add(listener);
             Trace.AutoFlush = true;
 
             Assembly web = Assembly.GetExecutingAssembly();
-            AssemblyName webName = web.GetName();
 
-            Trace.TraceInformation("RUNNING PRE_START ... Assembly: {0}", webName);
+            Trace.TraceInformation("Custom Framework RUNNING PRE_START ... Entry: {0}", web.GetName());
 
             DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
             DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
@@ -131,7 +127,10 @@ namespace MvcLib.Bootstrapper
                 Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
             }
 
-            Trace.Listeners.Remove("StartupListener");
+            if (!Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase))
+            {
+                Trace.Listeners.Remove("StartupListener");
+            }
         }
 
         private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
