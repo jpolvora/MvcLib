@@ -13,6 +13,7 @@ namespace MvcLib.DbFileSystem
         {
             using (var db = new DbFileContext())
             {
+                Trace.TraceInformation("Initializing DbFileContext using ConnectionString: {0}", db.Database.Connection.ConnectionString);
                 db.Database.Initialize(false);
             }
         }
