@@ -35,7 +35,7 @@ namespace MvcLib.DbFileSystem
         static void Log(string str)
         {
             if (str.StartsWith("-- Completed"))
-                Trace.WriteLine(str.Replace(Environment.NewLine, ""));
+                Trace.TraceInformation("[DbFileContext]:{0}", str.Replace(Environment.NewLine, ""));
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
