@@ -85,7 +85,7 @@
       <Project>{969929c3-2898-49b8-9ec8-de7a28884524}</Project>
       <Name>MvcLib.DbFileSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvcLib.PluginCompiler\MvcLib.PluginLoader.csproj">
+    <ProjectReference Include="..\MvcLib.PluginLoader\MvcLib.PluginLoader.csproj">
       <Project>{ffbe8285-9c7a-41f6-bf1e-58de5cac726d}</Project>
       <Name>MvcLib.PluginLoader</Name>
     </ProjectReference>

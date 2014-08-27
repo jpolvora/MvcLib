@@ -114,7 +114,7 @@
       <Project>{03b91668-cf22-48fb-8853-82abfa6e2a27}</Project>
       <Name>MvcLib.Kompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvcLib.PluginCompiler\MvcLib.PluginLoader.csproj">
+    <ProjectReference Include="..\MvcLib.PluginLoader\MvcLib.PluginLoader.csproj">
       <Project>{ffbe8285-9c7a-41f6-bf1e-58de5cac726d}</Project>
       <Name>MvcLib.PluginLoader</Name>
     </ProjectReference>

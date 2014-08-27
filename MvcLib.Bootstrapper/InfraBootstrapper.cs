@@ -70,6 +70,9 @@ namespace MvcLib.Bootstrapper
 
                 if (Config.ValueOrDefault("Kompiler", false))
                 {
+                    //Kompiler depends on PluginLoader, so, initializes it if not previously initialized.
+                    PluginLoader.PluginLoader.Initialize();
+
                     Kompiler.AddReferences(PluginStorage.GetAssemblies().ToArray());
                     Kompiler.AddReferences(typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
 

@@ -61,7 +61,7 @@ namespace MvcLib.PluginLoader
         public static void Initialize()
         {
             if (_initialized)
-                throw new Exception("Already initialized...");
+                return;
 
             _initialized = true;
 
@@ -150,7 +150,8 @@ namespace MvcLib.PluginLoader
             var ass = PluginStorage.FindAssembly(args.Name);
             if (ass != null)
                 Trace.TraceInformation("Assembly found and resolved: {0} = {1}", ass.FullName, ass.Location);
-            return ass;
+
+            return ass; //not found
         }
 
         private static void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)

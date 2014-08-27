@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.Common", "MvcLib.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.CustomVPP", "MvcLib.CustomVPP\MvcLib.CustomVPP.csproj", "{6C33542A-E1A8-4487-8639-6B44D527847A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.PluginLoader", "MvcLib.PluginCompiler\MvcLib.PluginLoader.csproj", "{FFBE8285-9C7A-41F6-BF1E-58DE5CAC726D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.PluginLoader", "MvcLib.PluginLoader\MvcLib.PluginLoader.csproj", "{FFBE8285-9C7A-41F6-BF1E-58DE5CAC726D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcLib.DbFileSystem", "MvcLib.DbFileSystem\MvcLib.DbFileSystem.csproj", "{969929C3-2898-49B8-9EC8-DE7A28884524}"
 EndProject
