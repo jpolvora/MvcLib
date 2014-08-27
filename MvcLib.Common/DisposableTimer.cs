@@ -44,7 +44,7 @@ namespace MvcLib.Common
             }
             else
             {
-                Trace.TraceInformation("[DisposableTimer]:{0}, Caller: {1}, Completed: {2:##.000} ms", _msg, _caller, ms);
+                Trace.TraceInformation("[DisposableTimer]:{0}, Completed: {1:##.000} ms", _msg, ms);
             }
         }
     }
