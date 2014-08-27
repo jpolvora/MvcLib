@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using MvcLib.Common;
 using MvcLib.DbFileSystem;
 
-namespace MvcLib.PluginCompiler
+namespace MvcLib.PluginLoader
 {
     /*
      * http://shazwazza.com/post/Developing-a-plugin-framework-in-ASPNET-with-medium-trust
@@ -17,9 +17,9 @@ namespace MvcLib.PluginCompiler
 
     public class PluginLoader
     {
-        public const string CompiledAssemblyName = "db-compiled-assembly";
-
         public static readonly DirectoryInfo PluginFolder;
+
+        public static bool _initialized;
 
         static PluginLoader()
         {
@@ -46,9 +46,53 @@ namespace MvcLib.PluginCompiler
             }
 
             PluginFolder = new DirectoryInfo(HostingEnvironment.MapPath(privatePath));
+
+            if (!PluginFolder.Exists)
+            {
+                PluginFolder.Create();
+            }
+
+            foreach (var fileInfo in PluginFolder.EnumerateFiles("*.dll"))
+            {
+                fileInfo.Delete();
+            }
         }
 
-        public static void Initialize(bool forceRecompile = false)
+        public static void Initialize()
+        {
+            if (_initialized)
+                throw new Exception("Already initialized...");
+
+            _initialized = true;
+
+            if (AppDomain.CurrentDomain.IsFullyTrusted)
+            {
+                AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
+            }
+            else
+            {
+                Trace.TraceWarning("We are not in FULL TRUST! We must use private probing path in Web.Config");
+            }
+
+            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
+
+            var assemblies = LoadFromDb();
+
+            WriteToDisk(assemblies);
+
+            LoadPlugins(assemblies.Select(s => s.Key));
+        }
+
+
+        public static void LoadPlugin(string fileName, byte[] bytes)
+        {
+            var kvp = new KeyValuePair<string, byte[]>(fileName, bytes);
+
+            WriteToDisk(new[] { kvp });
+            LoadPlugins(new[] { kvp.Key });
+        }
+
+        static Dictionary<string, byte[]> LoadFromDb()
         {
             var assemblies = new Dictionary<string, byte[]>();
             using (var ctx = new DbFileContext())
@@ -56,58 +100,27 @@ namespace MvcLib.PluginCompiler
                 var files = ctx.DbFiles
                     .Where(x => !x.IsHidden && !x.IsDirectory && x.IsBinary && x.Extension.Equals(".dll"))
                     .ToList();
+
                 foreach (var s in files)
                 {
-                    if (forceRecompile && s.Name.Equals(CompiledAssemblyName))
-                        continue;
-
                     Trace.TraceInformation("[PluginLoader]: Found assembly from Database: {0}", s.VirtualPath);
                     assemblies.Add(s.Name, s.Bytes);
                 }
             }
 
-            if (!assemblies.ContainsKey(CompiledAssemblyName))
-            {
-                if (Config.ValueOrDefault("EnableKompiler", false))
-                {
-                    using (DisposableTimer.StartNew("Assembly Compilation"))
-                    {
-                        byte[] buffer;
-                        var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
-                        if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
-                        {
-                            Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");
-                            assemblies.Add(CompiledAssemblyName, buffer);
-                        }
-                        else
-                        {
-                            Trace.TraceInformation("[PluginLoader]: DB Compilation Result: Bytes:{0}, Msg:{1}",
-                                buffer.Length, msg);
-                        }
-                    }
-                }
-            }
-
-            LoadPlugins(assemblies);
+            return assemblies;
         }
 
-        public static void LoadPlugins(IEnumerable<KeyValuePair<string, byte[]>> assemblies)
+        static void WriteToDisk(IEnumerable<KeyValuePair<string, byte[]>> assemblies)
         {
             try
             {
-                if (!PluginFolder.Exists)
-                {
-                    PluginFolder.Create();
-                }
-
-                foreach (var fileInfo in PluginFolder.EnumerateFiles("*.dll"))
-                {
-                    fileInfo.Delete();
-                }
-
                 foreach (var assembly in assemblies)
                 {
                     var fullFileName = Path.Combine(PluginFolder.FullName, assembly.Key + ".dll");
+
+                    if (File.Exists(fullFileName))
+                        File.Delete(fullFileName);
 
                     File.WriteAllBytes(fullFileName, assembly.Value);
                 }
@@ -116,18 +129,61 @@ namespace MvcLib.PluginCompiler
             {
                 Trace.TraceError(ex.Message);
             }
+        }
 
+        static void LoadPlugins(IEnumerable<string> fileNames)
+        {
+            foreach (var fileName in fileNames)
+            {
+                if (File.Exists(fileName))
+                {
+                    PluginStorage.Register(fileName);
+                }
+            }
+        }
 
-            foreach (var file in PluginFolder.GetFiles("*.dll", SearchOption.TopDirectoryOnly))
+        private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            if (args.RequestingAssembly != null)
+                return args.RequestingAssembly;
+
+            var ass = PluginStorage.FindAssembly(args.Name);
+            if (ass != null)
+                Trace.TraceInformation("Assembly found and resolved: {0} = {1}", ass.FullName, ass.Location);
+            return ass;
+        }
+
+        private static void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            if (args.LoadedAssembly.GlobalAssemblyCache)
+                return;
+
+            Trace.TraceInformation("Assembly Loaded... {0}", args.LoadedAssembly.Location);
+
+            var types = args.LoadedAssembly.GetExportedTypes();
+
+            foreach (var type in types)
+            {
+                Trace.TraceInformation("Type exported: {0}", type.FullName);
+            }
+
+            if (args.LoadedAssembly.IsDynamic)
+            {
+                Trace.TraceInformation("DYNAMIC Assembly Loaded... {0}", args.LoadedAssembly.Location);
+                return;
+            }
+
+            var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
+
+            if (!string.IsNullOrWhiteSpace(path) && path.StartsWith(PluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase))
             {
                 try
                 {
-                    var loadingAssembly = Assembly.LoadFile(file.FullName);
+                    PluginStorage.Register(args.LoadedAssembly);
                 }
                 catch (Exception ex)
                 {
-                    var msg = "ERRO LOADING ASSEMBLY: {0}: {1}".Fmt(file.FullName, ex);
-                    Trace.TraceError(msg);
+                    Trace.TraceError(ex.Message);
                 }
             }
         }

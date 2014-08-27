@@ -173,6 +173,10 @@
       <Project>{3971d9ad-bb07-4675-babf-471be04e2490}</Project>
       <Name>MvcLib.FsDump</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MvcLib.Kompiler\MvcLib.Kompiler.csproj">
+      <Project>{03b91668-cf22-48fb-8853-82abfa6e2a27}</Project>
+      <Name>MvcLib.Kompiler</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

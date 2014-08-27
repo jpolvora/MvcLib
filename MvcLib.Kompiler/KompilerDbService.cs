@@ -63,7 +63,7 @@ namespace MvcLib.PluginCompiler
             using (var ctx = new DbFileContext())
             {
                 var root = ctx.DbFiles.Include(x => x.Children).First(x => x.IsDirectory && x.ParentId == null && x.Name == null && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
-                var existingFile = root.Children.FirstOrDefault(x => x.VirtualPath.Equals("/" + PluginLoader.CompiledAssemblyName + ".dll", StringComparison.InvariantCultureIgnoreCase));
+                var existingFile = root.Children.FirstOrDefault(x => x.VirtualPath.Equals("/" + Kompiler.CompiledAssemblyName + ".dll", StringComparison.InvariantCultureIgnoreCase));
                 if (existingFile != null)
                 {
                     ctx.DbFiles.Remove(existingFile);

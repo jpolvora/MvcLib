@@ -1,6 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
@@ -17,6 +16,7 @@ using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
 using MvcLib.FsDump;
 using MvcLib.PluginCompiler;
+using MvcLib.PluginLoader;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(InfraBootstrapper), "PreStart")]
 [assembly: WebActivatorEx.PostApplicationStartMethod(typeof(InfraBootstrapper), "PostStart")]
@@ -30,16 +30,15 @@ namespace MvcLib.Bootstrapper
         public static void PreStart()
         {
             var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
-            var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
+            var listener = new DelimitedListTraceListener(traceOutput, "StartupListener");
 
             Trace.Listeners.Add(listener);
             Trace.AutoFlush = true;
 
-            Assembly web = Assembly.GetExecutingAssembly();
+            var executingAssembly = Assembly.GetExecutingAssembly();
 
-            using (
-                DisposableTimer.StartNew(string.Format("Custom Framework RUNNING PRE_START ... Entry: {0}",
-                    web.GetName())))
+            using (DisposableTimer.StartNew(string.Format("Custom Framework RUNNING PRE_START ... Entry: {0}",
+                    executingAssembly.GetName().Name)))
             {
                 if (Config.ValueOrDefault("TracerHttpModule", true))
                 {
@@ -49,14 +48,14 @@ namespace MvcLib.Bootstrapper
                 {
                     DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
                 }
+
                 DbFileContext.Initialize();
 
-                if (Config.ValueOrDefault("CustomVPP", false))
+                if (Config.ValueOrDefault("CustomVirtualPathProvider", false))
                 {
-                    //var customvpp = new RemapVpp();
-                    //.AddImpl(new LazyDbFileSystemProviderImpl());
-                    //.AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
-                    //HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+                    var customvpp = new CustomVirtualPathProvider()
+                    .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
+                    HostingEnvironment.RegisterVirtualPathProvider(customvpp);
                 }
 
                 if (Config.ValueOrDefault("DumpToLocal", false))
@@ -64,19 +63,18 @@ namespace MvcLib.Bootstrapper
                     DbToLocal.Execute();
                 }
 
-                if (AppDomain.CurrentDomain.IsFullyTrusted)
+                if (Config.ValueOrDefault("PluginLoader", false))
                 {
-                    AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
-                }
-                else
-                {
-                    Trace.TraceWarning("We are not in FULL TRUST! We must use private probing path in Web.Config");
+                    PluginLoader.PluginLoader.Initialize();
                 }
 
-                AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
+                if (Config.ValueOrDefault("Kompiler", false))
+                {
+                    Kompiler.AddReferences(PluginStorage.GetAssemblies().ToArray());
+                    Kompiler.AddReferences(typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
 
-                var forceRecompilation = Config.ValueOrDefault("CustomForceRecompilation", true);
-                PluginLoader.Initialize(forceRecompilation);
+                    Kompiler.Initialize();
+                }
 
                 //config routing
                 //var routes = RouteTable.Routes;
@@ -113,8 +111,6 @@ namespace MvcLib.Bootstrapper
 
             using (DisposableTimer.StartNew("RUNNING POST_START ..."))
             {
-
-
                 if (Config.ValueOrDefault("MvcTracerFilter", true))
                 {
                     GlobalFilters.Filters.Add(new MvcTracerFilter());
@@ -140,54 +136,9 @@ namespace MvcLib.Bootstrapper
                     Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
                 }
 
-                if (!Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase))
+                if (!Config.IsInDebugMode)
                 {
                     Trace.Listeners.Remove("StartupListener");
-                }
-            }
-        }
-
-        private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            if (args.RequestingAssembly != null)
-                return args.RequestingAssembly;
-
-            var ass = PluginStorage.FindAssembly(args.Name);
-            if (ass != null)
-                Trace.TraceInformation("Assembly found and resolved: {0} = {1}", ass.FullName, ass.Location);
-            return ass;
-        }
-
-        private static void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
-        {
-            if (args.LoadedAssembly.GlobalAssemblyCache)
-                return;
-
-            if (args.LoadedAssembly.IsDynamic)
-            {
-                Trace.TraceInformation("DYNAMIC Assembly Loaded... {0}", args.LoadedAssembly.Location);
-                return;
-            }
-
-            Trace.TraceInformation("Assembly Loaded... {0}", args.LoadedAssembly.Location);
-
-            var types = args.LoadedAssembly.GetExportedTypes();
-
-            foreach (var type in types)
-            {
-                Trace.TraceInformation("Type exported: {0}", type.FullName);
-            }
-
-            var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
-            if (path.IndexOf(PluginLoader.PluginFolder.FullName, 0, StringComparison.InvariantCultureIgnoreCase) >= 0)
-            {
-                try
-                {
-                    PluginStorage.Register(args.LoadedAssembly);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message);
                 }
             }
         }

@@ -9,6 +9,9 @@ namespace MvcLib.DbFileSystem
     {
         public DbSet<DbFile> DbFiles { get; set; }
 
+        public static string ConnectionStringKey { get; private set; }
+        public static bool Verbose { get; private set; }
+
         public static void Initialize()
         {
             using (var db = new DbFileContext())
@@ -20,7 +23,14 @@ namespace MvcLib.DbFileSystem
 
         static DbFileContext()
         {
+            ConnectionStringKey = Config.ValueOrDefault("DbFileContextKey", "DbFileContext");
+            Verbose = Config.ValueOrDefault("DbFileContextVerbose", true);
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
+        }
+
+        public DbFileContext()
+            : this(ConnectionStringKey)
+        {
         }
 
         public DbFileContext(string connStrKey)
@@ -28,17 +38,11 @@ namespace MvcLib.DbFileSystem
         {
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;
-
-            var cfg = Config.ValueOrDefault("CustomDbFileContextVerbose", true);
-            if (cfg)
+            
+            if (Verbose)
             {
                 Database.Log = Log;
             }
-        }
-
-        public DbFileContext()
-            : this(Config.ValueOrDefault("DbFileContextKey", "DbFileContext"))
-        {
         }
 
         static void Log(string str)

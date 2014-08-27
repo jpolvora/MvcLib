@@ -30,7 +30,6 @@ namespace MvcLib.Common.Mvc
             private readonly WebPageBase _page;
             private readonly TagBuilder _tagBuilder;
             private readonly string _info;
-            private readonly bool _isInDebug;
 
             public Chunk(WebPageBase page, TagBuilder tagBuilder, string info)
             {
@@ -41,8 +40,8 @@ namespace MvcLib.Common.Mvc
 
                 if (tagBuilder == null) return;
 
-                _isInDebug = Config.ValueOrDefault("Environment", "Debug").Equals("Debug", StringComparison.OrdinalIgnoreCase);
-                if (_isInDebug)
+                
+                if (Config.IsInDebugMode)
                     page.Output.WriteLine("<!-- BEGIN {0} -->", page.VirtualPath);
 
                 page.Output.WriteLine(Environment.NewLine + tagBuilder.ToString(TagRenderMode.StartTag));
@@ -55,7 +54,7 @@ namespace MvcLib.Common.Mvc
 
                 _page.Output.WriteLine(Environment.NewLine + _tagBuilder.ToString(TagRenderMode.EndTag));
 
-                if (_isInDebug)
+                if (Config.IsInDebugMode)
                     _page.Output.WriteLine("<!-- END {0} -->", _page.VirtualPath);
             }
         }

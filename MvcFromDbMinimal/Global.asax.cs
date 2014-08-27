@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using MvcLib.PluginCompiler;
+using Roslyn.Compilers;
 
 namespace MvcFromDbMinimal
 {
@@ -15,6 +17,13 @@ namespace MvcFromDbMinimal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //Kompiler.DefaultReferences.AddRange(
+            //   new[]
+            //    {
+            //        new MetadataFileReference(typeof (ApplicationUser).Assembly.Location),
+            //        new MetadataFileReference(typeof (ApplicationUserManager).Assembly.Location),
+            //    });
         }
 
         protected void Session_Start(object sender, EventArgs e)

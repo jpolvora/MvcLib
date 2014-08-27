@@ -1,29 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
+using MvcLib.Common;
 
-namespace MvcLib.PluginCompiler
+namespace MvcLib.PluginLoader
 {
     public static class PluginStorage
     {
         private static readonly Dictionary<string, Assembly> Assemblies = new Dictionary<string, Assembly>();
 
-        public static void Register(Assembly assembly)
+        internal static void Register(string fileName)
         {
-            if (!Assemblies.ContainsKey(assembly.FullName))
+            if (Assemblies.ContainsKey(fileName)) return;
+            try
             {
-                Assemblies.Add(assembly.FullName, assembly);
-                BuildManager.AddReferencedAssembly(assembly);
+                var loadingAssembly = Assembly.LoadFile(fileName);
+                Register(loadingAssembly);
+            }
+            catch (Exception ex)
+            {
+                var msg = "ERRO LOADING ASSEMBLY: {0}: {1}".Fmt(fileName, ex);
+                Trace.TraceError(msg);
             }
         }
 
-        public static Assembly FindAssembly(string fullName)
+        internal static void Register(Assembly assembly)
         {
-            if (Assemblies.ContainsKey(fullName))
-                return Assemblies[fullName];
+            if (Assemblies.ContainsKey(assembly.FullName)) return;
 
-            return null;
+            Assemblies.Add(assembly.FullName, assembly);
+            BuildManager.AddReferencedAssembly(assembly);
+        }
+
+        internal static Assembly FindAssembly(string fullName)
+        {
+            return Assemblies.ContainsKey(fullName) 
+                ? Assemblies[fullName] 
+                : null;
         }
 
         public static IEnumerable<string> GetPluginNames()

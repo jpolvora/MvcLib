@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Text;
-using System.Web.Mvc;
-using System.Web.WebPages;
-using MvcLib.Common;
-using MvcLib.Common.Mvc;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 

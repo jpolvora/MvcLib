@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MvcLib.PluginLoader")]
+[assembly: AssemblyTitle("MvcLib.Kompiler")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MvcLib.PluginLoader")]
+[assembly: AssemblyProduct("MvcLib.Kompiler")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("82912973-5f1c-4526-9f68-5ba881a2b14f")]
+[assembly: Guid("b1558a08-2209-4071-ad8f-4496ea6a7d59")]
 
 // Version information for an assembly consists of the following four values:
 //

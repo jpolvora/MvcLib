@@ -287,9 +287,9 @@
       <Project>{3971d9ad-bb07-4675-babf-471be04e2490}</Project>
       <Name>MvcLib.FsDump</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvcLib.PluginCompiler\MvcLib.PluginCompiler.csproj">
+    <ProjectReference Include="..\MvcLib.PluginCompiler\MvcLib.PluginLoader.csproj">
       <Project>{ffbe8285-9c7a-41f6-bf1e-58de5cac726d}</Project>
-      <Name>MvcLib.PluginCompiler</Name>
+      <Name>MvcLib.PluginLoader</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
