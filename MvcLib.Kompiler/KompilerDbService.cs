@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using MvcLib.DbFileSystem;
 
-namespace MvcLib.PluginCompiler
+namespace MvcLib.Kompiler
 {
     class KompilerDbService
     {
@@ -16,7 +16,7 @@ namespace MvcLib.PluginCompiler
             try
             {
                 var dict = LoadSourceCodeFromDb();
-                result = Kompiler.CreateSolutionAndCompile(dict, out buffer);
+                result = RoslynWrapper.CreateSolutionAndCompile(dict, out buffer);
 
                 if (!String.IsNullOrEmpty(result)) return result;
 

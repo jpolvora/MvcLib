@@ -1,10 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.WebPages;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcFromDb.Infra;
 using MvcLib.Bootstrapper;
@@ -15,7 +17,6 @@ using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
 using MvcLib.DbFileSystem;
 using MvcLib.FsDump;
-using MvcLib.PluginCompiler;
 using MvcLib.PluginLoader;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(InfraBootstrapper), "PreStart")]
@@ -73,10 +74,10 @@ namespace MvcLib.Bootstrapper
                     //Kompiler depends on PluginLoader, so, initializes it if not previously initialized.
                     PluginLoader.PluginLoader.Initialize();
 
-                    Kompiler.AddReferences(PluginStorage.GetAssemblies().ToArray());
-                    Kompiler.AddReferences(typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
+                    Kompiler.Kompiler.AddReferences(PluginStorage.GetAssemblies().ToArray());
+                    Kompiler.Kompiler.AddReferences(typeof(Controller), typeof(WebPageRenderingBase),  typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
 
-                    Kompiler.Initialize();
+                    Kompiler.Kompiler.Initialize();
                 }
 
                 //config routing

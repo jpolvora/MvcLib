@@ -14,7 +14,7 @@ namespace MvcLib.Common.Cache
         public static WebCacheWrapper Instance { get; private set; }
         static WebCacheWrapper()
         {
-            Enabled = Config.ValueOrDefault("CustomCacheWrapper", true);
+            Enabled = Config.ValueOrDefault("WebCacheWrapper", true);
 
             Trace.TraceInformation("Using WebCacheWrapper: {0}", Enabled);
         }

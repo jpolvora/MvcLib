@@ -51,11 +51,14 @@ namespace MvcLib.PluginLoader
             {
                 PluginFolder.Create();
             }
-
-            foreach (var fileInfo in PluginFolder.EnumerateFiles("*.dll"))
+            else
             {
-                fileInfo.Delete();
+                foreach (var fileInfo in PluginFolder.EnumerateFiles("*.dll"))
+                {
+                    fileInfo.Delete();
+                }
             }
+
         }
 
         public static void Initialize()
@@ -78,9 +81,9 @@ namespace MvcLib.PluginLoader
 
             var assemblies = LoadFromDb();
 
-            WriteToDisk(assemblies);
+            var fileNames = WriteToDisk(assemblies);
 
-            LoadPlugins(assemblies.Select(s => s.Key));
+            LoadPlugins(fileNames);
         }
 
 
@@ -88,8 +91,8 @@ namespace MvcLib.PluginLoader
         {
             var kvp = new KeyValuePair<string, byte[]>(fileName, bytes);
 
-            WriteToDisk(new[] { kvp });
-            LoadPlugins(new[] { kvp.Key });
+            var fileNames = WriteToDisk(new[] { kvp });
+            LoadPlugins(fileNames);
         }
 
         static Dictionary<string, byte[]> LoadFromDb()
@@ -111,24 +114,33 @@ namespace MvcLib.PluginLoader
             return assemblies;
         }
 
-        static void WriteToDisk(IEnumerable<KeyValuePair<string, byte[]>> assemblies)
+        static IEnumerable<string> WriteToDisk(IEnumerable<KeyValuePair<string, byte[]>> assemblies)
         {
+            var result = new List<string>();
             try
             {
                 foreach (var assembly in assemblies)
                 {
-                    var fullFileName = Path.Combine(PluginFolder.FullName, assembly.Key + ".dll");
+                    var fileName = assembly.Key;
+                    if (!Path.HasExtension(assembly.Key))
+                        fileName = assembly.Key + ".dll";
+
+                    var fullFileName = Path.Combine(PluginFolder.FullName, fileName);
 
                     if (File.Exists(fullFileName))
                         File.Delete(fullFileName);
 
                     File.WriteAllBytes(fullFileName, assembly.Value);
+
+                    result.Add(fullFileName);
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
             }
+
+            return result;
         }
 
         static void LoadPlugins(IEnumerable<string> fileNames)
