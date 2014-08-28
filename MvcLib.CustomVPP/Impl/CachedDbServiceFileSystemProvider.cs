@@ -143,7 +143,7 @@ namespace MvcLib.CustomVPP.Impl
             object item = Cache.Get(cacheKey);
             if (item != null)
             {
-                Trace.TraceInformation("From cache: {0} - {1}", item, cacheKey);
+                Trace.TraceInformation("From cache: {0} - '{1}'", item, cacheKey);
                 return (CustomVirtualFile)item;
             }
 
@@ -167,7 +167,7 @@ namespace MvcLib.CustomVPP.Impl
             var item = Cache.Get(cacheKey);
             if (item != null)
             {
-                Trace.TraceInformation("From cache: {0} - {1}", item, cacheKey);
+                Trace.TraceInformation("From cache: {0} - '{1}'", item, cacheKey);
                 return (CustomVirtualDir)item;
             }
             var id = _service.GetDirectoryId(path);

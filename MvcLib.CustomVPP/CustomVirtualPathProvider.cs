@@ -71,7 +71,6 @@ namespace MvcLib.CustomVPP
             {
                 if (provider.IsVirtualDir(virtualDir) && provider.DirectoryExists(virtualDir))
                 {
-                    Trace.TraceInformation("[{0}]: Fetching Directory '{1}' found", provider.GetType().Name, virtualDir);
                     return provider.GetDirectory(virtualDir);
                 }
             }
@@ -84,7 +83,6 @@ namespace MvcLib.CustomVPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    Trace.TraceInformation("[{0}]: Fetching File '{1}'", provider.GetType().Name, virtualPath);
                     return provider.GetFile(virtualPath);
                 }
             }
@@ -98,7 +96,6 @@ namespace MvcLib.CustomVPP
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
-                    Trace.TraceInformation("[{0}]: Fetching Hash for file '{1}'", provider.GetType().Name, virtualPath);
                     return provider.GetFileHash(virtualPath);
                 }
             }
@@ -110,11 +107,6 @@ namespace MvcLib.CustomVPP
             return _providers.Any(x => x.IsVirtualFile(virtualPath) && x.FileExists(virtualPath))
                 ? null
                 : Previous.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
-        }
-
-        public override string CombineVirtualPaths(string basePath, string relativePath)
-        {
-            return base.CombineVirtualPaths(basePath, relativePath);
         }
     }
 }

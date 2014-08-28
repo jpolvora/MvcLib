@@ -16,7 +16,7 @@ namespace MvcLib.CustomVPP.Impl
                 var result = ctx.DbFiles.Any(x => x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden &&
                                                   !x.IsDirectory);
 
-                Trace.TraceInformation("FileExistsImpl('{0}') = {1}", path, result);
+                Trace.TraceInformation("[DefaultDbService]:FileExistsImpl('{0}') = {1}", path, result);
                 return result;
             }
         }
@@ -29,7 +29,7 @@ namespace MvcLib.CustomVPP.Impl
                     x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden &&
                     x.IsDirectory);
 
-                Trace.TraceInformation("DirectoryExistsImpl('{0}') = {1}", path, result);
+                Trace.TraceInformation("[DefaultDbService]:DirectoryExistsImpl('{0}') = {1}", path, result);
                 return result;
             }
         }
@@ -45,7 +45,7 @@ namespace MvcLib.CustomVPP.Impl
                     .Select(s => s.Texto)
                     .FirstOrDefault() ?? string.Empty;
 
-                Trace.TraceInformation("GetFileBytes('{0}') = {1} length", path, str.Length);
+                Trace.TraceInformation("[DefaultDbService]:GetFileBytes('{0}') = {1} length", path, str.Length);
                 return Encoding.UTF8.GetBytes(str);
             }
         }
@@ -60,7 +60,7 @@ namespace MvcLib.CustomVPP.Impl
                     .Select(s => s.Id)
                     .FirstOrDefault();
 
-                Trace.TraceInformation("GetDirectoryId('{0}') = {1}", path, id);
+                Trace.TraceInformation("[DefaultDbService]:GetDirectoryId('{0}') = {1}", path, id);
                 return id;
             }
         }
@@ -86,7 +86,7 @@ namespace MvcLib.CustomVPP.Impl
                         : file.Created.ToUniversalTime().ToString("T");
                 }
 
-                Trace.TraceInformation("GetFileHash('{0}') = {1}", path, result);
+                Trace.TraceInformation("[DefaultDbService]:GetFileHash('{0}') = {1}", path, result);
 
                 return result;
             }
@@ -98,11 +98,12 @@ namespace MvcLib.CustomVPP.Impl
             {
                 var child = ctx.DbFiles
                     .Where(x => x.Id == parentId)
-                    .SelectMany(s => s.Children.Select(t => new { t.VirtualPath, t.IsDirectory }))
+                    .SelectMany(s => s.Children.Select(t => new {t.VirtualPath, t.IsDirectory}))
                     .ToList()
-                    .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory));
+                    .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory))
+                    .ToList();
 
-                Trace.TraceInformation("GetChildren('{0}') = {1}", parentId, child.Count());
+                Trace.TraceInformation("[DefaultDbService]:GetChildren('{0}') = {1}", parentId, child.Count);
                 return child;
             }
         }

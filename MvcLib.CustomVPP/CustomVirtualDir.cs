@@ -42,5 +42,10 @@ namespace MvcLib.CustomVPP
                 return all;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("CustomVirtualDir: {0}", VirtualPath);
+        }
     }
 }

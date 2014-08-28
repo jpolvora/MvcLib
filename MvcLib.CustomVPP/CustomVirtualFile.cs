@@ -31,6 +31,9 @@ namespace MvcLib.CustomVPP
             return new MemoryStream(Bytes ?? new byte[0]);
         }
 
-
+        public override string ToString()
+        {
+            return string.Format("CustomVirtualFile: {0}", VirtualPath);
+        }
     }
 }
