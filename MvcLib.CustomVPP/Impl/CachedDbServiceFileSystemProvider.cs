@@ -95,20 +95,31 @@ namespace MvcLib.CustomVPP.Impl
             var cacheKey = GetCacheKeyForHash(path);
 
             string hash = (string)Cache.Get(cacheKey);
-            if (hash != null)
+            if (!string.IsNullOrWhiteSpace( hash))
             {
                 return hash;
             }
 
             hash = _service.GetFileHash(path);
+            //hash: 2 minutos sem sliding
+            //verificar se arquivo foi alterado ou excluído
             Cache.Set(cacheKey, hash, 2, false);
 
-            var vf = Cache.Get(GetCacheKeyForFile(path)) as CustomVirtualFile;
-            if (vf == null || vf.Hash != hash)
+            if (string.IsNullOrWhiteSpace(hash))
             {
-                RemoveFromCache(path, true, true, false);
+                //não encontrou hash no banco: arquivo foi excluído
+                RemoveFromCache(path, true, true, true);
             }
-
+            else
+            {
+                var fileKey = GetCacheKeyForFile(path);
+                var vf = Cache.Get(fileKey) as CustomVirtualFile;
+                if (vf == null || vf.Hash != hash)
+                {
+                    //arquivo foi alterado
+                    RemoveFromCache(path, true, true, false);
+                }
+            }
             return hash;
         }
 
@@ -147,7 +158,7 @@ namespace MvcLib.CustomVPP.Impl
                 return (CustomVirtualFile)item;
             }
 
-            var bytes = _service.GetFileBytes(path);
+            var bytes = _service.GetFileBytes(path);    
             var hash = GetFileHash(virtualPath);
 
             var file = new CustomVirtualFile(virtualPath, bytes, hash);

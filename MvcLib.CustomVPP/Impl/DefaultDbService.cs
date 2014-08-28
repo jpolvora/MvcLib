@@ -69,7 +69,7 @@ namespace MvcLib.CustomVPP.Impl
         {
             using (var ctx = new DbFileContext())
             {
-                var result = DateTime.Now.ToUniversalTime().ToString("T");
+                string result = null;
 
                 var file =
                     ctx.DbFiles.Where(
@@ -86,7 +86,7 @@ namespace MvcLib.CustomVPP.Impl
                         : file.Created.ToUniversalTime().ToString("T");
                 }
 
-                Trace.TraceInformation("[DefaultDbService]:GetFileHash('{0}') = {1}", path, result);
+                Trace.TraceInformation("[DefaultDbService]:GetFileHash('{0}') = '{1}'", path, result);
 
                 return result;
             }
