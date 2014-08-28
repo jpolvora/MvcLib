@@ -22,5 +22,7 @@ namespace MvcLib.CustomVPP
         bool DirectoryExistsImpl(string path);
 
         IEnumerable<Tuple<string, string, byte[]>> GetChildren(string virtualPath);
+
+        IEnumerable<VirtualFileBase> Preload();
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -138,8 +139,28 @@ namespace MvcLib.CustomVPP.Impl
 
             return dbFiles.Select(dbFile => dbFile.IsDirectory
                 ? new Tuple<string, string, byte[]>(dbFile.VirtualPath, null, null)
-                : new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"),
+                : new Tuple<string, string, byte[]>(
+                    dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"),
                     dbFile.IsBinary ? dbFile.Bytes : Encoding.UTF8.GetBytes(dbFile.Texto.ValueOrDefault(""))));
+        }
+
+        public IEnumerable<VirtualFileBase> Preload()
+        {
+            //var db = new DbFileContext();
+            //var files = db.DbFiles.Include(x => x.Children).ToList();
+            //db.Dispose();
+
+            //foreach (var dbFile in files)
+            //{
+            //    if (dbFile.IsDirectory)
+            //    {
+            //        yield return new CustomVirtualDir(dbFile.VirtualPath, true, dbFile.Children.Select(s => new ));
+            //    }
+            //    else yield return new CustomVirtualFile(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"),
+            //        dbFile.IsBinary ? dbFile.Bytes : Encoding.UTF8.GetBytes(dbFile.Texto.ValueOrDefault("")));
+            //}
+
+            return Enumerable.Empty<VirtualFileBase>();
         }
     }
 }

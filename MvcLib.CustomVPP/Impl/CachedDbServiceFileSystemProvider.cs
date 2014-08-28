@@ -25,6 +25,14 @@ namespace MvcLib.CustomVPP.Impl
             Cache = cache;
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            //pre carregar diretorios e arquivos
+            var files = _service.Preload();
+        }
+
         #region files
 
         private CustomVirtualFile SetEntry(string virtualPath, string hash, byte[] bytes)
