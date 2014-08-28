@@ -11,7 +11,7 @@ namespace MvcLib.CustomVPP
 
         public bool IsBinary { get; private set; }
 
-        public CustomVirtualFile(string virtualPath, byte[] bytes, string hash, bool isBinary = false)
+        public CustomVirtualFile(string virtualPath, string hash, byte[] bytes, bool isBinary = false)
             : base(virtualPath)
         {
             Bytes = bytes;
@@ -20,7 +20,7 @@ namespace MvcLib.CustomVPP
         }
 
         public CustomVirtualFile(string virtualPath, string lines, string hash)
-            : this(virtualPath, Encoding.UTF8.GetBytes(lines), hash, false)
+            : this(virtualPath, hash, Encoding.UTF8.GetBytes(lines))
         {
         }
 

@@ -22,7 +22,7 @@ namespace MvcLib.CustomVPP.Impl
             Cache = cache;
         }
 
-        CustomVirtualFile EnsureFileHasEntry(string virtualPath)
+        private CustomVirtualFile EnsureFileHasEntry(string virtualPath)
         {
             var path = NormalizeFilePath(virtualPath);
 
@@ -33,7 +33,7 @@ namespace MvcLib.CustomVPP.Impl
             var info = _service.GetFileInfo(path);
             if (info.Item1)
             {
-                var vf = new CustomVirtualFile(virtualPath, info.Item3, info.Item2);
+                var vf = new CustomVirtualFile(virtualPath, info.Item2, info.Item3);
                 Cache.Set(GetCacheKeyForHash(path), vf.Hash, 2, false);
                 Cache.Set(cacheKey, vf);
                 return vf;
@@ -47,8 +47,8 @@ namespace MvcLib.CustomVPP.Impl
 
         public override bool FileExists(string virtualPath)
         {
-            var info = EnsureFileHasEntry(virtualPath);
-            if (info != null)
+            var entry = EnsureFileHasEntry(virtualPath);
+            if (entry != null)
             {
                 return true;
             }
