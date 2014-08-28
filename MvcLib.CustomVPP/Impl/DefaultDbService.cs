@@ -19,7 +19,7 @@ namespace MvcLib.CustomVPP.Impl
                 if (str != null)
                 {
                     var result = Tuple.Create(true, str.LastWriteUtc.ToString("T"), Encoding.UTF8.GetBytes(str.Texto));
-                    Trace.TraceInformation("[DefaultDbService]:GetFileInfo('{0}') = {1} length");
+                    Trace.TraceInformation("[DefaultDbService]:GetFileInfo('{0}') = {1} length", path, result.Item3.Length);
                     return result;
                 }
 

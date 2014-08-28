@@ -43,10 +43,22 @@ namespace MvcLib.Common.Cache
             if (!Enabled)
                 return null;
 
+            object result = null;
+
             bool hasValue;
-            return _cacheKeys.TryGetValue(key, out hasValue)
-                ? WebCache.Get(key)
-                : null;
+            _cacheKeys.TryGetValue(key, out hasValue);
+            
+            if (hasValue)
+            {
+                result = WebCache.Get(key);
+                if (result == null)
+                {
+                    //expirou
+                    bool r;
+                    _cacheKeys.TryRemove(key, out r);
+                }
+            }
+            return result;
         }
 
         public T Set<T>(string key, T value, int duration = 20, bool sliding = true)
