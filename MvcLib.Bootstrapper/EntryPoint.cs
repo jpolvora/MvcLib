@@ -97,7 +97,10 @@ namespace MvcLib.Bootstrapper
                 {
                     PluginLoader.EntryPoint.Initialize();
                 }
-
+                else
+                {
+                    PluginLoader.EntryPoint.PluginFolder.Delete(true);
+                }
                 //config routing
                 //var routes = RouteTable.Routes;
 

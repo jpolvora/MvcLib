@@ -19,7 +19,7 @@ namespace MvcLib.PluginLoader
     {
         public static readonly DirectoryInfo PluginFolder;
 
-        public static bool _initialized;
+        private static bool _initialized;
 
         static EntryPoint()
         {
