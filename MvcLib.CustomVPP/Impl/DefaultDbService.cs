@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Web.Hosting;
 using MvcLib.DbFileSystem;
 
 namespace MvcLib.CustomVPP.Impl
@@ -40,19 +41,6 @@ namespace MvcLib.CustomVPP.Impl
             }
         }
 
-        public bool DirectoryExistsImpl(string path)
-        {
-            using (var ctx = new DbFileContext())
-            {
-                var result = ctx.DbFiles.Any(x =>
-                    x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden &&
-                    x.IsDirectory);
-
-                Trace.TraceInformation("[DefaultDbService]:DirectoryExistsImpl('{0}') = {1}", path, result);
-                return result;
-            }
-        }
-
         public byte[] GetFileBytes(string path)
         {
             using (var ctx = new DbFileContext())
@@ -69,20 +57,20 @@ namespace MvcLib.CustomVPP.Impl
             }
         }
 
-        public int GetDirectoryId(string path)
-        {
-            using (var ctx = new DbFileContext())
-            {
-                var id = ctx.DbFiles
-                    .Where(x =>
-                        x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden && x.IsDirectory)
-                    .Select(s => s.Id)
-                    .FirstOrDefault();
+        //public int GetDirectoryId(string path)
+        //{
+        //    using (var ctx = new DbFileContext())
+        //    {
+        //        var id = ctx.DbFiles
+        //            .Where(x =>
+        //                x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden && x.IsDirectory)
+        //            .Select(s => s.Id)
+        //            .FirstOrDefault();
 
-                Trace.TraceInformation("[DefaultDbService]:GetDirectoryId('{0}') = {1}", path, id);
-                return id;
-            }
-        }
+        //        Trace.TraceInformation("[DefaultDbService]:GetDirectoryId('{0}') = {1}", path, id);
+        //        return id;
+        //    }
+        //}
 
         public string GetFileHash(string path)
         {
@@ -111,19 +99,47 @@ namespace MvcLib.CustomVPP.Impl
             }
         }
 
-        public IEnumerable<Tuple<string, bool>> GetChildren(int parentId)
+        //public IEnumerable<Tuple<string, bool>> GetChildren(int parentId)
+        //{
+        //    using (var ctx = new DbFileContext())
+        //    {
+        //        var child = ctx.DbFiles
+        //            .Where(x => x.Id == parentId)
+        //            .SelectMany(s => s.Children.Select(t => new { t.VirtualPath, t.IsDirectory }))
+        //            .ToList()
+        //            .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory))
+        //            .ToList();
+
+        //        Trace.TraceInformation("[DefaultDbService]:GetChildren('{0}') = {1}", parentId, child.Count);
+        //        return child;
+        //    }
+        //}
+
+        public bool DirectoryExistsImpl(string path)
         {
             using (var ctx = new DbFileContext())
             {
-                var child = ctx.DbFiles
-                    .Where(x => x.Id == parentId)
-                    .SelectMany(s => s.Children.Select(t => new { t.VirtualPath, t.IsDirectory }))
-                    .ToList()
-                    .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory))
-                    .ToList();
+                var result = ctx.DbFiles.Any(x =>
+                    x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden &&
+                    x.IsDirectory);
 
-                Trace.TraceInformation("[DefaultDbService]:GetChildren('{0}') = {1}", parentId, child.Count);
-                return child;
+                Trace.TraceInformation("[DefaultDbService]:DirectoryExistsImpl('{0}') = {1}", path, result);
+                return result;
+            }
+        }
+
+        public IEnumerable<Tuple<string, string, byte[]>> GetChildren(string virtualPath)
+        {
+            var dbFiles = new DbFileContext().DbFiles.Where(x =>
+                x.Parent.VirtualPath.Equals(virtualPath, StringComparison.InvariantCultureIgnoreCase) && !x.IsHidden &&
+                x.Parent.IsDirectory)
+                .ToList();
+
+            foreach (var dbFile in dbFiles)
+            {
+                if (dbFile.IsDirectory)
+                    yield return new Tuple<string, string, byte[]>(dbFile.VirtualPath, null, null);
+                else yield return new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"), dbFile.Bytes);
             }
         }
     }

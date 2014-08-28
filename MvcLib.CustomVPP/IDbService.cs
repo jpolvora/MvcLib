@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Web.Hosting;
 
 namespace MvcLib.CustomVPP
 {
@@ -13,10 +14,13 @@ namespace MvcLib.CustomVPP
         Tuple<bool, string, byte[]> GetFileInfo(string virtualPath);
 
         bool FileExistsImpl(string path);
-        bool DirectoryExistsImpl(string path);
+
         byte[] GetFileBytes(string path);
-        int GetDirectoryId(string path);
+
         string GetFileHash(string path);
-        IEnumerable<Tuple<string, bool>> GetChildren(int parentId);
+
+        bool DirectoryExistsImpl(string path);
+
+        IEnumerable<Tuple<string, string, byte[]>> GetChildren(string virtualPath);
     }
 }

@@ -10,16 +10,16 @@ namespace MvcLib.CustomVPP
 {
     public class CustomVirtualPathProvider : VirtualPathProvider
     {
-        private static readonly List<IFileSystemProvider> _providers = new List<IFileSystemProvider>();
+        private static readonly List<IFileSystemProvider> Providers = new List<IFileSystemProvider>();
 
         public static IReadOnlyList<IFileSystemProvider> GetProviders()
         {
-            return new List<IFileSystemProvider>(_providers);
+            return new List<IFileSystemProvider>(Providers);
         }
 
         public CustomVirtualPathProvider AddImpl(IFileSystemProvider provider)
         {
-            _providers.Add(provider);
+            Providers.Add(provider);
             return this;
         }
 
@@ -31,7 +31,7 @@ namespace MvcLib.CustomVPP
         {
             base.Initialize();
 
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 provider.Initialize();
             }
@@ -39,7 +39,7 @@ namespace MvcLib.CustomVPP
 
         public override bool FileExists(string virtualPath)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
@@ -53,7 +53,7 @@ namespace MvcLib.CustomVPP
 
         public override bool DirectoryExists(string virtualDir)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 if (provider.IsVirtualDir(virtualDir) && provider.DirectoryExists(virtualDir))
                 {
@@ -67,7 +67,7 @@ namespace MvcLib.CustomVPP
 
         public override VirtualDirectory GetDirectory(string virtualDir)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 if (provider.IsVirtualDir(virtualDir) && provider.DirectoryExists(virtualDir))
                 {
@@ -79,7 +79,7 @@ namespace MvcLib.CustomVPP
 
         public override VirtualFile GetFile(string virtualPath)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
@@ -92,7 +92,7 @@ namespace MvcLib.CustomVPP
 
         public override string GetFileHash(string virtualPath, IEnumerable virtualPathDependencies)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in Providers)
             {
                 if (provider.IsVirtualFile(virtualPath) && provider.FileExists(virtualPath))
                 {
@@ -104,7 +104,7 @@ namespace MvcLib.CustomVPP
 
         public override CacheDependency GetCacheDependency(string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
         {
-            return _providers.Any(x => x.IsVirtualFile(virtualPath) && x.FileExists(virtualPath))
+            return Providers.Any(x => x.IsVirtualFile(virtualPath) && x.FileExists(virtualPath))
                 ? null
                 : Previous.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
         }

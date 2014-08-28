@@ -8,19 +8,21 @@ namespace MvcLib.CustomVPP
 {
     public class CustomVirtualDir : VirtualDirectory
     {
-        private readonly Func<IEnumerable<VirtualFileBase>> _getChildren;
+        public readonly bool Loaded;
+        private readonly IEnumerable<VirtualFileBase> _children;
 
-        public CustomVirtualDir(string virtualPath, Func<IEnumerable<VirtualFileBase>> getChildren)
+        public CustomVirtualDir(string virtualPath, bool loaded, IEnumerable<VirtualFileBase> children)
             : base(virtualPath)
         {
-            _getChildren = getChildren;
+            Loaded = loaded;
+            _children = children;
         }
 
         public override IEnumerable Directories
         {
             get
             {
-                var dirs = _getChildren().OfType<VirtualDirectory>();
+                var dirs = _children.OfType<CustomVirtualDir>();
                 return dirs;
             }
         }
@@ -29,7 +31,7 @@ namespace MvcLib.CustomVPP
         {
             get
             {
-                var files = _getChildren().OfType<VirtualFile>();
+                var files = _children.OfType<CustomVirtualFile>();
                 return files;
             }
         }
@@ -38,8 +40,7 @@ namespace MvcLib.CustomVPP
         {
             get
             {
-                var all = _getChildren();
-                return all;
+                return _children;
             }
         }
 
