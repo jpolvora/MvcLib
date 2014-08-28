@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using System.Web.Hosting;
 using MvcLib.Common.Cache;
@@ -152,39 +153,38 @@ namespace MvcLib.CustomVPP.Impl
 
         public override bool DirectoryExists(string virtualDir)
         {
-            return false;
+            //return false;
 
-            //var path = NormalizeFilePath(virtualDir);
+            var path = NormalizeFilePath(virtualDir);
 
-            //var cacheKey = GetCacheKeyDir(path);
-            //var item = Cache.Get(cacheKey);
-            //if (item != null)
-            //{
-            //    return item is CustomVirtualDir;
-            //}
+            var cacheKey = GetCacheKeyDir(path);
+            var item = Cache.Get(cacheKey);
+            if (item != null)
+            {
+                return item is CustomVirtualDir;
+            }
 
-            //var result = _service.DirectoryExistsImpl(path);
+            var result = _service.DirectoryExistsImpl(path);
 
-            //// a chave será sobrescrita quando for recuperar o diretório real
-            //Cache.Set(cacheKey, new CustomVirtualDir(virtualDir, false, null));
+            // a chave será sobrescrita quando for recuperar o diretório real
+            Cache.Set(cacheKey, new CustomVirtualDir(virtualDir, false, Enumerable.Empty<VirtualFileBase>()));
 
-            //return result;
+            return result;
         }
 
         //todo: eager load all files in directory
 
         public override CustomVirtualDir GetDirectory(string virtualDir)
         {
-            return null;
-            
+            //return null;
+
             var path = NormalizeFilePath(virtualDir);
 
             var cacheKey = GetCacheKeyDir(path);
 
             var item = Cache.Get(cacheKey) as CustomVirtualDir;
-            if (item == null) return null;
-
-            if (item.Loaded) return item;
+            if (item != null && item.Loaded)
+                return item;
 
             //load files and subdirectories
 
@@ -200,12 +200,12 @@ namespace MvcLib.CustomVPP.Impl
                     //sem hash = diretorio
                     if (Cache.HasEntry(dirKey))
                     {
-                        var entry = Cache.Get(dirKey)as CustomVirtualDir;
+                        var entry = Cache.Get(dirKey) as CustomVirtualDir;
                         if (entry != null && entry.Loaded)
                             continue;
                     }
 
-                    var dir = new CustomVirtualDir(vpp, false, null);
+                    var dir = new CustomVirtualDir(vpp, false, Enumerable.Empty<VirtualFileBase>());
                     Cache.Set(dirKey, dir);
                     children.Add(dir);
                 }

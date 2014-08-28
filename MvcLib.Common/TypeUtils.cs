@@ -5,6 +5,13 @@ namespace MvcLib.Common
 {
     public static class TypeUtils
     {
+        public static T ValueOrDefault<T>(this T obj, T defaultValue)
+        {
+            var empty = default(T);
+            
+            return Equals(obj, empty) ? defaultValue : obj;
+        }
+
         public static T As<T>(this object obj)
         {
             if (obj is T)

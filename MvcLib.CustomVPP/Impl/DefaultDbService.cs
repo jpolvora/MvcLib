@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web.Hosting;
+using MvcLib.Common;
 using MvcLib.DbFileSystem;
 
 namespace MvcLib.CustomVPP.Impl
@@ -137,7 +138,8 @@ namespace MvcLib.CustomVPP.Impl
 
             return dbFiles.Select(dbFile => dbFile.IsDirectory
                 ? new Tuple<string, string, byte[]>(dbFile.VirtualPath, null, null)
-                : new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"), dbFile.Bytes));
+                : new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"),
+                    dbFile.IsBinary ? dbFile.Bytes : Encoding.UTF8.GetBytes(dbFile.Texto.ValueOrDefault(""))));
         }
     }
 }
