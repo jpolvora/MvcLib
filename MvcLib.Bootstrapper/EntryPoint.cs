@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -35,6 +36,9 @@ namespace MvcLib.Bootstrapper
             if (Config.IsInDebugMode)
             {
                 var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
+                if (File.Exists(traceOutput))
+                    File.Delete(traceOutput);
+
                 var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
 
                 Trace.Listeners.Add(listener);
