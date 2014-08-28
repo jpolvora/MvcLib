@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Hosting;
 using System.Xml.Linq;
-using MvcLib.Common;
 using MvcLib.DbFileSystem;
 
 namespace MvcLib.PluginLoader
@@ -186,19 +185,19 @@ namespace MvcLib.PluginLoader
                 return;
             }
 
-            var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
+            //var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
 
-            if (!string.IsNullOrWhiteSpace(path) && path.StartsWith(PluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase))
+            //if (!string.IsNullOrWhiteSpace(path) && path.StartsWith(PluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase))
+
+            try
             {
-                try
-                {
-                    PluginStorage.Register(args.LoadedAssembly);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message);
-                }
+                PluginStorage.Register(args.LoadedAssembly);
             }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+            }
+
         }
 
         //public static void RecursiveDeleteDirectory(DirectoryInfo baseDir, bool self, params string[] extensions)

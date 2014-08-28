@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Hosting;
 using MvcLib.Common;
 using MvcLib.DbFileSystem;
@@ -14,16 +10,31 @@ namespace MvcLib.FsDump
 {
     public class DbToLocal
     {
+        static void RecursiveDelete(DirectoryInfo fsInfo)
+        {
+            foreach (var info in fsInfo.EnumerateFileSystemInfos())
+            {
+                if (info is DirectoryInfo)
+                    RecursiveDelete((DirectoryInfo)info);
+
+                info.Delete();
+            }
+        }
+
         public static void Execute()
         {
             Trace.TraceInformation("[DbToLocal]: Starting...");
 
             var path = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
-            
+
             var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
             var dirInfo = new DirectoryInfo(root);
             if (!dirInfo.Exists)
                 dirInfo.Create();
+            else
+            {
+                RecursiveDelete(dirInfo);
+            }
 
             //procurar por todos os arquivos CS no DbFileSystem
             using (var ctx = new DbFileContext())

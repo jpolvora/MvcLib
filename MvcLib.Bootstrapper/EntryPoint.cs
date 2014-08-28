@@ -59,6 +59,12 @@ namespace MvcLib.Bootstrapper
 
                 DbFileContext.Initialize();
 
+                //plugin loader deve ser utilizado se dump to local = true ou se utilizar o custom vpp
+                if (Config.ValueOrDefault("PluginLoader", false))
+                {
+                    PluginLoader.EntryPoint.Initialize();
+                }
+
                 if (Config.ValueOrDefault("DumpToLocal", false))
                 {
                     var customvpp = new SubfolderVpp();
@@ -72,7 +78,7 @@ namespace MvcLib.Bootstrapper
                         .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
                     HostingEnvironment.RegisterVirtualPathProvider(customvpp);
                 }
-              
+
 
                 if (Config.ValueOrDefault("Kompiler", false))
                 {
@@ -93,17 +99,8 @@ namespace MvcLib.Bootstrapper
 
                         Kompiler.EntryPoint.Execute();
                     }
-
                 }
 
-                if (Config.ValueOrDefault("PluginLoader", false))
-                {
-                    PluginLoader.EntryPoint.Initialize();
-                }
-                else
-                {
-                    PluginLoader.EntryPoint.PluginFolder.Delete(true);
-                }
                 //config routing
                 //var routes = RouteTable.Routes;
 
