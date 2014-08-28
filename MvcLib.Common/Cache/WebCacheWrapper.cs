@@ -40,7 +40,13 @@ namespace MvcLib.Common.Cache
 
         public object Get(string key)
         {
-            return Enabled ? WebCache.Get(key) : null;
+            if (!Enabled)
+                return null;
+
+            bool hasValue;
+            return _cacheKeys.TryGetValue(key, out hasValue)
+                ? WebCache.Get(key)
+                : null;
         }
 
         public T Set<T>(string key, T value, int duration = 20, bool sliding = true)
@@ -50,11 +56,12 @@ namespace MvcLib.Common.Cache
                 throw new ArgumentNullException("key", "key obrigatório");
 
             _cacheKeys.AddOrUpdate(key, s => value != null, (s, b) => value != null);
-            
+
             if (!Enabled)
                 return value;
 
-            WebCache.Set(key, value, duration, sliding);
+            if (value != null)
+                WebCache.Set(key, value, duration, sliding);
 
             return value;
         }

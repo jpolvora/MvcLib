@@ -14,7 +14,7 @@ namespace MvcLib.CustomVPP.Impl
             using (var ctx = new DbFileContext())
             {
                 var str = ctx.DbFiles.FirstOrDefault(x => x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) &&
-                                                          !x.IsHidden && !x.IsDirectory);
+                                                          !x.IsHidden && !x.IsDirectory & !x.IsBinary);
 
                 if (str != null)
                 {
