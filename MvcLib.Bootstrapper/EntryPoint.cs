@@ -85,7 +85,7 @@ namespace MvcLib.Bootstrapper
                         //EntryPoint depends on PluginLoader, so, initializes it if not previously initialized.
                         PluginLoader.EntryPoint.Initialize();
 
-                        Kompiler.EntryPoint.AddReferences(typeof(Controller), typeof(WebPageRenderingBase), typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal));
+                        Kompiler.EntryPoint.AddReferences(typeof(Controller), typeof(WebPageRenderingBase), typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal), typeof(CustomErrorHttpModule.ErrorModel));
                         Kompiler.EntryPoint.AddReferences(PluginStorage.GetAssemblies().ToArray());
 
                         Kompiler.EntryPoint.Execute();
