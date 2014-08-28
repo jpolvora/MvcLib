@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
+using MvcLib.Common;
 using MvcLib.DbFileSystem;
 
 namespace MvcLib.FsDump
@@ -17,7 +18,9 @@ namespace MvcLib.FsDump
         {
             Trace.TraceInformation("[DbToLocal]: Starting...");
 
-            var root = Path.GetFullPath(HostingEnvironment.MapPath("~/"));
+            var path = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
+            
+            var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
             var dirInfo = new DirectoryInfo(root);
             if (!dirInfo.Exists)
                 dirInfo.Create();

@@ -58,6 +58,9 @@
     <Compile Include="Impl\CachedDbServiceFileSystemProvider.cs" />
     <Compile Include="Impl\DefaultDbService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemappedDir.cs" />
+    <Compile Include="RemappedFile.cs" />
+    <Compile Include="SubfolderVpp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

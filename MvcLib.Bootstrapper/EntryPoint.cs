@@ -59,17 +59,20 @@ namespace MvcLib.Bootstrapper
 
                 DbFileContext.Initialize();
 
-                if (Config.ValueOrDefault("CustomVirtualPathProvider", false))
-                {
-                    var customvpp = new CustomVirtualPathProvider()
-                    .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
-                    HostingEnvironment.RegisterVirtualPathProvider(customvpp);
-                }
-
                 if (Config.ValueOrDefault("DumpToLocal", false))
                 {
+                    var customvpp = new SubfolderVpp();
+                    HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+
                     DbToLocal.Execute();
                 }
+                else if (Config.ValueOrDefault("CustomVirtualPathProvider", false))
+                {
+                    var customvpp = new CustomVirtualPathProvider()
+                        .AddImpl(new CachedDbServiceFileSystemProvider(new DefaultDbService(), new WebCacheWrapper()));
+                    HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+                }
+              
 
                 if (Config.ValueOrDefault("Kompiler", false))
                 {

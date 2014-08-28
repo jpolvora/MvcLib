@@ -599,6 +599,7 @@
     <Content Include="Content\ext-theme-classic\images\window-header\window-header-default-top-sides.gif" />
     <Content Include="Content\ext-theme-classic\images\window\window-default-corners.gif" />
     <Content Include="Content\ext-theme-classic\images\window\window-default-sides.gif" />
+    <Content Include="dbfiles\dummy.txt" />
     <Content Include="Scripts\CodeMirror\active-line.js" />
     <Content Include="Scripts\CodeMirror\brace-fold.js" />
     <Content Include="Scripts\CodeMirror\clike.js" />
