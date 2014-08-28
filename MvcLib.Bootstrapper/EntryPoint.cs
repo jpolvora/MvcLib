@@ -158,7 +158,7 @@ namespace MvcLib.Bootstrapper
                     Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
                 }
 
-                if (Config.IsInDebugMode)
+                if (!Config.IsInDebugMode)
                 {
                     Trace.Listeners.Remove("StartupListener");
                 }

@@ -135,12 +135,9 @@ namespace MvcLib.CustomVPP.Impl
                 x.Parent.IsDirectory)
                 .ToList();
 
-            foreach (var dbFile in dbFiles)
-            {
-                if (dbFile.IsDirectory)
-                    yield return new Tuple<string, string, byte[]>(dbFile.VirtualPath, null, null);
-                else yield return new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"), dbFile.Bytes);
-            }
+            return dbFiles.Select(dbFile => dbFile.IsDirectory
+                ? new Tuple<string, string, byte[]>(dbFile.VirtualPath, null, null)
+                : new Tuple<string, string, byte[]>(dbFile.VirtualPath, dbFile.LastWriteUtc.ToString("T"), dbFile.Bytes));
         }
     }
 }

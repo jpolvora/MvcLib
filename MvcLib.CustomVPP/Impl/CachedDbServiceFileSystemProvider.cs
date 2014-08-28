@@ -152,29 +152,31 @@ namespace MvcLib.CustomVPP.Impl
 
         public override bool DirectoryExists(string virtualDir)
         {
-            //return false;
+            return false;
 
-            var path = NormalizeFilePath(virtualDir);
+            //var path = NormalizeFilePath(virtualDir);
 
-            var cacheKey = GetCacheKeyDir(path);
-            var item = Cache.Get(cacheKey);
-            if (item != null)
-            {
-                return item is CustomVirtualDir;
-            }
+            //var cacheKey = GetCacheKeyDir(path);
+            //var item = Cache.Get(cacheKey);
+            //if (item != null)
+            //{
+            //    return item is CustomVirtualDir;
+            //}
 
-            var result = _service.DirectoryExistsImpl(path);
+            //var result = _service.DirectoryExistsImpl(path);
 
-            // a chave será sobrescrita quando for recuperar o diretório real
-            Cache.Set(cacheKey, new CustomVirtualDir(virtualDir, false, null));
+            //// a chave será sobrescrita quando for recuperar o diretório real
+            //Cache.Set(cacheKey, new CustomVirtualDir(virtualDir, false, null));
 
-            return result;
+            //return result;
         }
 
         //todo: eager load all files in directory
 
         public override CustomVirtualDir GetDirectory(string virtualDir)
         {
+            return null;
+            
             var path = NormalizeFilePath(virtualDir);
 
             var cacheKey = GetCacheKeyDir(path);
@@ -191,13 +193,20 @@ namespace MvcLib.CustomVPP.Impl
             var tuples = _service.GetChildren(path);
             foreach (var tuple in tuples)
             {
+                var dirKey = GetCacheKeyDir(tuple.Item1);
                 var vpp = "~" + tuple.Item1;
                 if (string.IsNullOrWhiteSpace(tuple.Item2))
                 {
                     //sem hash = diretorio
-                    
+                    if (Cache.HasEntry(dirKey))
+                    {
+                        var entry = Cache.Get(dirKey)as CustomVirtualDir;
+                        if (entry != null && entry.Loaded)
+                            continue;
+                    }
+
                     var dir = new CustomVirtualDir(vpp, false, null);
-                    Cache.Set(GetCacheKeyDir(tuple.Item1), dir);
+                    Cache.Set(dirKey, dir);
                     children.Add(dir);
                 }
                 else
