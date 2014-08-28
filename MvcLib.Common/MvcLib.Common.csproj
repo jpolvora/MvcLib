@@ -67,8 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache\FileSystemCache.cs" />
-    <Compile Include="Cache\ICacheableBytes.cs" />
     <Compile Include="Cache\WebCacheWrapper.cs" />
     <Compile Include="CollectionExtensions.cs" />
     <Compile Include="Config.cs" />

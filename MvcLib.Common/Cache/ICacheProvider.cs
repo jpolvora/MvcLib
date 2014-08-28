@@ -8,7 +8,7 @@
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        bool HasValue(string key);
+        bool HasEntry(string key);
 
         object Get(string key);
 

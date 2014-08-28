@@ -9,6 +9,25 @@ namespace MvcLib.CustomVPP.Impl
 {
     public class DefaultDbService : IDbService
     {
+        public Tuple<bool, string, byte[]> GetFileInfo(string path)
+        {
+            using (var ctx = new DbFileContext())
+            {
+                var str = ctx.DbFiles.FirstOrDefault(x => x.VirtualPath.Equals(path, StringComparison.InvariantCultureIgnoreCase) &&
+                                                          !x.IsHidden && !x.IsDirectory);
+
+                if (str != null)
+                {
+                    var result = Tuple.Create(true, str.LastWriteUtc.ToString("T"), Encoding.UTF8.GetBytes(str.Texto));
+                    Trace.TraceInformation("[DefaultDbService]:GetFileInfo('{0}') = {1} length");
+                    return result;
+                }
+
+
+                return Tuple.Create(false, (string)null, (byte[])null);
+            }
+        }
+
         public bool FileExistsImpl(string path)
         {
             using (var ctx = new DbFileContext())
@@ -98,7 +117,7 @@ namespace MvcLib.CustomVPP.Impl
             {
                 var child = ctx.DbFiles
                     .Where(x => x.Id == parentId)
-                    .SelectMany(s => s.Children.Select(t => new {t.VirtualPath, t.IsDirectory}))
+                    .SelectMany(s => s.Children.Select(t => new { t.VirtualPath, t.IsDirectory }))
                     .ToList()
                     .Select(s => new Tuple<string, bool>(s.VirtualPath, s.IsDirectory))
                     .ToList();

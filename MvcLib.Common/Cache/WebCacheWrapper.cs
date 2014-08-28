@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Helpers;
@@ -30,7 +31,7 @@ namespace MvcLib.Common.Cache
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool HasValue(string key)
+        public bool HasEntry(string key)
         {
             bool hasValue;
             var r = _cacheKeys.TryGetValue(key, out hasValue);
@@ -41,21 +42,19 @@ namespace MvcLib.Common.Cache
         {
             return Enabled ? WebCache.Get(key) : null;
         }
-        
+
         public T Set<T>(string key, T value, int duration = 20, bool sliding = true)
-            where T: class
+            where T : class
         {
             if (string.IsNullOrEmpty(key))
-                return default(T);
-
-            if (value == null)  
-                return default(T);
+                throw new ArgumentNullException("key", "key obrigatório");
 
             _cacheKeys.AddOrUpdate(key, s => value != null, (s, b) => value != null);
-            if (Enabled)
-            {
-                WebCache.Set(key, value, duration, sliding);
-            }
+            
+            if (!Enabled)
+                return value;
+
+            WebCache.Set(key, value, duration, sliding);
 
             return value;
         }

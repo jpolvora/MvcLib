@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Web.Hosting;
 using MvcLib.Common.Cache;
 
@@ -22,21 +23,48 @@ namespace MvcLib.CustomVPP.Impl
             Cache = cache;
         }
 
-        public override bool FileExists(string virtualPath)
+        void EnsureFileHasEntry(string virtualPath)
         {
             var path = NormalizeFilePath(virtualPath);
 
             var cacheKey = GetCacheKeyForFile(path);
+            var hashKey = GetCacheKeyForHash(path);
+
+            if (Cache.HasEntry(cacheKey) && Cache.HasEntry(hashKey)) return;
+
+            VirtualFileBase vf;
+
+            var info = _service.GetFileInfo(path);
+
+            if (info.Item1)
+            {
+                vf = new CustomVirtualFile(virtualPath, info.Item3, info.Item2, false);
+            }
+            else
+            {
+                vf = new DummyVirtualFile(false);
+            }
+            Cache.Set(cacheKey, vf);
+            Cache.Set(hashKey, info.Item2, 2, false);
+        }
+
+        public override bool FileExists(string virtualPath)
+        {
+            EnsureFileHasEntry(virtualPath);
+
+            var path = NormalizeFilePath(virtualPath);
+            var cacheKey = GetCacheKeyForFile(path);
+
             var item = Cache.Get(cacheKey);
             if (item != null)
             {
-                return item is CustomVirtualFile || item is ICacheableBytes;
+                return item is CustomVirtualFile;
             }
 
             var result = _service.FileExistsImpl(path);
 
             if (result)
-                Cache.Set(cacheKey, GetFileInternal(virtualPath, true));
+                Cache.Set(cacheKey, GetFileInternal(virtualPath));
             else
             {
                 Cache.Set(cacheKey, new DummyVirtualFile(false), 20, false);
@@ -69,7 +97,7 @@ namespace MvcLib.CustomVPP.Impl
             var result = _service.DirectoryExistsImpl(path);
             if (result)
             {
-                Cache.Set(cacheKey, GetDirectoryInternal(virtualDir, true));
+                GetDirectoryInternal(virtualDir);
             }
             else
             {
@@ -81,21 +109,23 @@ namespace MvcLib.CustomVPP.Impl
 
         public override CustomVirtualFile GetFile(string virtualPath)
         {
-            return GetFileInternal(virtualPath, false);
+            return GetFileInternal(virtualPath);
         }
 
         public override CustomVirtualDir GetDirectory(string virtualDir)
         {
-            return GetDirectoryInternal(virtualDir, false);
+            return GetDirectoryInternal(virtualDir);
         }
 
         public override string GetFileHash(string virtualPath)
         {
+            EnsureFileHasEntry(virtualPath);
+
             var path = NormalizeFilePath(virtualPath);
             var cacheKey = GetCacheKeyForHash(path);
 
             string hash = (string)Cache.Get(cacheKey);
-            if (!string.IsNullOrWhiteSpace( hash))
+            if (!string.IsNullOrWhiteSpace(hash))
             {
                 return hash;
             }
@@ -132,11 +162,11 @@ namespace MvcLib.CustomVPP.Impl
                 var current = dbFile;
                 if (current.Item2)
                 {
-                    yield return GetDirectoryInternal(current.Item1, false);
+                    yield return GetDirectoryInternal(current.Item1);
                 }
                 else
                 {
-                    yield return GetFileInternal(current.Item1, false);
+                    yield return GetFileInternal(current.Item1);
                 }
             }
         }
@@ -147,7 +177,7 @@ namespace MvcLib.CustomVPP.Impl
             RemoveFromCache(path, false, true, true);
         }
 
-        private CustomVirtualFile GetFileInternal(string virtualPath, bool isSettingCache)
+        private CustomVirtualFile GetFileInternal(string virtualPath)
         {
             var path = NormalizeFilePath(virtualPath);
 
@@ -160,18 +190,17 @@ namespace MvcLib.CustomVPP.Impl
                 return (CustomVirtualFile)item;
             }
 
-            var bytes = _service.GetFileBytes(path);    
+            var bytes = _service.GetFileBytes(path);
             var hash = GetFileHash(virtualPath);
 
             var file = new CustomVirtualFile(virtualPath, bytes, hash);
 
-            if (!isSettingCache)
-                Cache.Set(cacheKey, file);
+            Cache.Set(cacheKey, file);
 
             return file;
         }
 
-        private CustomVirtualDir GetDirectoryInternal(string virtualDir, bool isSettingCache)
+        private CustomVirtualDir GetDirectoryInternal(string virtualDir)
         {
             var path = NormalizeFilePath(virtualDir);
 
@@ -187,8 +216,8 @@ namespace MvcLib.CustomVPP.Impl
 
             var dir = new CustomVirtualDir(virtualDir, () => LazyGetChildren(id));
 
-            if (!isSettingCache)
-                Cache.Set(cacheKey, dir);
+
+            Cache.Set(cacheKey, dir);
 
             return dir;
 

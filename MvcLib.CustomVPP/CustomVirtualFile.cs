@@ -1,13 +1,11 @@
 ﻿using System.IO;
 using System.Text;
 using System.Web.Hosting;
-using MvcLib.Common.Cache;
 
 namespace MvcLib.CustomVPP
 {
-    public class CustomVirtualFile : VirtualFile, ICacheableBytes
+    public class CustomVirtualFile : VirtualFile
     {
-
         public byte[] Bytes { get; private set; }
         public readonly string Hash;
 
