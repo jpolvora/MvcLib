@@ -55,6 +55,33 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="MvcLib.Bootstrapper">
+      <HintPath>..\compiled_libs\MvcLib.Bootstrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.Common">
+      <HintPath>..\compiled_libs\MvcLib.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.Common.Mvc">
+      <HintPath>..\compiled_libs\MvcLib.Common.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.CustomVPP">
+      <HintPath>..\compiled_libs\MvcLib.CustomVPP.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.DbFileSystem">
+      <HintPath>..\compiled_libs\MvcLib.DbFileSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.FsDump">
+      <HintPath>..\compiled_libs\MvcLib.FsDump.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.HttpModules">
+      <HintPath>..\compiled_libs\MvcLib.HttpModules.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.Kompiler">
+      <HintPath>..\compiled_libs\MvcLib.Kompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcLib.PluginLoader">
+      <HintPath>..\compiled_libs\MvcLib.PluginLoader.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -627,6 +654,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="packages.config" />
     <Content Include="Content\ext-theme-classic\Readme.md" />
+    <Content Include="_plugins\dummy.txt" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -711,7 +739,6 @@
     <Content Include="_Apps\Developer\App\view\LogViewer.js" />
     <Content Include="_Apps\Developer\App\view\Viewport.js" />
     <Content Include="_Apps\Developer\mvc.js" />
-    <Content Include="_plugins\dummy.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -723,47 +750,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teste.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ExtjsHelpers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MvcLib.Bootstrapper\MvcLib.Bootstrapper.csproj">
-      <Project>{741f4607-7d76-481f-9d5e-015fbb95aa84}</Project>
-      <Name>MvcLib.Bootstrapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Common.Mvc\MvcLib.Common.Mvc.csproj">
-      <Project>{4550bc11-b931-4872-87fd-726957542efa}</Project>
-      <Name>MvcLib.Common.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Common\MvcLib.Common.csproj">
-      <Project>{7ea8cab5-30b9-4069-a8c5-d553ca4016b0}</Project>
-      <Name>MvcLib.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.CustomVPP\MvcLib.CustomVPP.csproj">
-      <Project>{6c33542a-e1a8-4487-8639-6b44d527847a}</Project>
-      <Name>MvcLib.CustomVPP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.DbFileSystem\MvcLib.DbFileSystem.csproj">
-      <Project>{969929c3-2898-49b8-9ec8-de7a28884524}</Project>
-      <Name>MvcLib.DbFileSystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.FsDump\MvcLib.FsDump.csproj">
-      <Project>{3971d9ad-bb07-4675-babf-471be04e2490}</Project>
-      <Name>MvcLib.FsDump</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.HttpModules\MvcLib.HttpModules.csproj">
-      <Project>{061afd8c-defa-4ac6-8cb5-e9a4def11d40}</Project>
-      <Name>MvcLib.HttpModules</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.Kompiler\MvcLib.Kompiler.csproj">
-      <Project>{03b91668-cf22-48fb-8853-82abfa6e2a27}</Project>
-      <Name>MvcLib.Kompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MvcLib.PluginLoader\MvcLib.PluginLoader.csproj">
-      <Project>{ffbe8285-9c7a-41f6-bf1e-58de5cac726d}</Project>
-      <Name>MvcLib.PluginLoader</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
