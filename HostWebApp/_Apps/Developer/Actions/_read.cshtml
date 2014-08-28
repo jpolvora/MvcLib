@@ -1,0 +1,94 @@
+﻿@using System.Data.Entity
+@using System.Dynamic
+@using Entropia.Framework.Entities
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@{
+    using (var ctx = new EntropiaCtx())
+    {
+        var rootFiles = ctx.DbFiles
+            .Where(
+                x =>
+                    x.IsDirectory && x.ParentId == null && x.Name == null &&
+                    x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+
+        var results = new List<IDictionary<string, object>>();
+
+        if (rootFiles.Count > 0)
+        {
+            foreach (var rootFile in rootFiles)
+            {
+                CreateTree(ctx, rootFile, results);
+            }
+        }
+
+        var data = new
+        {
+            children = results,
+            success = true
+        };
+
+        ResponseExtensions.WriteAjax(Response, data);
+    }
+}
+
+@functions
+{
+    public static void CreateTree(DbContext ctx, DbFile root, List<IDictionary<string, object>> results)
+    {
+        IDictionary<string, object> self = CreateDirectory(root);
+        results.Add(self);
+
+        var logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        logger.DebugFormat("Loading a bunch of entities: {0}", root.Id);
+
+        var entry = ctx.Entry(root);
+        entry.Collection(x => x.Children).Load();
+
+        foreach (var dbFile in root.Children.OrderBy(x => !x.IsDirectory).ThenBy(x => x.Name))
+        {
+            if (dbFile.IsDirectory)
+            {
+                CreateTree(ctx, dbFile, (List<IDictionary<string, object>>)self["children"]);
+            }
+            else
+            {
+                var result = CreateFile(dbFile);
+                ((List<IDictionary<string, object>>)self["children"]).Add(result);
+            }
+        }
+    }
+
+    public static ExpandoObject CreateDirectory(DbFile root)
+    {
+        var expando = new ExpandoObject();
+        dynamic self = expando;
+        self.id = root.Id;
+        self.name = root.Name ?? "/";
+        self.fileName = root.VirtualPath;
+        self.fileTime = root.Modified.HasValue ? root.Modified.Value : root.Created;
+        self.leaf = false;
+        self.loaded = true;
+        self.expanded = root.ParentId == null;
+        self.expandable = true;
+        self.IsHidden = root.IsHidden;
+        self.children = new List<IDictionary<string, object>>();
+        return expando;
+    }
+
+    public static ExpandoObject CreateFile(DbFile root)
+    {
+        var expando = new ExpandoObject();
+        dynamic self = expando;
+        self.id = root.Id;
+        self.name = string.Format("{0}{1}", root.Name, root.Extension);
+        self.fileName = root.VirtualPath;
+        self.fileTime = root.Modified.HasValue ? root.Modified.Value : root.Created;
+        self.leaf = true;
+        self.loaded = false;
+        self.expandable = false;
+        self.IsHidden = root.IsHidden;
+        return expando;
+    }
+}

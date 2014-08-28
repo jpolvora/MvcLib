@@ -1,0 +1,54 @@
+﻿@using Entropia.Framework.Entities
+@{
+    Layout = null;
+
+    if (IsPost)
+    {
+        try
+        {
+            using (var ctx = new EntropiaCtx())
+            {
+                if (EntropiaCtx.IsMySql)
+                {
+                    ctx.Database.ExecuteSqlCommand(@"
+                        SET FOREIGN_KEY_CHECKS = 0;
+                        DELETE FROM KorePages_DbPageParameters;
+                        DELETE FROM KorePages_DbPages;
+                        DELETE FROM KorePages_DbFiles;
+                        ALTER TABLE KorePages_DbPageParameters AUTO_INCREMENT = 1;
+                        ALTER TABLE KorePages_DbFiles AUTO_INCREMENT = 1;
+                        SET FOREIGN_KEY_CHECKS = 1;");
+                }
+                else
+                {
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbPageParameters");
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbPages");
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbFiles");
+                    ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('KorePages_DbPageParameters', RESEED, 0)"" ");
+                    ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('KorePages_DbFiles', RESEED, 0)"" ");
+                }
+            }
+
+            <p>Desinstalado.</p>
+            HttpRuntime.UnloadAppDomain();
+        }
+        catch (Exception ex)
+        {
+            <p>@ex.Message</p>
+        }
+    }
+}
+
+<html>
+<head>
+    <title>
+
+    </title>
+</head>
+<body>
+    <form method="POST">
+        <input type="submit" value="Desinstalar" />
+    </form>
+
+</body>
+</html>

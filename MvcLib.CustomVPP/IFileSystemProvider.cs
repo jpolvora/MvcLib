@@ -35,5 +35,7 @@ namespace MvcLib.CustomVPP
         bool DirectoryExists(string virtualDir);
         CustomVirtualDir GetDirectory(string virtualDir);
         IEnumerable<VirtualFileBase> LazyGetChildren(int key);
+
+        void RemoveFromCache(string key);
     }
 }

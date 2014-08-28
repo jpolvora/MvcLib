@@ -1,0 +1,20 @@
+﻿@using System.Text
+@using System.Web.Hosting
+@{
+    Layout = null;
+    Response.Clear();
+    Response.ContentType = "application/javascript";
+
+    var url = UrlData[0];
+    var path = VirtualPathUtility.Combine(VirtualPath, url);
+    var file = HostingEnvironment.VirtualPathProvider.GetFile(path);
+    string js;
+    using (var str = file.Open())
+    {
+        byte[] buffer = new byte[str.Length];
+        str.Read(buffer, 0, (int)str.Length);
+        js = Encoding.UTF8.GetString(buffer);
+    }
+}
+@("/* Rendered by Razor View Engine */")
+@Html.Raw(js)

@@ -1,0 +1,106 @@
+/*
+ * Print and Close icons from Silk icon set 1.3
+ * _________________________________________
+ * Mark James
+ * http://www.famfamfam.com/lab/icons/silk/
+ */
+
+html.x-ux-grid-printer,.x-ux-grid-printer div,.x-ux-grid-printer dl,.x-ux-grid-printer dt,.x-ux-grid-printer dd,
+.x-ux-grid-printer ul,.x-ux-grid-printer ol,.x-ux-grid-printer li,.x-ux-grid-printer h1,.x-ux-grid-printer h2,
+.x-ux-grid-printer h3,.x-ux-grid-printer h4,.x-ux-grid-printer h5,.x-ux-grid-printer h6,.x-ux-grid-printer pre,.x-ux-grid-printer form,
+.x-ux-grid-printer fieldset,.x-ux-grid-printer input,.x-ux-grid-printer p,.x-ux-grid-printer blockquote,.x-ux-grid-printer th,.x-ux-grid-printer td
+    {
+    margin: 0;
+    padding: 0;
+}
+
+html.x-ux-grid-printer, .x-ux-grid-printer img,.x-ux-grid-printer body {
+    border: 0;
+}
+
+.x-ux-grid-printer address,.x-ux-grid-printer caption,.x-ux-grid-printer cite,.x-ux-grid-printer code,.x-ux-grid-printer dfn,.x-ux-grid-printer em,.x-ux-grid-printer strong,.x-ux-grid-printer th,.x-ux-grid-printer var {
+    font-style: normal;
+    font-weight: normal;
+}
+
+.x-ux-grid-printer ol,.x-ux-grid-printer ul {
+    list-style: none;
+}
+
+.x-ux-grid-printer caption,.x-ux-grid-printer th {
+    text-align: left;
+}
+
+.x-ux-grid-printer h1,.x-ux-grid-printer h2,.x-ux-grid-printer h3,.x-ux-grid-printer h4,.x-ux-grid-printer h5,.x-ux-grid-printer h6 {
+    font-size: 100%;
+}
+
+.x-ux-grid-printer q:before,.x-ux-grid-printer q:after {
+    content: '';
+}
+
+.x-ux-grid-printer .x-ux-grid-printer-links {
+    padding: 0 0 20px 0;
+}
+
+.x-ux-grid-printer a.x-ux-grid-printer-linkprint {
+    padding: 0 0 0 18px;
+    margin: 0 5px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABk0lEQVR42mNkQAPlx979Z8AODnRaCTmiCzJiM6DDUhBF7MjzHwxbHnz/CWReARpiQrIBSIb8BRrAgteAlH2v/892FEER+w30FCtQZer+NwxznEQZMQzY+fAbq7s8128Q23/L818bvCVYsQVCwNYXDBt9JDENUMpfd/ne6486DCQAVVHeq7cnhugwmjduPy3Lx2qyKN2SFP0McTOPM1x98eUSI0PU/P9f54SBBT99/02UZn5OiA+5UlYxgA240O7DwM3OwvD15x+iDODhYGH48uMPg0HlFogBB5r9wBLff6EawIjDAC42FoZ/QNqhdhPEgGXl3gyg5Pfn338GRiZGvLb/B6phhaqJ6twKMWBdnT9JAcjICDEgsHEDA6NW1ZarLEwMWpGOmmDByXUr8WrObQoH2srIsGz/NYbPX37cARslkrL09Zv338DJT93GkOFGgTFWzRoTzjLcPH0ZzBbjZHv7am60CNiA/c++SDtK8TwFG9B/5j9eAwpNGOcdvOsqLSl43V1N6AlGiIEMwOcFkAHIfACMiZwi5jkPDQAAAABJRU5ErkJggg==') /*/Content/png/16.png*/ no-repeat bottom left !important;
+}
+
+.x-ux-grid-printer a.x-ux-grid-printer-linkclose {
+    padding: 0 0 0 18px;
+    margin: 0 5px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACrElEQVR42pVTTUhUURT+3vy9JkvHP0wRexE5aSXYZAszaREMlBUpbmJ0F2oloREprkPa5MLAoF26EzXMAsMoQg3MQVA0hMphfOPzd5wc5//N3M57Y+pEEH2bw7nn3u/cc853OLR+ZABa0H7pCRQ0vm6FTlcFnd5MNkk9k2Uf5Mg82T50XmvHPnA7BEAk0oyofAtGo0XITOayUowoN2eroU/zElZ+BuBY22IIBOx0twnPro/GCVo+sOriXPROiRCyUlCScxhCbqb60CGuqXa/3zstgUgWEA7VKiQcHr1n968Ww0nBvNwMOF0bmJK8lM1L9BzAmJIGQkYybliOUnwdAzNEEvRPouNKCYeHI6zOWqRmWJTceDstAtGoB5HwEGKxLjWg0TZAr68QctJN1uI8iEtuvJkRGfyBNg4P3rGay2eUJGoyadmNkbkl0IO9xiq4O2iDQd8pZKeZLp7Ow+eJOXzbDNg5NA8zMLUbe/jtP7XuPwXuDXbDYLBVlp/C6oobo7PiduKFf+HOq1Ia7Zi1tFB1h8fn2P8TcNzYhfMFVC7D+MRXIqjv94LFDu3WoNH0oOtmzV8JGga6qbG2orMnse3Zwg+HRCXU9U1CjlqOF5nh93ohOZc90GobiaQn8XG/DXKMmphq0mSkY83hgtcXtCs/aCVRPM4qOKFMHcvfnYp0FZIh+k18jLFYA422gpRqOlKYj/C2D+7FJQaeb4v/+3bvF4SC55LN+apr3FjFyronQfECicydZILs88MvugD+wCReVJdwO7WVIRx+SQ06pktPg8ZoVEcZCwbibdn1g5BdJDSeX4CBr6UyR/emUN9fRhvXQTq3IMXEpfJabFJGFe4NIBQi+QYYjAft0Oua0FW5s0x/QumJLFcRmZlsfJ11Oh+t9zzZPjyvTFjnXztOJ299+BfJAAAAAElFTkSuQmCC') /*/Content/png/cancelar.png*/ no-repeat bottom left !important;
+}
+
+.x-ux-grid-printer table {
+    width: 100%;
+    text-align: left;
+    font-size: 11px;
+    font-family: arial;
+    border-collapse: collapse;
+}
+
+.x-ux-grid-printer table th {
+    font-weight: bold;
+    padding: 4px 3px 4px 5px;
+    border: 1px solid #d0d0d0;
+    border-left-color: #eee;
+    background-color: #ededed;
+}
+
+.x-ux-grid-printer table tr.odd {
+    background-color: #ffffff;
+}
+
+.x-ux-grid-printer table tr.even {
+    background-color: #f9f9f9;
+}
+
+.x-ux-grid-printer table td {
+    padding: 4px 3px 4px 5px;
+    border-style: none solid solid;
+    border-width: 1px;
+    border-color: #ededed;
+}
+
+.x-tree-elbow-img, .x-tree-elbow-line {
+    width: 10px;
+}
+
+@media print {
+    .x-ux-grid-printer body {
+        margin: 0;
+        padding: 0;
+    }
+    .x-ux-grid-printer div.x-ux-grid-printer-noprint {
+        display: none;
+    }
+}
+.group-header {
+    border-bottom : 2px solid black;
+    font-size     : 14px;
+}
+

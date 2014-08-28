@@ -1,0 +1,51 @@
+﻿@using Entropia.Framework.Entities
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+@{
+    try
+    {
+        var filterFn = Server.UrlDecode(Request.Unvalidated["filter"]);
+        var json = Json.Decode(filterFn)[0];
+        if (json.property == "DbPageId")
+        {
+            int id = json.value;
+
+            if (id <= 0)
+            {
+                ResponseExtensions.WriteAjax(Response, new
+                {
+                    success = false,
+                    msg = "Parâmetros inválidos"
+                });
+
+                return;
+            }
+
+            using (var ctx = new EntropiaCtx())
+            {
+                var total = ctx.DbPageParameters.Count(x => x.DbPageId == id);
+                var pages = ctx.DbPageParameters.Where(x => x.DbPageId == id).ToList();
+
+                var data = new
+                {
+                    msg = "",
+                    success = true,
+                    total = total,
+                    data = pages
+                };
+                ResponseExtensions.WriteAjax(Response, data);
+            }
+        }
+        else
+        {
+            ResponseExtensions.WriteAjax(Response, new { msg = "Filtro inválido", success = false }, status: 500);
+        }
+    }
+    catch (Exception ex)
+    {
+        ResponseExtensions.WriteAjax(Response, new
+        {
+            success = false,
+            msg = ex.Message
+        }, true, 500);
+    }
+}

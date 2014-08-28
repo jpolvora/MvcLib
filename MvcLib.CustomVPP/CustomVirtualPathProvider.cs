@@ -10,7 +10,12 @@ namespace MvcLib.CustomVPP
 {
     public class CustomVirtualPathProvider : VirtualPathProvider
     {
-        private readonly List<IFileSystemProvider> _providers = new List<IFileSystemProvider>();
+        private static readonly List<IFileSystemProvider> _providers = new List<IFileSystemProvider>();
+
+        public static IReadOnlyList<IFileSystemProvider> GetProviders()
+        {
+            return new List<IFileSystemProvider>(_providers);
+        }
 
         public CustomVirtualPathProvider AddImpl(IFileSystemProvider provider)
         {
@@ -102,8 +107,8 @@ namespace MvcLib.CustomVPP
 
         public override CacheDependency GetCacheDependency(string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
         {
-            return _providers.Any(x => x.IsVirtualFile(virtualPath) && x.FileExists(virtualPath)) 
-                ? null 
+            return _providers.Any(x => x.IsVirtualFile(virtualPath) && x.FileExists(virtualPath))
+                ? null
                 : Previous.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
         }
 

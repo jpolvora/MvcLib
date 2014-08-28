@@ -1,0 +1,38 @@
+﻿@using System.Data.Entity;
+@using Entropia.Framework.Entities
+@using MvcLib.CustomVPP
+@using MvcLib.DbFileSystem
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@{
+    var id = IsPost ? Request.Form["id"].AsInt(0) : UrlData[0].AsInt(0);
+
+    using (var ctx = new DbFileContext())
+    {
+        var result = ctx.DbFiles.Include(x => x.Children).FirstOrDefault(x => x.Id == id);
+        if (result != null && result.Children.Count == 0)
+        {
+            ctx.DbFiles.Remove(result);
+            ctx.SaveChanges();
+
+            /* remove do cache após alterações */
+            var cacheKey = string.Format(result.IsDirectory
+                ? "VirtualDirectory:{0}"
+                : "VirtualFile:{0}", result.VirtualPath);
+
+            EntropiaCache.Remove(cacheKey);
+            if (!result.IsDirectory)
+            {
+                var hashKey = string.Format("Hash:{0}", result.VirtualPath);
+                EntropiaCache.Remove(hashKey);
+            }
+
+            ResponseExtensions.WriteAjax(Response, new { success = true });
+            return;
+        }
+
+        Response.StatusCode = 404;
+        ResponseExtensions.WriteAjax(Response, new { success = false, msg = "Arquivo não encontrado/pasta não vazia!" });
+        return;
+    }
+}

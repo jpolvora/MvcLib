@@ -1,0 +1,52 @@
+﻿@using Entropia.Framework.Utils
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+@{
+    Layout = null;
+    Response.ContentType = "application/json";
+
+
+    if (IsPost)
+    {
+        var req = Misc.AsString(Request.Params["__RequestVerificationToken"]);
+        //AntiForgery.Validate();
+    }
+
+    if (UrlData.Count == 0)
+    {
+        @WriteError("Action não encontrada.")
+    }
+    else
+    {
+        try
+        {
+            string addExtension = "";
+            var extension = VirtualPathUtility.GetExtension(UrlData[0]);
+            if (string.IsNullOrEmpty(extension))
+            {
+                addExtension = ".cshtml";
+            }
+            @RenderPage(string.Format("Actions/_{0}{1}", UrlData[0], addExtension))
+        }
+        catch (Exception ex)
+        {
+            @WriteError("Erro ao executar ação: {0}. \r\n{1}", UrlData[0], ex.Message)
+            throw;
+        }
+    }
+}
+
+@helper WriteError(string msg, params object[] args)
+{
+    var fmt = string.Format(msg, args);
+    Response.StatusDescription = fmt;
+
+    if (IsAjax)
+    {
+        ResponseExtensions.WriteAjax(Response, new { success = false, msg = fmt, data = new object[0] }, status: 500);
+    }
+    else
+    {
+        Response.StatusCode = 500;
+        <p>@fmt</p>
+    }
+}

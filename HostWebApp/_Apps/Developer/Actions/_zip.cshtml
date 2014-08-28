@@ -1,0 +1,280 @@
+﻿@using System.Data.Entity;
+@using System.Diagnostics
+@using System.Dynamic
+@using System.Reflection
+@using System.IO.Compression;
+@using Entropia.Framework.EF
+@using Entropia.Framework.Entities
+@using Entropia.Framework.VPP
+@using Newtonsoft.Json
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@(IsPost ? Upload() : Download())
+
+
+@helper Upload()
+{
+    string path = Path.GetTempFileName();
+    var file = Request.Files[0];
+    file.SaveAs(path);
+
+    var folder = GetUniquePath();
+    ZipFile.ExtractToDirectory(path, folder);
+
+    var root = new DirectoryInfo(folder);
+
+    using (var ctx = new EntropiaCtx())
+    {
+        if (DbConfig.IsMySql)
+        {
+            ctx.Database.ExecuteSqlCommand(@"
+                        SET FOREIGN_KEY_CHECKS = 0;
+                        DELETE FROM Entropia_DbPageParameters;
+                        DELETE FROM Entropia_DbPages;
+                        DELETE FROM Entropia_DbFiles;                        
+                        ALTER TABLE Entropia_DbPageParameters AUTO_INCREMENT = 1;
+                        ALTER TABLE Entropia_DbFiles AUTO_INCREMENT = 1;
+                        SET FOREIGN_KEY_CHECKS = 1;");
+        }
+        else
+        {
+            ctx.Database.ExecuteSqlCommand("DELETE FROM Entropia_DbPageParameters");
+            ctx.Database.ExecuteSqlCommand("DELETE FROM Entropia_DbPages");
+            ctx.Database.ExecuteSqlCommand("DELETE FROM Entropia_DbFiles");
+            ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('Entropia_DbPageParameters', RESEED, 0)"" ");
+            ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('Entropia_DbFiles', RESEED, 0)"" ");
+        }
+        WriteFilesToDatabase(ctx, new Uri(folder), root, null);
+    }
+
+    ResponseExtensions.WriteAjax(Response, new { success = true, file = file.FileName });
+}
+
+@helper Download()
+{
+    const string JsonFileName = "db-metadata.json";
+    var path = GetUniquePath();
+
+    using (var ctx = new EntropiaCtx())
+    {
+        var root = ctx.DbFiles.First(x => x.IsDirectory && x.ParentId == null && x.Name == null && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
+
+        var results = new List<IDictionary<string, object>>();
+        CreateTree(ctx, root, results);
+
+        RecursiveWrite(ctx, path, results);
+
+        var metadata = ctx.DbPages.Include(x => x.Parameters).ToList();
+        var settings = new JsonSerializerSettings();
+        settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        settings.Formatting = Formatting.Indented;
+        var jsonMetadata = JsonConvert.SerializeObject(metadata, settings);
+        File.WriteAllText(Path.Combine(path, JsonFileName), jsonMetadata);
+    }
+
+    var zip = Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetRandomFileName(), "zip"));
+    ZipFile.CreateFromDirectory(path, zip);
+    try
+    {
+        Directory.Delete(path, true);
+    }
+    catch (Exception ex)
+    {
+    }
+
+    if (File.Exists(zip))
+    {
+        Response.ContentType = "application/zip";
+        Response.AddHeader("Content-Disposition", string.Format("attachment; filename={0}-bkp.zip", DateTime.Now.ToString("yy-MM-dd-HHmmss")));
+        Response.TransmitFile(zip);
+        return;
+    }
+
+    Response.StatusCode = 404;
+}
+
+
+@functions
+{
+    public static string GetUniquePath()
+    {
+        string uniquePath;
+        do
+        {
+            Guid guid = Guid.NewGuid();
+            string uniqueSubFolderName = guid.ToString();
+            uniquePath = Path.Combine(Path.GetTempPath(), uniqueSubFolderName);
+        } while (Directory.Exists(uniquePath));
+        Directory.CreateDirectory(uniquePath);
+        return uniquePath;
+    }
+
+    public static void CreateTree(DbContext ctx, DbFile root, List<IDictionary<string, object>> results)
+    {
+        IDictionary<string, object> self = CreateDirectory(root);
+        results.Add(self);
+
+        var entry = ctx.Entry(root);
+        entry.Collection(x => x.Children).Load();
+
+        foreach (var dbFile in root.Children.OrderBy(x => !x.IsDirectory).ThenBy(x => x.Name))
+        {
+            if (dbFile.IsDirectory)
+            {
+                CreateTree(ctx, dbFile, (List<IDictionary<string, object>>)self["children"]);
+            }
+            else
+            {
+                var result = CreateFile(dbFile);
+                ((List<IDictionary<string, object>>)self["children"]).Add(result);
+            }
+        }
+    }
+
+    public static ExpandoObject CreateDirectory(DbFile root)
+    {
+        var expando = new ExpandoObject();
+        dynamic self = expando;
+        self.id = root.Id;
+        self.name = root.Name ?? "/";
+        self.fileName = root.VirtualPath;
+        self.leaf = false;
+        self.loaded = true;
+        self.expandable = true;
+        self.IsHidden = root.IsHidden;
+        self.children = new List<IDictionary<string, object>>();
+        return expando;
+    }
+
+    public static ExpandoObject CreateFile(DbFile root)
+    {
+        var expando = new ExpandoObject();
+        dynamic self = expando;
+        self.id = root.Id;
+        self.name = string.Format("{0}{1}", root.Name, root.Extension);
+        self.fileName = root.VirtualPath;
+        self.leaf = true;
+        self.loaded = false;
+        self.expandable = false;
+        self.IsHidden = root.IsHidden;
+        return expando;
+    }
+
+    static void RecursiveWrite(EntropiaCtx ctx, string path, IEnumerable<IDictionary<string, object>> results)
+    {
+        foreach (dynamic result in results)
+        {
+            if (result.leaf)
+            {
+                var fullPath = Path.Combine(path, result.fileName.Substring(1).Replace("/", "\\"));
+                var dir = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                var dbFile = ctx.DbFiles.Find(result.id);
+
+                File.WriteAllBytes(fullPath, dbFile.Bytes);
+            }
+            else
+            {
+                RecursiveWrite(ctx, path, result.children);
+            }
+        }
+    }
+
+    static void WriteJsonMetadata(string fullPath)
+    {
+        if (!File.Exists(fullPath)) return;
+        try
+        {
+            var json = File.ReadAllText(fullPath);
+            var root = JsonConvert.DeserializeObject<List<DbPage>>(json);
+            using (var ctx = new EntropiaCtx())
+            {
+                foreach (var viewMetadata in root)
+                {
+                    ctx.DbPages.Add(viewMetadata);
+                }
+                ctx.SaveChanges();
+
+            }
+        }
+        catch (Exception ex)
+        {
+            var logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+            logger.Error("Erro ao tentar escrever arquivo JSON." + ex.Message, ex);
+        }
+    }
+
+
+    public static void WriteFilesToDatabase(EntropiaCtx ctx, Uri initialUri, DirectoryInfo root, int? id)
+    {
+        string virtualPath;
+        string dirName;
+        if (id == null)
+        {
+            virtualPath = "/";
+            dirName = null;
+        }
+        else
+        {
+            var currentUri = new Uri(root.FullName);
+            var tempRelative = initialUri.MakeRelativeUri(currentUri).ToString();
+            var iof = tempRelative.IndexOf('/');
+            virtualPath = tempRelative.Substring(iof);
+
+            dirName = root.Name;
+        }
+
+        var dbFile = new DbFile
+        {
+            IsDirectory = true,
+            Name = dirName,
+            VirtualPath = virtualPath,
+            ParentId = id
+        };
+
+        ctx.DbFiles.Add(dbFile);
+        ctx.SaveChanges();
+        DbFileSystemProvider.RemoveFileFromCache(dbFile.VirtualPath, dbFile.IsDirectory);
+
+        const string JsonFileName = "db-metadata.json";
+
+        foreach (var fi in root.EnumerateFiles())
+        {
+            if (virtualPath.Equals("/") && fi.Name.Equals(JsonFileName))
+            {
+                Debug.WriteLine(fi.FullName);
+                WriteJsonMetadata(fi.FullName);
+                continue;
+            }
+            var bytes = File.ReadAllBytes(fi.FullName);
+
+            var dbFileFolder = new DbFile
+            {
+                IsDirectory = false,
+                Name = Path.GetFileNameWithoutExtension(fi.Name),
+                Extension = fi.Extension,
+                VirtualPath = Path.Combine(virtualPath, fi.Name).Replace('\\', '/'),
+                ParentId = dbFile.Id,
+                Bytes = bytes
+            };
+
+            ctx.DbFiles.Add(dbFileFolder);
+            ctx.SaveChanges();
+
+            DbFileSystemProvider.RemoveFileFromCache(dbFileFolder.VirtualPath, dbFileFolder.IsDirectory);
+            RemoveMetadataFromCache(dbFileFolder.VirtualPath);
+
+            if (dbFileFolder.Bytes.Count() != bytes.Count())
+            {
+                throw new Exception("Arquivo não foi copiado corretamente!");
+            }
+        }
+
+        foreach (var di in root.EnumerateDirectories())
+        {
+            WriteFilesToDatabase(ctx, initialUri, di, dbFile.Id);
+        }
+    }
+}

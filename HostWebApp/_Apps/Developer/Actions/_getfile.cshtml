@@ -1,0 +1,24 @@
+﻿@using System.Text
+@using Entropia.Framework.Entities
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@{
+    var id = IsPost ? Request.Form["id"].AsInt(0) : UrlData[0].AsInt(0);
+
+    using (var ctx = new EntropiaCtx())
+    {
+        var result = ctx.DbFiles.FirstOrDefault(x => x.Id == id && x.IsDirectory == false);
+        if (result != null)
+        {
+            var file = Encoding.UTF8.GetString(result.Bytes);
+            Response.Clear();
+            Response.ContentType = "text/plain";
+            Response.Write(file);
+        }
+        else
+        {
+            Response.StatusCode = 404;
+            ResponseExtensions.WriteAjax(Response, new { success = false, msg = "Arquivo não encontrado" });
+        }
+    }
+}

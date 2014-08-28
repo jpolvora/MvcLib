@@ -1,0 +1,137 @@
+﻿@{
+    const string corForte = "#00498A"; @* 157fcc *@
+    const string corMedia = "#293956";
+    const string corFraca = "#9BA7B7";
+    const string color1 = "#293955"; @* #3892D3 *@ //borda janela
+    const string color2 = "#293955"; @* ADD2ED *@
+    const string color5 = "#ff9999";
+
+    const string marromForte = "#990000";
+    const string marromMedio = "#CC3333";
+    const string vermelho = "#FF0000";
+    const string vermelhoMedio = "#FF3333";
+    const string vermelhoFraco = "#FF6666";
+}
+
+<style>
+    .x-panel-header-text-container-default {
+        color: white;
+    }
+
+    .x-window-header-text-container-default {
+        color: white;
+    }
+     .x-border-layout-ct {
+         background-color: @color1;
+     }
+
+    .x-panel-default {
+        border-color: @corForte;
+    }
+
+    .x-panel-body-default {
+        border-color: @corForte;
+    }
+
+    .x-panel-header-default {
+        background-image: none;
+        background-color: @corForte;
+        font-size: 14px;
+        border: 1px solid @corForte;
+    }
+
+    .x-panel-header-default .x-tool-img {
+        background-color: @corForte;
+    }
+
+    .x-tab-default-top, .x-tab-default-left, .x-tab-default-right {
+        background-color: @color2;
+        border-bottom: 0 solid @color2;
+    }
+
+    .x-tab-default {
+        border-color: @corMedia;
+        margin: 0 1px 0 0;
+        cursor: pointer;
+    }
+
+    .x-tab-default-active {
+        background-color: @corFraca;
+    }
+
+    .x-tab-default-active .x-tab-inner {
+        color: @corForte;
+    }
+
+
+    .x-tab-bar-default {
+        background-color: @corForte;
+    }
+
+    .x-tab-bar-strip-default {
+        border-style: solid;
+        border-color: @corForte;
+        background-color: @corFraca;
+    }
+
+    .x-window-default {
+        border-color: @color1;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .x-window-header-default {
+        border-color: @color1;
+    }
+
+    .x-window-header-default .x-tool-img {
+        background-color: @color1;
+    }
+
+    .x-window-header-default-top {
+        background-color: @color1;
+    }
+
+    .x-window-body-default {
+        border-color: @color1;
+    }
+
+    .x-btn-default-small {
+        background-color: @color1;
+        border-color: @color2;
+        background-image: -webkit-linear-gradient(top,@corMedia,@corFraca 50%,@corMedia 50%,@corFraca);
+    }
+
+    .x-btn-default-small-over {
+        background-image: -webkit-linear-gradient(top,@corForte,@corMedia 50%,@corForte 50%,@corMedia);
+    }
+
+    .x-form-item, .x-form-field {
+        font-family: 'Consolas', monospace;
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .x-accordion-hd .x-tool-img {
+        background-color: #cccccc;
+    }
+
+    .x-accordion-hd .x-panel-header-text-container {
+        color: @corForte;
+    }
+
+    .x-accordion-item .x-accordion-hd {
+        background: #ccc;
+        border-top-color: #FFF;
+        padding: 8px 10px;
+    }
+
+    .x-grid-cell {
+        font-family: 'Consolas', monospace;
+        font-size: 12px;
+        line-height: 1;
+    }
+</style>

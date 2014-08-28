@@ -1,0 +1,11 @@
+﻿@{
+    
+    //Response.Cache.SetCacheability(HttpCacheability.Server);
+    //Response.Cache.SetExpires(DateTime.Now.AddSeconds(60));
+    //Response.Cache.SetValidUntilExpires(true);
+    //Response.Cache.VaryByParams.IgnoreParams = false;
+    
+    this.CheckLogin(Constants.ROLE_DEVELOPERS);
+
+    Layout = "_Layout.cshtml";
+}

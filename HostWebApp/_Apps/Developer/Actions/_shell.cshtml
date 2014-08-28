@@ -1,0 +1,65 @@
+﻿@using System.Reflection
+@using Roslyn.Compilers
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+@{
+    var logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+    var json = Request.Unvalidated("_csharpcode");
+
+    if (json.IsEmpty())
+    {
+        ResponseExtensions.WriteAjax(Response, new { success = false, msg = "_csharpcode" });
+    }
+    else
+    {
+        var code = Json.Decode(json);
+        MemoryStream stream = null;
+        string msg = string.Empty;
+        try
+        {
+            logger.Debug("About to compile code.");
+            msg = RoslynWrapper.TryCompile(code, Guid.NewGuid().ToString("N"), out stream, OutputKind.ConsoleApplication);
+        }
+        catch (Exception ex)
+        {
+            logger.Error("Error compiling code", ex);
+            ResponseExtensions.WriteAjax(Response, new { success = false, msg = ex.Message }, true, 500);
+        }
+
+        if (string.IsNullOrEmpty(msg) && stream != null)
+        {
+            try
+            {
+                var bytes = stream.ToArray();
+                stream.Close();
+
+                logger.Debug("About to load compiled assembly.");
+                var assembly = Assembly.Load(bytes);
+                var method = assembly.EntryPoint;
+
+                using (var buffer = new StringWriter())
+                {
+                    Console.SetOut(buffer);
+
+                    logger.Debug("About to invoke entry point.");
+                    method.Invoke(null, new object[0]);
+
+                    var sb = buffer.GetStringBuilder();
+                    ResponseExtensions.WriteAjax(Response, new { success = true, msg = sb.ToString() });
+
+                    buffer.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Error", ex);
+                ResponseExtensions.WriteAjax(Response, new { success = false, msg = ex.Message }, status: 500);
+            }
+        }
+        else
+        {
+            logger.DebugFormat("Error during compilation = {0}", msg);
+            ResponseExtensions.WriteAjax(Response, new { success = false, msg });
+        }
+    }
+}

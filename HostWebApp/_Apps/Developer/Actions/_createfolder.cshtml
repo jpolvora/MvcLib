@@ -1,0 +1,50 @@
+﻿@using System.Data.Entity;
+@using Entropia.Framework.Entities
+@using Entropia.Framework.VPP
+@using MvcLib.Common.Cache
+@using MvcLib.CustomVPP
+@using MvcLib.DbFileSystem
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@{
+    var id = IsPost ? Request.Form["id"].AsInt(0) : UrlData[0].AsInt(0);
+    var dirName = IsPost ? Request.Form["dirName"] : UrlData[1];
+
+    using (var ctx = new DbFileContext())
+    {
+        var result = ctx.DbFiles.Include(x => x.Parent).FirstOrDefault(x => x.Id == id);
+        if (result != null)
+        {
+            var parent = id;
+            var folderName = result.VirtualPath;
+            if (!result.IsDirectory)
+            {
+                parent = result.ParentId.GetValueOrDefault();
+                folderName = result.Parent.VirtualPath;
+            }
+
+            folderName = VirtualPathUtility.AppendTrailingSlash(folderName);
+
+            var dbFile = new DbFile
+            {
+                IsDirectory = true,
+                ParentId = parent,
+                Name = dirName,
+                VirtualPath = string.Format("{0}{1}", folderName, dirName)
+            };
+
+            ctx.DbFiles.Add(dbFile);
+            ctx.SaveChanges();
+            CustomVirtualPathProvider.
+            DbFileSystemProvider.RemoveFileFromCache(dbFile.VirtualPath, dbFile.IsDirectory);
+            
+
+            ResponseExtensions.WriteAjax(Response, new { success = true });
+            return;
+        }
+
+        Response.StatusCode = 404;
+        ResponseExtensions.WriteAjax(Response, new { success = false, msg = "Arquivo não encontrado" });
+        return;
+    }
+}

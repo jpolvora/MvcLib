@@ -94,7 +94,7 @@ namespace MvcLib.CustomVPP.Impl
             var path = NormalizeFilePath(virtualPath);
             var cacheKey = GetCacheKeyForHash(path);
 
-            string hash = (string) Cache.Get(cacheKey);
+            string hash = (string)Cache.Get(cacheKey);
             if (hash != null)
             {
                 return hash;
@@ -128,26 +128,34 @@ namespace MvcLib.CustomVPP.Impl
             }
         }
 
+        public override void RemoveFromCache(string key)
+        {
+            var path = NormalizeFilePath(key);
+            RemoveFromCache(path, false, true, true);
+        }
+
         private CustomVirtualFile GetFileInternal(string virtualPath, bool isSettingCache)
         {
             var path = NormalizeFilePath(virtualPath);
 
             var cacheKey = GetCacheKeyForFile(path);
 
-            var item = Cache.Get(cacheKey);
+            object item = Cache.Get(cacheKey);
             if (item != null)
             {
-                return item as CustomVirtualFile;
+                Trace.TraceInformation("From cache: {0} - {1}", item, cacheKey);
+                return (CustomVirtualFile)item;
             }
 
             var bytes = _service.GetFileBytes(path);
             var hash = GetFileHash(virtualPath);
 
-            item = new CustomVirtualFile(virtualPath, bytes, hash);
-            if (!isSettingCache)
-                Cache.Set(cacheKey, item);
+            var file = new CustomVirtualFile(virtualPath, bytes, hash);
 
-            return (CustomVirtualFile) item;
+            if (!isSettingCache)
+                Cache.Set(cacheKey, file);
+
+            return file;
         }
 
         private CustomVirtualDir GetDirectoryInternal(string virtualDir, bool isSettingCache)
@@ -159,16 +167,17 @@ namespace MvcLib.CustomVPP.Impl
             var item = Cache.Get(cacheKey);
             if (item != null)
             {
+                Trace.TraceInformation("From cache: {0} - {1}", item, cacheKey);
                 return (CustomVirtualDir)item;
             }
             var id = _service.GetDirectoryId(path);
 
-            item = new CustomVirtualDir(virtualDir, () => LazyGetChildren(id));
+            var dir = new CustomVirtualDir(virtualDir, () => LazyGetChildren(id));
 
             if (!isSettingCache)
-                Cache.Set(cacheKey, item);
+                Cache.Set(cacheKey, dir);
 
-            return (CustomVirtualDir) item;
+            return dir;
 
         }
 
@@ -190,7 +199,7 @@ namespace MvcLib.CustomVPP.Impl
             return string.Format("H{0}", path);
         }
 
-        public void RemoveFromCache(string path, bool removeDir, bool removeFile, bool removeHash)
+        internal void RemoveFromCache(string path, bool removeDir, bool removeFile, bool removeHash)
         {
             Trace.TraceInformation("RemoveFromCache: {0}", path);
 

@@ -1,0 +1,36 @@
+﻿@using System.Data.Entity
+@using Entropia.Framework.Entities
+@using Newtonsoft.Json
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+@{
+    try
+    {
+        var input = Request.InputStream;
+        input.Seek(0, SeekOrigin.Begin);
+        var json = new StreamReader(input).ReadToEnd();
+        
+        var rawInput = JsonConvert.DeserializeObject<DbPageParameter>(json);
+        using (var ctx = new EntropiaCtx())
+        {
+            var toDelete = ctx.DbPageParameters.Find(rawInput.Id);
+            ctx.DbPageParameters.Remove(toDelete);
+            ctx.SaveChanges();
+
+            var data = new
+            {
+                msg = "",
+                success = true
+            };
+            ResponseExtensions.WriteAjax(Response, data);
+        }
+
+    }
+    catch (Exception ex)
+    {
+        ResponseExtensions.WriteAjax(Response, new
+        {
+            success = false,
+            msg = ex.Message
+        }, true, 500);
+    }
+}

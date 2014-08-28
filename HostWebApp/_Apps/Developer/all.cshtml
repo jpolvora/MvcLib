@@ -1,0 +1,125 @@
+﻿@{
+    /*app.js utiliza caminho relativo, portanto é necessário que a url no browser seja um arquivo.*/
+
+    var path = VirtualPathUtility.ToAbsolute(VirtualPath);
+    if (!path.Equals(Request.Path))
+    {
+        Response.Redirect(VirtualPath, true);
+    }
+
+    PageData["Title"] = "KorePages - Developer";
+}
+
+@* ReSharper disable once Razor.SectionNotResolved *@
+@section header {
+    @if (Context.IsDebuggingEnabled)
+    {
+        string theme = "~/Content/ext-theme-gray/ext-theme-gray-all.css";
+        if (!Request["theme"].IsEmpty())
+        {
+            switch (Request["theme"])
+            {
+                case "neptune": theme = "~/Content/ext-theme-neptune/ext-theme-neptune-all.css"; break;
+                case "classic": theme = "~/Content/ext-theme-classic/ext-theme-classic-all.css"; break;
+                default: break;
+            }
+        }
+
+        @*<link rel="stylesheet" href="~/Content/ext-theme-neptune/ext-theme-neptune-all.css">*@
+        @*<link rel="stylesheet" href="~/Content/ext-theme-gray/ext-theme-gray-all.css">*@
+        <link rel="stylesheet" href="@Href(theme)">
+        <script src="~/Scripts/dropbox.min.js">
+        </script>
+    }
+    else
+    {
+
+        string theme = "//extjs.cachefly.net/ext/gpl/4.2.0/resources/css/ext-all-gray.css";
+        if (!Request["theme"].IsEmpty())
+        {
+            switch (Request["theme"])
+            {
+                case "neptune": theme = "//extjs.cachefly.net/ext/gpl/4.2.0/resources/css/ext-all-neptune.css"; break;
+                case "classic": theme = "//extjs.cachefly.net/ext/gpl/4.2.0/resources/css/ext-all.css"; break;
+                case "access": theme = "//extjs.cachefly.net/ext/gpl/4.2.0/resources/css/ext-all-access.css"; break;
+                default: break;
+            }
+        }
+
+        <link href="@theme" rel="stylesheet" />
+
+        if (theme == "neptune")
+        {
+            @RenderPage("ext-neptune-red.cshtml")
+        }
+
+        <script async defer src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js">
+        </script>
+    }
+
+    @{
+        string folder = VirtualPathUtility.GetDirectory(path);
+        string dropbox = folder + "_Developer/dropbox_receiver.cshtml";
+        string receiveUrl = new System.Web.Mvc.UrlHelper(Request.RequestContext).ToPublicUrl(new Uri(dropbox, UriKind.Relative));
+    }
+
+    <script>
+        window._DropBoxClient = new Dropbox.Client({ key: "eeazli6wo1wm78e" });
+        var client = window._DropBoxClient;
+        client.authDriver(new Dropbox.AuthDriver.Popup({
+            receiverUrl: '@receiveUrl'
+        }));
+
+        console.log('client is:', client);
+    </script>
+
+    @Styles.Render("~/bundles/codemirror-css")
+    @Scripts.Render("~/bundles/codemirror-js")
+
+    <style>
+        .northcls .x-panel-header-text-container-default {
+            font-size: 16px;
+        }
+
+        /*.x-panel-body, .x-grid-body, .x-grid-cell {
+            background: #ffe;
+            color: #15428B;
+        }*/
+
+        .ajax-loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -16px; /* -1 * image width / 2 */
+            margin-top: -16px; /* -1 * image height / 2 */
+            display: block;
+        }
+
+        .CodeMirror pre {
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.2;
+        }
+    </style>
+}
+
+
+<div id="page-loader">
+    <img alt="loading..." class="ajax-loader" src="~/Content/blue-loading.gif" />
+</div>
+<form>
+    @AntiForgery.GetHtml()
+</form>
+
+@section scripts {
+    @if (Context.IsDebuggingEnabled)
+    {
+        <script type="text/javascript" src="~/Scripts/ext/ext-all-debug-w-comments.js"></script>
+    }
+    else
+    {
+        <script src="//extjs.cachefly.net/ext/gpl/4.2.0/ext-all.js"></script>
+    }
+    <script type="text/javascript" src="~/Scripts/ext/ext-lang-pt_BR.js"></script>
+    <script type="text/javascript" src="all.js"></script>
+}

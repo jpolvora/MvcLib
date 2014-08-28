@@ -1,0 +1,179 @@
+﻿@using System.Data.Entity;
+@using System.IO.Compression
+@using MvcLib.DbFileSystem
+
+@functions
+{
+    public static string GetUniquePath()
+    {
+        string uniquePath;
+        do
+        {
+            Guid guid = Guid.NewGuid();
+            string uniqueSubFolderName = guid.ToString();
+            uniquePath = Path.Combine(Path.GetTempPath(), uniqueSubFolderName);
+        } while (Directory.Exists(uniquePath));
+        Directory.CreateDirectory(uniquePath);
+        return uniquePath;
+    }
+
+    public static void WriteFilesToDatabase(DbFileContext ctx, Uri initialUri, DirectoryInfo root, int? id)
+    {
+        string virtualPath;
+        string dirName;
+        bool isHidden = false;
+        if (id == null)
+        {
+            virtualPath = "/";
+            dirName = null;
+        }
+        else
+        {
+            var currentUri = new Uri(root.FullName);
+            var tempRelative = initialUri.MakeRelativeUri(currentUri).ToString();
+            var iof = tempRelative.IndexOf('/');
+            virtualPath = tempRelative.Substring(iof);
+            isHidden = true;
+            dirName = root.Name;
+        }
+
+        var dbFile = new DbFile
+        {
+            IsDirectory = true,
+            Name = dirName,
+            VirtualPath = virtualPath,
+            ParentId = id,
+            IsHidden = isHidden
+        };
+
+        ctx.DbFiles.Add(dbFile);
+        ctx.SaveChanges();
+        //id = dbFile.Id;
+
+        foreach (var fi in root.EnumerateFiles())
+        {
+            var bytes = System.IO.File.ReadAllBytes(fi.FullName);
+
+            var dbFileFolder = new DbFile
+            {
+                IsDirectory = false,
+                Name = Path.GetFileNameWithoutExtension(fi.Name),
+                Extension = fi.Extension,
+                VirtualPath = Path.Combine(virtualPath, fi.Name).Replace('\\', '/'),
+                ParentId = dbFile.Id,
+                Bytes = bytes,
+                IsHidden = true
+            };
+
+            ctx.DbFiles.Add(dbFileFolder);
+            ctx.SaveChanges();
+        }
+
+        foreach (var di in root.EnumerateDirectories())
+        {
+            WriteFilesToDatabase(ctx, initialUri, di, dbFile.Id);
+        }
+    }
+}
+
+@{
+    Layout = null;
+    bool installed;
+    string msg = "";
+
+    using (var ctx = new DbFileContext())
+    {
+        var dbFile = ctx.DbFiles
+            .Include(x => x.Children)
+            .FirstOrDefault(x => x.IsDirectory &&
+                x.ParentId == null
+                && x.Name == null
+                && x.VirtualPath.Equals("/", StringComparison.InvariantCultureIgnoreCase) && x.IsDirectory);
+
+        installed = dbFile != null && dbFile.Children.Count > 0;
+
+        if (!installed && IsPost)
+        {
+            var path = Server.MapPath("~/msbuild/template.zip");
+            if (File.Exists(path))
+            {
+                var folder = GetUniquePath();
+                ZipFile.ExtractToDirectory(path, folder);
+
+                var root = new DirectoryInfo(folder);
+
+                if (EntropiaCtx.IsMySql)
+                {
+                    ctx.Database.ExecuteSqlCommand(@"
+                        SET FOREIGN_KEY_CHECKS = 0;
+                        DELETE FROM KorePages_DbPageParameters;
+                        DELETE FROM KorePages_DbPages;
+                        DELETE FROM KorePages_DbFiles;
+                        ALTER TABLE KorePages_DbPageParameters AUTO_INCREMENT = 1;
+                        ALTER TABLE KorePages_DbFiles AUTO_INCREMENT = 1;
+                        SET FOREIGN_KEY_CHECKS = 1;");
+                }
+                else
+                {
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbPageParameters");
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbPages");
+                    ctx.Database.ExecuteSqlCommand("DELETE FROM KorePages_DbFiles");
+                    ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('KorePages_DbPageParameters', RESEED, 0)"" ");
+                    ctx.Database.ExecuteSqlCommand(@"EXEC sp_executesql ""DBCC CHECKIDENT('KorePages_DbFiles', RESEED, 0)"" ");
+                }
+
+                ctx.SaveChanges();
+
+                try
+                {
+                    WriteFilesToDatabase(new EntropiaCtx(), new Uri(folder), root, null);
+                    msg = "Instalação efetuada com sucesso.";
+                    installed = true;
+                }
+                catch (Exception ex)
+                {
+                    msg = ex.Message;
+                }
+            }
+            else
+            {
+                msg = "Arquivo não encontrado: " + path;
+            }
+        }
+        else if (installed)
+        {
+            msg = "Já instalado.";
+        }
+    }
+}
+
+<html>
+<head>
+    <title>KorePages - Instalação</title>
+</head>
+<body>
+    <p>@msg</p>
+    @if (IsPost)
+    {
+        if (!installed)
+        {
+            <p>Erro</p>
+        }
+
+
+    }
+    else
+    {
+        if (!installed)
+        {
+            <form method="POST">
+                <input type="submit" value="Instalar" />
+            </form>
+        }
+        else
+        {
+            Response.Redirect("~/?reason=installed");
+        }
+    }
+</body>
+</html>

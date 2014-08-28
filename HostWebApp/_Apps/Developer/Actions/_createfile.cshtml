@@ -1,0 +1,60 @@
+﻿@using System.Data.SqlClient
+@using Dapper
+@using Entropia.Framework.Auth
+@using Entropia.Framework.VPP
+@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+
+@{
+    var id = IsPost ? Request.Form["id"].AsInt(0) : UrlData[0].AsInt(0);
+    var fileName = IsPost ? Request.Form["fileName"] : UrlData[1];
+
+    using (var cnn = "EntropiaCtx".GetCustomConnection())
+    {
+        var file = cnn.Query(@"
+                SELECT F.Id, F.VirtualPath, F.IsDirectory, D.VirtualPath as ParentVirtualPath, F.ParentId
+                FROM [Entropia_DbFiles] F
+                LEFT JOIN [Entropia_DbFiles] D on F.ParentId = D.Id
+                WHERE F.Id = @id", new { id }).FirstOrDefault();
+
+        if (file != null)
+        {
+            var parent = id;
+            var folderName = file.VirtualPath;
+            if (!file.IsDirectory)
+            {
+                parent = file.ParentId;
+                folderName = file.ParentVirtualPath;
+            }
+            folderName = VirtualPathUtility.AppendTrailingSlash(folderName);
+
+            var fName = Path.GetFileNameWithoutExtension(fileName);
+            var fExtension = Path.GetExtension(fileName);
+            string fVirtualPath = string.Format("{0}{1}", folderName, fileName);
+
+            const string insert = @"INSERT INTO [Entropia_DbFiles]
+                                    (IsDirectory, Name, Extension, ParentId, VirtualPath, IsHidden, Created, CreatedBy, Bytes)
+                                  VALUES (@a, @b, @c, @d, @e, @f, @g, @h, @i)";
+            cnn.Execute(insert, new
+            {
+                a = 0,
+                b = fName,
+                c = fExtension,
+                d = parent,
+                e = fVirtualPath,
+                f = 0,
+                g = DateTime.Now,
+                h = EntropiaSecurity.CurrentUserName,
+                i = new byte[0]
+            });
+
+            DbFileSystemProvider.RemoveFileFromCache(fVirtualPath, false);
+
+            ResponseExtensions.WriteAjax(Response, new { success = true });
+            return;
+        }
+    }
+
+    Response.StatusCode = 404;
+    ResponseExtensions.WriteAjax(Response, new { success = false, msg = "Arquivo não encontrado" });
+    return;
+}

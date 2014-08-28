@@ -27,11 +27,6 @@ namespace MvcLib.CustomVPP
             return result.ToLowerInvariant();
         }
 
-        protected AbstractFileSystemProvider()
-        {
-
-        }
-
         public virtual bool IsVirtualDir(string virtualPath)
         {
             /*
@@ -121,5 +116,7 @@ namespace MvcLib.CustomVPP
         public abstract CustomVirtualDir GetDirectory(string virtualDir);
 
         public abstract IEnumerable<VirtualFileBase> LazyGetChildren(int key);
+
+        public abstract void RemoveFromCache(string key);
     }
 }
