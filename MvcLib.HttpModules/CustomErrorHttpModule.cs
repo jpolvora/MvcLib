@@ -71,7 +71,9 @@ namespace MvcLib.HttpModules
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.Message);
+                var msg = string.Format("Error rendering view '{0}': {1}", errorViewPath, ex.Message);
+                response.Write(msg);
+                Trace.TraceError(msg);
             }
         }
 
@@ -101,7 +103,9 @@ namespace MvcLib.HttpModules
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error executing controller {0}: {1}", controller, ex.Message);
+                var msg = string.Format("Error executing controller {0}: {1}", controller, ex.Message);
+                context.Response.Write(msg);
+                Trace.TraceError(msg);
             }
             finally
             {
