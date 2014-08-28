@@ -108,6 +108,7 @@ namespace MvcLib.CustomVPP.Impl
             if (string.IsNullOrWhiteSpace(hash))
             {
                 //não encontrou hash no banco: arquivo foi excluído
+                Trace.TraceInformation("File was deleted? {0}", path);
                 RemoveFromCache(path, true, true, true);
             }
             else
@@ -117,6 +118,7 @@ namespace MvcLib.CustomVPP.Impl
                 if (vf == null || vf.Hash != hash)
                 {
                     //arquivo foi alterado
+                    Trace.TraceInformation("File was modified? {0}", path);
                     RemoveFromCache(path, true, true, false);
                 }
             }
