@@ -31,7 +31,7 @@ namespace MvcLib.CustomVPP
 
         public override string ToString()
         {
-            return string.Format("CustomVirtualFile: {0}", VirtualPath);
+            return string.Format("CustomVirtualFile: {0}, {1}", VirtualPath, Hash);
         }
     }
 }

@@ -13,9 +13,9 @@
         object Get(string key);
 
         T Set<T>(string key, T value, int duration = 20, bool sliding = true)
-            where T: class;
+            where T : class;
 
-        object Remove(string key);
+        void Remove(string key);
         void Clear();
     }
 }

@@ -57,7 +57,6 @@
     <Compile Include="IFileSystemProvider.cs" />
     <Compile Include="Impl\CachedDbServiceFileSystemProvider.cs" />
     <Compile Include="Impl\DefaultDbService.cs" />
-    <Compile Include="Impl\DummyVirtualFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

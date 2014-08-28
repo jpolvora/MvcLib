@@ -115,8 +115,6 @@ namespace MvcLib.CustomVPP
 
         public abstract CustomVirtualDir GetDirectory(string virtualDir);
 
-        public abstract IEnumerable<VirtualFileBase> LazyGetChildren(int key);
-
         public abstract void RemoveFromCache(string key);
     }
 }

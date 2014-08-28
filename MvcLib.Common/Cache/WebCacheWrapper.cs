@@ -46,13 +46,12 @@ namespace MvcLib.Common.Cache
             object result = null;
 
             bool hasValue;
-            _cacheKeys.TryGetValue(key, out hasValue);
-            
-            if (hasValue)
+            if (_cacheKeys.TryGetValue(key, out hasValue) && hasValue)
             {
                 result = WebCache.Get(key);
                 if (result == null)
                 {
+                    Trace.TraceInformation("[WebCacheWrapper]:Item expired: '{0}'", key);
                     //expirou
                     bool r;
                     _cacheKeys.TryRemove(key, out r);
@@ -78,12 +77,12 @@ namespace MvcLib.Common.Cache
             return value;
         }
 
-        public object Remove(string key)
+        public void Remove(string key)
         {
             bool r;
             _cacheKeys.TryRemove(key, out r);
 
-            return Enabled ? WebCache.Remove(key) : null;
+            WebCache.Remove(key);
         }
 
         public void Clear()
