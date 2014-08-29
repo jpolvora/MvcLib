@@ -1,5 +1,6 @@
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
+using MvcLib.Common;
 
 namespace MvcLib.DbFileSystem
 {
@@ -17,11 +18,14 @@ namespace MvcLib.DbFileSystem
 
         protected override void Seed(DbFileContext context)
         {
-            context.DbFiles.AddOrUpdate(x => x.VirtualPath, new DbFile()
+            using (DisposableTimer.StartNew("Seeding DbFileContext"))
             {
-                IsDirectory = true,
-                VirtualPath = "/"
-            });
+                context.DbFiles.AddOrUpdate(x => x.VirtualPath, new DbFile()
+                {
+                    IsDirectory = true,
+                    VirtualPath = "/"
+                });
+            }
         }
     }
 }

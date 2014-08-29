@@ -16,8 +16,12 @@ namespace MvcLib.DbFileSystem
         {
             using (var db = new DbFileContext())
             {
-                Trace.TraceInformation("Initializing DbFileContext using ConnectionString: {0}", db.Database.Connection.ConnectionString);
-                db.Database.Initialize(false);
+                using (DisposableTimer
+                    .StartNew("Initializing DbFileContext using ConnectionString: {0}"
+                    .Fmt(db.Database.Connection.ConnectionString)))
+                {
+                    db.Database.Initialize(false);
+                }
             }
         }
 
@@ -39,7 +43,7 @@ namespace MvcLib.DbFileSystem
         {
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;
-            
+
             if (Verbose)
             {
                 Database.Log = Log;
