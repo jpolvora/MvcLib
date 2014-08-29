@@ -645,12 +645,12 @@
     <Content Include="Content\ext-theme-classic\Readme.md" />
     <Content Include="default.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
-    <None Include="Web.Debug.config">
+    <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
+    </Content>
+    <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
+    </Content>
     <Content Include="_Apps\Developer\Actions\_apprestart.cshtml" />
     <Content Include="_Apps\Developer\Actions\_createfile.cshtml" />
     <Content Include="_Apps\Developer\Actions\_createfolder.cshtml" />
