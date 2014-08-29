@@ -4,7 +4,7 @@ using MvcLib.Common;
 
 namespace MvcLib.DbFileSystem
 {
-    internal sealed class DbFileContextMigrationConfiguration : DbMigrationsConfiguration<DbFileContext>
+    public sealed class DbFileContextMigrationConfiguration : DbMigrationsConfiguration<DbFileContext>
     {
         public DbFileContextMigrationConfiguration()
         {
