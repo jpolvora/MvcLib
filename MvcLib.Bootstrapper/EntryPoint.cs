@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -36,16 +37,19 @@ namespace MvcLib.Bootstrapper
 
             if (Config.IsInDebugMode)
             {
-                var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
-                if (File.Exists(traceOutput))
-                    File.Delete(traceOutput);
+                try
+                {
+                    var traceOutput = HostingEnvironment.MapPath("~/traceOutput.log");
+                    if (File.Exists(traceOutput))
+                        File.Delete(traceOutput);
 
-                var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
+                    var listener = new TextWriterTraceListener(traceOutput, "StartupListener");
 
-                Trace.Listeners.Add(listener);
-                Trace.AutoFlush = true;
+                    Trace.Listeners.Add(listener);
+                    Trace.AutoFlush = true;
+                }
+                catch { }
             }
-
 
             using (DisposableTimer.StartNew("PRE_START"))
             {
