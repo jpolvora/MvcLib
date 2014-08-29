@@ -14,7 +14,7 @@ namespace MvcLib.Kompiler
 {
     public class RoslynWrapper
     {
-        public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
+        static IProject CreateProject()
         {
             IProject project = Solution.Create(SolutionId.CreateNewId())
                 .AddCSharpProject(EntryPoint.CompiledAssemblyName, EntryPoint.CompiledAssemblyName + ".dll")
@@ -22,6 +22,48 @@ namespace MvcLib.Kompiler
                 .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp5))
                 .AddMetadataReferences(EntryPoint.DefaultReferences)
                 .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            return project;
+        }
+
+        static string Compile(IProject project, out byte[] buffer)
+        {
+            buffer = new byte[0];
+
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    var comp = project.GetCompilation();
+
+                    var result = comp.Emit(stream);
+
+                    if (!result.Success)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var diagnostic in result.Diagnostics)
+                        {
+                            sb.AppendFormat("{0} - {1}", diagnostic.Info.Severity, diagnostic.Info.GetMessage())
+                                .AppendLine();
+                        }
+
+                        return sb.ToString();
+                    }
+
+                    buffer = stream.ToArray();
+
+                    return String.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public static string CreateSolutionAndCompile(Dictionary<string, byte[]> files, out byte[] buffer)
+        {
+            var project = CreateProject();
 
             foreach (var file in files)
             {
@@ -33,37 +75,7 @@ namespace MvcLib.Kompiler
                 project = csDoc.Project;
             }
 
-            buffer = new byte[0];
-
-            try
-            {
-                using (var stream = new MemoryStream())
-                {
-                    var comp = project.GetCompilation();
-
-                    var result = comp.Emit(stream);
-
-                    if (!result.Success)
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        foreach (var diagnostic in result.Diagnostics)
-                        {
-                            sb.AppendFormat("{0} - {1}", diagnostic.Info.Severity, diagnostic.Info.GetMessage())
-                                .AppendLine();
-                        }
-
-                        return sb.ToString();
-                    }
-
-                    buffer = stream.ToArray();
-
-                    return String.Empty;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            return Compile(project, out buffer);
         }
 
         public static string CreateSolutionAndCompile(string folder, out byte[] buffer)
@@ -75,12 +87,7 @@ namespace MvcLib.Kompiler
                 return "Pasta {0} não encontada".Fmt(folder);
             }
 
-            IProject project = Solution.Create(SolutionId.CreateNewId())
-                .AddCSharpProject(EntryPoint.CompiledAssemblyName, EntryPoint.CompiledAssemblyName + ".dll")
-                .Solution.Projects.Single()
-                .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp5))
-                .AddMetadataReferences(EntryPoint.DefaultReferences)
-                .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            var project = CreateProject();
 
             foreach (var file in dirInfo.EnumerateFileSystemInfos("*.cs", SearchOption.AllDirectories))
             {
@@ -90,39 +97,8 @@ namespace MvcLib.Kompiler
                 project = csDoc.Project;
             }
 
-            buffer = new byte[0];
-
-            try
-            {
-                using (var stream = new MemoryStream())
-                {
-                    var comp = project.GetCompilation();
-
-                    var result = comp.Emit(stream);
-
-                    if (!result.Success)
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        foreach (var diagnostic in result.Diagnostics)
-                        {
-                            sb.AppendFormat("{0} - {1}", diagnostic.Info.Severity, diagnostic.Info.GetMessage())
-                                .AppendLine();
-                        }
-
-                        return sb.ToString();
-                    }
-
-                    buffer = stream.ToArray();
-
-                    return String.Empty;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            return Compile(project, out buffer);
         }
-
 
         public static String TryCompile(string myCode, string assemblyName, out MemoryStream stream, OutputKind kind = OutputKind.ConsoleApplication)
         {

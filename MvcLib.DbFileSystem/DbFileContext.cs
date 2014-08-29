@@ -19,14 +19,15 @@ namespace MvcLib.DbFileSystem
             if (_initialized)
                 return;
 
+            _initialized = true;
+
             using (var db = new DbFileContext())
             {
-                using (DisposableTimer
-                    .StartNew("Initializing DbFileContext using ConnectionString: {0}"
-                    .Fmt(db.Database.Connection.ConnectionString)))
+                using (DisposableTimer.StartNew("Initializing DbFileContext"))
                 {
+                    Trace.TraceInformation("Connection String: {0}", db.Database.Connection.ConnectionString);
                     db.Database.Initialize(false);
-                    _initialized = true;
+
                 }
             }
         }
