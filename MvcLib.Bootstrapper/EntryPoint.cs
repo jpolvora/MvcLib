@@ -77,7 +77,7 @@ namespace MvcLib.Bootstrapper
 
                 if (Config.ValueOrDefault("DumpToLocal", false))
                 {
-                    //HttpInternals.StopFileMonitoring();
+                    HttpInternals.StopFileMonitoring();
 
                     var customvpp = new SubfolderVpp();
                     HostingEnvironment.RegisterVirtualPathProvider(customvpp);
