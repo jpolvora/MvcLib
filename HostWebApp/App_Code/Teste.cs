@@ -9,7 +9,7 @@ namespace HostWebApp
     {
         public override string ToString()
         {
-            return base.ToString();
+            return string.Format("{0}", DateTime.Now);
         }
     }
 }
