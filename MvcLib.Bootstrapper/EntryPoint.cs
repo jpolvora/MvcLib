@@ -94,7 +94,6 @@ namespace MvcLib.Bootstrapper
                     HostingEnvironment.RegisterVirtualPathProvider(customvpp);
                 }
 
-
                 if (Config.ValueOrDefault("Kompiler", false))
                 {
                     if (Config.ValueOrDefault("KompilerForceRecompilation", false))

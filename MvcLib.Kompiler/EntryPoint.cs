@@ -58,10 +58,20 @@ namespace MvcLib.Kompiler
 
             _initialized = true;
 
-            using (DisposableTimer.StartNew("Assembly Compilation"))
+            using (DisposableTimer.StartNew("Assembly Compilation from dbfiles"))
             {
                 byte[] buffer;
-                var msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
+                string msg;
+                if (Config.ValueOrDefault("DumpToLocal", false))
+                {
+                    msg = RoslynWrapper.CreateSolutionAndCompile(
+                        Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles"), out buffer);
+                }
+                else
+                {
+                    msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
+                }
+
                 if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
                 {
                     Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");

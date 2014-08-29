@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Hosting;
+using MvcLib.Common;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Services;
@@ -64,9 +66,66 @@ namespace MvcLib.Kompiler
             }
         }
 
+        public static string CreateSolutionAndCompile(string folder, out byte[] buffer)
+        {
+            var dirInfo = new DirectoryInfo(HostingEnvironment.MapPath(folder));
+            if (!dirInfo.Exists)
+            {
+                buffer = new byte[0];
+                return "Pasta {0} não encontada".Fmt(folder);
+            }
+
+            IProject project = Solution.Create(SolutionId.CreateNewId())
+                .AddCSharpProject(EntryPoint.CompiledAssemblyName, EntryPoint.CompiledAssemblyName + ".dll")
+                .Solution.Projects.Single()
+                .UpdateParseOptions(new ParseOptions().WithLanguageVersion(LanguageVersion.CSharp5))
+                .AddMetadataReferences(EntryPoint.DefaultReferences)
+                .UpdateCompilationOptions(new CompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            foreach (var file in dirInfo.EnumerateFileSystemInfos("*.cs", SearchOption.AllDirectories))
+            {
+                var folders = file.FullName.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+
+                var csDoc = project.AddDocument(file.FullName, File.ReadAllText(file.FullName), folders);
+                project = csDoc.Project;
+            }
+
+            buffer = new byte[0];
+
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    var comp = project.GetCompilation();
+
+                    var result = comp.Emit(stream);
+
+                    if (!result.Success)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var diagnostic in result.Diagnostics)
+                        {
+                            sb.AppendFormat("{0} - {1}", diagnostic.Info.Severity, diagnostic.Info.GetMessage())
+                                .AppendLine();
+                        }
+
+                        return sb.ToString();
+                    }
+
+                    buffer = stream.ToArray();
+
+                    return String.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+
         public static String TryCompile(string myCode, string assemblyName, out MemoryStream stream, OutputKind kind = OutputKind.ConsoleApplication)
         {
-
 
             // The MyClassInAString is where your code goes
             var syntaxTree = SyntaxTree.ParseText(myCode);
