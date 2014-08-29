@@ -114,5 +114,23 @@ namespace MvcLib.FsDump
             }
 
         }
+
+        public static void RemoveFromDisk(DbFile dbFile)
+        {
+            var localpath = GetLocalPath(dbFile);
+
+            if (File.Exists(localpath))
+            {
+                Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}", localpath);
+                try
+                {
+                    File.Delete(localpath);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿@using System.Data.Entity;
-@using Entropia.Framework.Entities
-@using MvcLib.CustomVPP
 @using MvcLib.DbFileSystem
+@using MvcLib.FsDump
 @using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
 
 @{
@@ -14,18 +13,8 @@
         {
             ctx.DbFiles.Remove(result);
             ctx.SaveChanges();
-
-            /* remove do cache após alterações */
-            var cacheKey = string.Format(result.IsDirectory
-                ? "VirtualDirectory:{0}"
-                : "VirtualFile:{0}", result.VirtualPath);
-
-            EntropiaCache.Remove(cacheKey);
-            if (!result.IsDirectory)
-            {
-                var hashKey = string.Format("Hash:{0}", result.VirtualPath);
-                EntropiaCache.Remove(hashKey);
-            }
+            
+            DbToLocal.RemoveFromDisk(result);
 
             ResponseExtensions.WriteAjax(Response, new { success = true });
             return;

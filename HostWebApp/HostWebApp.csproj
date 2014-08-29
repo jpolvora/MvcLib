@@ -132,6 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Code\dummy.txt" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\codemirror\codemirror.css" />
     <Content Include="Content\codemirror\dialog.css" />
     <Content Include="Content\codemirror\eclipse.css" />
@@ -600,6 +604,17 @@
     <Content Include="Content\ext-theme-classic\images\window-header\window-header-default-top-sides.gif" />
     <Content Include="Content\ext-theme-classic\images\window\window-default-corners.gif" />
     <Content Include="Content\ext-theme-classic\images\window\window-default-sides.gif" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <None Include="Scripts\jquery-1.9.0.intellisense.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\jquery-1.9.0.js" />
+    <Content Include="Scripts\jquery-1.9.0.min.js" />
     <Content Include="_plugins\dummy.txt" />
     <Content Include="Scripts\CodeMirror\active-line.js" />
     <Content Include="Scripts\CodeMirror\brace-fold.js" />
@@ -629,6 +644,7 @@
     <Content Include="packages.config" />
     <Content Include="Content\ext-theme-classic\Readme.md" />
     <Content Include="default.cshtml" />
+    <Content Include="Scripts\jquery-1.9.0.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -636,7 +652,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="_Apps\Developer\Actions\_apprestart.cshtml" />
-    <Content Include="_Apps\Developer\Actions\_build.cshtml" />
     <Content Include="_Apps\Developer\Actions\_createfile.cshtml" />
     <Content Include="_Apps\Developer\Actions\_createfolder.cshtml" />
     <Content Include="_Apps\Developer\Actions\_createPage.cshtml" />

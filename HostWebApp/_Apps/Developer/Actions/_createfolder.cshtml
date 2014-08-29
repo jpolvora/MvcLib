@@ -1,8 +1,4 @@
 ﻿@using System.Data.Entity;
-@using Entropia.Framework.Entities
-@using Entropia.Framework.VPP
-@using MvcLib.Common.Cache
-@using MvcLib.CustomVPP
 @using MvcLib.DbFileSystem
 @using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
 
@@ -35,8 +31,6 @@
 
             ctx.DbFiles.Add(dbFile);
             ctx.SaveChanges();
-            CustomVirtualPathProvider.
-            DbFileSystemProvider.RemoveFileFromCache(dbFile.VirtualPath, dbFile.IsDirectory);
             
 
             ResponseExtensions.WriteAjax(Response, new { success = true });

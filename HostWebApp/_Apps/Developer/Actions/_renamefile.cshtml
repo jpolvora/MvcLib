@@ -1,12 +1,13 @@
 ﻿@using System.Data.Entity;
-@using Entropia.Framework.Entities
+@using MvcLib.DbFileSystem
+@using MvcLib.FsDump
 @using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
 
 @{
     var id = IsPost ? Request.Form["id"].AsInt(0) : UrlData[0].AsInt(0);
     var newFileName = IsPost ? Request.Form["newFileName"] : UrlData[1];
 
-    using (var ctx = new EntropiaCtx())
+    using (var ctx = new DbFileContext())
     {
         var result = ctx.DbFiles.Include(x => x.Children).Include(x => x.Parent).FirstOrDefault(x => x.Id == id);
         if (result != null && result.Children.Count == 0)
@@ -21,19 +22,10 @@
             result.VirtualPath = string.Format("{0}{1}", folderName, newFileName);
 
             ctx.SaveChanges();
-
-            /* remove do cache após alterações */
-            var cacheKey = string.Format(result.IsDirectory
-                ? "VirtualDirectory:{0}"
-                : "VirtualFile:{0}", result.VirtualPath);
             
-            EntropiaCache.Remove(cacheKey);
-            if (!result.IsDirectory)
-            {
-                var hashKey = string.Format("Hash:{0}", result.VirtualPath);
-                EntropiaCache.Remove(hashKey);
-            }
-
+            DbToLocal.RemoveFromDisk(result);
+            DbToLocal.WriteToDisk(result, true);
+            
             ResponseExtensions.WriteAjax(Response, new { success = true });
             return;
         }
