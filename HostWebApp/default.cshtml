@@ -1,5 +1,7 @@
-﻿@{
+﻿@using HostWebApp
+@{
     Layout = null;
+    var teste = new Teste();
 }
 
 <!DOCTYPE html>
@@ -12,6 +14,7 @@
 <body>
     <div>
         <p>Database is empty. Please upload files.</p>
+        <p>Test Compilation: @teste.ToString()</p>
     </div>
 </body>
 </html>
