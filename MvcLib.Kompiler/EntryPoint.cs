@@ -58,17 +58,19 @@ namespace MvcLib.Kompiler
 
             _initialized = true;
 
-            using (DisposableTimer.StartNew("Assembly Compilation from dbfiles"))
+            using (DisposableTimer.StartNew("Roslyn Compilation"))
             {
                 byte[] buffer;
                 string msg;
                 if (Config.ValueOrDefault("DumpToLocal", false))
                 {
-                    msg = RoslynWrapper.CreateSolutionAndCompile(
-                        Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles"), out buffer);
+                    var localRootFolder = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
+                    Trace.TraceInformation("Compiling from Local File System: {0}", localRootFolder);
+                    msg = RoslynWrapper.CreateSolutionAndCompile(localRootFolder, out buffer);
                 }
                 else
                 {
+                    Trace.TraceInformation("Compiling from DB");
                     msg = KompilerDbService.TryCreateAndSaveAssemblyFromDbFiles(CompiledAssemblyName, out buffer);
                 }
 

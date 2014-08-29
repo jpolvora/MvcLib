@@ -25,7 +25,8 @@ namespace MvcLib.DbFileSystem
         {
             ConnectionStringKey = Config.ValueOrDefault("DbFileContextKey", "DbFileContext");
             Verbose = Config.ValueOrDefault("DbFileContextVerbose", true);
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
+            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
+            System.Data.Entity.Database.SetInitializer(new NullDatabaseInitializer<DbFileContext>());
         }
 
         public DbFileContext()
