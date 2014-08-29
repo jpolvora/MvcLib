@@ -62,20 +62,28 @@ namespace MvcLib.Bootstrapper
                     DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
                 }
 
-                DbFileContext.Initialize();
-
+                using (DisposableTimer.StartNew("DbFileContext"))
+                {
+                    DbFileContext.Initialize();
+                }
                 //plugin loader deve ser utilizado se dump to local = true ou se utilizar o custom vpp
                 if (Config.ValueOrDefault("PluginLoader", false))
                 {
-                    PluginLoader.EntryPoint.Initialize();
+                    using (DisposableTimer.StartNew("PluginLoader"))
+                    {
+                        PluginLoader.EntryPoint.Initialize();
+                    }
                 }
 
                 if (Config.ValueOrDefault("DumpToLocal", false))
                 {
                     var customvpp = new SubfolderVpp();
                     HostingEnvironment.RegisterVirtualPathProvider(customvpp);
+                    using (DisposableTimer.StartNew("DumpToLocal"))
+                    {
+                        DbToLocal.Execute();
+                    }
 
-                    DbToLocal.Execute();
                 }
                 else if (Config.ValueOrDefault("CustomVirtualPathProvider", false))
                 {
@@ -102,7 +110,10 @@ namespace MvcLib.Bootstrapper
                         Kompiler.EntryPoint.AddReferences(typeof(Controller), typeof(WebPageRenderingBase), typeof(WebCacheWrapper), typeof(ViewRenderer), typeof(DbToLocal), typeof(CustomErrorHttpModule.ErrorModel));
                         Kompiler.EntryPoint.AddReferences(PluginStorage.GetAssemblies().ToArray());
 
-                        Kompiler.EntryPoint.Execute();
+                        using (DisposableTimer.StartNew("Kompiler"))
+                        {
+                            Kompiler.EntryPoint.Execute();
+                        }
                     }
                 }
 

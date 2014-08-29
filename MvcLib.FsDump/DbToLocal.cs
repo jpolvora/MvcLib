@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Web.Hosting;
 using MvcLib.Common;
 using MvcLib.DbFileSystem;
@@ -38,7 +39,6 @@ namespace MvcLib.FsDump
             else
                 RecursiveDelete(dirInfo);
 
-            //procurar por todos os arquivos CS no DbFileSystem
             using (var ctx = new DbFileContext())
             {
                 var dbFiles = ctx.DbFiles
@@ -78,12 +78,16 @@ namespace MvcLib.FsDump
                         }
                     }
 
-                    Trace.TraceInformation("[DbToLocal]:Copiando arquivo: {0} to {1}/{2}", dbFile.VirtualPath, localpath, dbFile.LastWriteUtc);
+                    Trace.TraceInformation("[DbToLocal]:Copiando arquivo: '{0}'", dbFile.VirtualPath);
                     try
                     {
-                        if (dbFile.IsBinary && dbFile.Bytes.Length > 0)
-                            File.WriteAllBytes(localpath, dbFile.Bytes);
-                        else File.WriteAllText(localpath, dbFile.Texto);
+                        DbFile file = dbFile;
+                        ThreadPool.QueueUserWorkItem(x =>
+                        {
+                            if (file.IsBinary && file.Bytes.Length > 0)
+                                File.WriteAllBytes(localpath, file.Bytes);
+                            else File.WriteAllText(localpath, file.Texto);
+                        });
                     }
                     catch (Exception ex)
                     {
