@@ -17,8 +17,7 @@
         var result = ctx.DbFiles.FirstOrDefault(x => x.Id == id && x.IsDirectory == false);
         if (result != null)
         {
-            var bytes = Encoding.UTF8.GetBytes(text.Trim());
-            result.Bytes = bytes;
+            result.Texto = text;
             result.IsHidden = isHidden;
             ctx.SaveChanges();
 
