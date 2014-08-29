@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Hosting;
 using MvcLib.Common;
 
@@ -12,7 +14,6 @@ namespace MvcLib.CustomVPP
 {
     public class SubfolderVpp : VirtualPathProvider
     {
-        private readonly string _subfolder;
         private readonly string _relativePath;
         private readonly string _absolutePath;
 
@@ -23,9 +24,9 @@ namespace MvcLib.CustomVPP
             _relativePath = VirtualPathUtility.AppendTrailingSlash(VirtualPathUtility.ToAppRelative(cfg));
             _absolutePath = VirtualPathUtility.AppendTrailingSlash(VirtualPathUtility.ToAbsolute(cfg));
 
-            _subfolder = HostingEnvironment.MapPath(_relativePath);
-            if (!Directory.Exists(_subfolder))
-                Directory.CreateDirectory(_subfolder);
+            string subfolder = HostingEnvironment.MapPath(_relativePath);
+            if (!Directory.Exists(subfolder))
+                Directory.CreateDirectory(subfolder);
         }
 
         string NewAbsolutePath(string virtualPath)
@@ -40,8 +41,8 @@ namespace MvcLib.CustomVPP
 
         string GetPath(string virtualPath)
         {
-            return HostingEnvironment.MapPath(VirtualPathUtility.IsAbsolute(virtualPath) 
-                ? NewAbsolutePath(virtualPath) 
+            return HostingEnvironment.MapPath(VirtualPathUtility.IsAbsolute(virtualPath)
+                ? NewAbsolutePath(virtualPath)
                 : NewRelativePath(virtualPath));
         }
 
@@ -88,6 +89,22 @@ namespace MvcLib.CustomVPP
                 return rem;
 
             return base.GetDirectory(virtualDir);
+        }
+
+        public override CacheDependency GetCacheDependency(string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
+        {
+            if (Path.HasExtension(virtualPath))
+            {
+                if (GetFile(virtualPath) is RemappedFile)
+                    return null;
+            }
+            else
+            {
+                if (GetDirectory(virtualPath) is RemappedDir)
+                    return null;
+            }
+            
+            return base.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
         }
     }
 }

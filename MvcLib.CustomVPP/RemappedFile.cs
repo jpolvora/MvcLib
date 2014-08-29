@@ -18,7 +18,10 @@ namespace MvcLib.CustomVPP
 
         public override Stream Open()
         {
-            return File.Open(_fullPath, FileMode.Open);
+            var inStream = new FileStream(_fullPath, FileMode.Open,
+                              FileAccess.Read, FileShare.ReadWrite);
+
+            return inStream;
         }
     }
 }
