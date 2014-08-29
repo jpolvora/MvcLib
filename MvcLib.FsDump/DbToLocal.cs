@@ -61,12 +61,12 @@ namespace MvcLib.FsDump
         static string GetLocalPath(DbFile dbFile)
         {
             string localpath;
-            if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
-            {
-                //copia p/ app_code
-                localpath = AppCode + dbFile.VirtualPath.Replace("/", "\\");
-            }
-            else
+            //if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    //copia p/ app_code
+            //    localpath = AppCode + dbFile.VirtualPath.Replace("/", "\\");
+            //}
+            //else
             {
                 localpath = DirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
             }

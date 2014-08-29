@@ -161,3 +161,4 @@ _plugins
 
 *.dll
 /MvcFromDbMinimal/_files
+/HostWebApp/dbfiles
