@@ -27,8 +27,40 @@ namespace HostWebApp
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-            // Set EnableOptimizations to false for debugging. For more information,
-            // visit http://go.microsoft.com/fwlink/?LinkId=301862
+            bundles.Add(new ScriptBundle("~/bundles/codemirror-js")
+                 .Include("~/Scripts/CodeMirror/codemirror.js")
+                 .Include("~/Scripts/CodeMirror/clike.js")
+                 .Include("~/Scripts/CodeMirror/htmlmixed.js")
+                 .Include("~/Scripts/CodeMirror/css.js")
+                 .Include("~/Scripts/CodeMirror/javascript.js")
+                 .Include("~/Scripts/CodeMirror/xml.js")
+                 .Include("~/Scripts/CodeMirror/razor.js")
+                 .Include("~/Scripts/CodeMirror/htmlembedded.js")
+                 .Include("~/Scripts/CodeMirror/dialog.js")
+                 .Include("~/Scripts/CodeMirror/searchcursor.js")
+                 .Include("~/Scripts/CodeMirror/search.js")
+                 .Include("~/Scripts/CodeMirror/foldcode.js")
+                 .Include("~/Scripts/CodeMirror/indent-fold.js")
+                 .Include("~/Scripts/CodeMirror/brace-fold.js")
+                 .Include("~/Scripts/CodeMirror/xml-fold.js")
+                 .Include("~/Scripts/CodeMirror/matchtags.js")
+                 .Include("~/Scripts/CodeMirror/matchbrackets.js")
+                 .Include("~/Scripts/CodeMirror/closebrackets.js")
+                 .Include("~/Scripts/CodeMirror/closetag.js")
+                 .Include("~/Scripts/CodeMirror/active-line.js")
+                 .Include("~/Scripts/CodeMirror/fullscreen.js"));
+
+            bundles.Add(new StyleBundle("~/bundles/codemirror-css")
+                .Include("~/Content/codemirror/codemirror.css")
+                .Include("~/Content/codemirror/dialog.css")
+                .Include("~/Content/codemirror/fullscreen.css")
+                .Include("~/Content/codemirror/xq-light.css")
+                .Include("~/Content/codemirror/pastel-on-dark.css")
+                .Include("~/Content/codemirror/mbo.css")
+                .Include("~/Content/codemirror/monokai.css")
+                .Include("~/Content/codemirror/eclipse.css")
+                .Include("~/Content/codemirror/vibrant-ink.css"));
+
 
             BundleTable.EnableOptimizations = !Config.IsInDebugMode;
         }

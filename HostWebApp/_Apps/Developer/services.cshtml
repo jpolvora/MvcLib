@@ -1,16 +1,8 @@
-﻿@using Entropia.Framework.Utils
-@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
+﻿@using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
 @{
     Layout = null;
     Response.ContentType = "application/json";
-
-
-    if (IsPost)
-    {
-        var req = Misc.AsString(Request.Params["__RequestVerificationToken"]);
-        //AntiForgery.Validate();
-    }
-
+    
     if (UrlData.Count == 0)
     {
         @WriteError("Action não encontrada.")

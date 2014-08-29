@@ -1,6 +1,6 @@
 ﻿@using System.Text
-@using Entropia.Framework.Entities
-@using Entropia.Framework.VPP
+@using MvcLib.DbFileSystem
+@using MvcLib.FsDump
 @using ResponseExtensions = MvcLib.Common.Mvc.ResponseExtensions
 
 @{
@@ -12,7 +12,7 @@
     var content = Encoding.UTF8.GetString(bytesStr);
     var text = Server.HtmlDecode(content);
 
-    using (var ctx = new EntropiaCtx())
+    using (var ctx = new DbFileContext())
     {
         var result = ctx.DbFiles.FirstOrDefault(x => x.Id == id && x.IsDirectory == false);
         if (result != null)
@@ -23,9 +23,8 @@
             ctx.SaveChanges();
 
             /* remove do cache após alterações */
-
-            DbFileSystemProvider.RemoveFileFromCache(result.VirtualPath, result.IsDirectory);
-            RemoveMetadataFromCache(result.VirtualPath);
+            //copy to local
+            DbToLocal.WriteToDisk(result, true);
 
             ResponseExtensions.WriteAjax(Response, new { success = true });
             return;

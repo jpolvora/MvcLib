@@ -15,7 +15,7 @@
     }
 
     PageData["Title"] = "Entropia - Developer";
-    string theme = "~/Content/ext-theme-gray/ext-theme-gray-all.css";
+    string theme = Href("~/Content/ext-theme-classic/ext-theme-classic-all.css");
 }
 
 @* ReSharper disable once Razor.SectionNotResolved *@
@@ -27,7 +27,7 @@
             switch (Request["theme"])
             {
                 case "neptune": theme = "~/Content/ext-theme-neptune/ext-theme-neptune-all.css"; break;
-                case "classic": theme = "~/Content/ext-theme-classic/ext-theme-classic-all.css"; break;
+                case "classic": theme = "~/Content/ext-theme-gray/ext-theme-gray-all.css"; break;
                 case "access": theme = "~/Content/ext-theme-classic/ext-theme-access-all.css"; break;
             }
         }
@@ -40,7 +40,6 @@
     }
     else
     {
-
         theme = "//extjs.cachefly.net/ext/gpl/4.2.1/resources/css/ext-all-gray.css";
         if (!Request["theme"].IsEmpty())
         {
@@ -76,13 +75,13 @@
     }
 
     <script>
-        window._DropBoxClient = new Dropbox.Client({ key: "eeazli6wo1wm78e" });
+        @*window._DropBoxClient = new Dropbox.Client({ key: "eeazli6wo1wm78e" });
         var client = window._DropBoxClient;
         client.authDriver(new Dropbox.AuthDriver.Popup({
             receiverUrl: '@receiveUrl'
         }));
 
-        console.log('client is:', client);
+        console.log('client is:', client);*@
     </script>
 
     @Styles.Render("~/bundles/codemirror-css")

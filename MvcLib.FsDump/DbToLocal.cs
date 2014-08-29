@@ -22,22 +22,28 @@ namespace MvcLib.FsDump
             }
         }
 
-        public static void Execute()
-        {
-            Trace.TraceInformation("[DbToLocal]: Starting...");
+        private static readonly string AppCode;
+        private static readonly DirectoryInfo DirInfo;
 
+        static DbToLocal()
+        {
             var path = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
 
-            var appCode = HostingEnvironment.MapPath("~/App_Code/");
+            AppCode = HostingEnvironment.MapPath("~/App_Code/");
 
             //var appCodeInfo = new DirectoryInfo(appCode);
 
             var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
-            var dirInfo = new DirectoryInfo(root);
-            if (!dirInfo.Exists)
-                dirInfo.Create();
+            DirInfo = new DirectoryInfo(root);
+            if (!DirInfo.Exists)
+                DirInfo.Create();
             else
-                RecursiveDelete(dirInfo);
+                RecursiveDelete(DirInfo);
+        }
+
+        public static void Execute()
+        {
+            Trace.TraceInformation("[DbToLocal]: Starting...");
 
             using (var ctx = new DbFileContext())
             {
@@ -47,54 +53,66 @@ namespace MvcLib.FsDump
 
                 foreach (var dbFile in dbFiles)
                 {
-                    string localpath;
-                    if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
-                    {
-                        //copia p/ app_code
-                        localpath = appCode + dbFile.VirtualPath.Replace("/", "\\");
-                    }
-                    else
-                    {
-                        localpath = dirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
-                    }
-                    var dir = Path.GetDirectoryName(localpath);
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    if (File.Exists(localpath))
-                    {
-                        var fi = new FileInfo(localpath);
-
-                        if (fi.LastWriteTimeUtc > dbFile.LastWriteUtc)
-                            continue;
-                        Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}/{1}", fi.FullName, fi.LastAccessTimeUtc);
-                        try
-                        {
-                            File.Delete(localpath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError(ex.Message);
-                        }
-                    }
-
-                    Trace.TraceInformation("[DbToLocal]:Copiando arquivo: '{0}'", dbFile.VirtualPath);
-                    try
-                    {
-                        DbFile file = dbFile;
-                        ThreadPool.QueueUserWorkItem(x =>
-                        {
-                            if (file.IsBinary && file.Bytes.Length > 0)
-                                File.WriteAllBytes(localpath, file.Bytes);
-                            else File.WriteAllText(localpath, file.Texto);
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(ex.Message);
-                    }
+                    WriteToDisk(dbFile, false);
                 }
             }
+        }
+
+        static string GetLocalPath(DbFile dbFile)
+        {
+            string localpath;
+            if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
+            {
+                //copia p/ app_code
+                localpath = AppCode + dbFile.VirtualPath.Replace("/", "\\");
+            }
+            else
+            {
+                localpath = DirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
+            }
+
+            return localpath;
+        }
+
+        public static void WriteToDisk(DbFile dbFile, bool force)
+        {
+            Trace.TraceInformation("[DbToLocal]:Copiando arquivo: '{0}'", dbFile.VirtualPath);
+
+            var localpath = GetLocalPath(dbFile);
+
+            if (File.Exists(localpath))
+            {
+                var fi = new FileInfo(localpath);
+
+                if (fi.LastWriteTimeUtc > dbFile.LastWriteUtc && !force)
+                    return;
+
+                Trace.TraceWarning("[DbToLocal]:Arquivo será excluído: {0}/{1}", fi.FullName, fi.LastAccessTimeUtc);
+                try
+                {
+                    File.Delete(localpath);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                }
+            }
+
+            var dir = Path.GetDirectoryName(localpath);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            try
+            {
+                if (dbFile.IsBinary && dbFile.Bytes.Length > 0)
+                    File.WriteAllBytes(localpath, dbFile.Bytes);
+                else File.WriteAllText(localpath, dbFile.Texto);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message);
+            }
+
         }
     }
 }
