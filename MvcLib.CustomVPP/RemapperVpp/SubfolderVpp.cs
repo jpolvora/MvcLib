@@ -80,9 +80,12 @@ namespace MvcLib.CustomVPP.RemapperVpp
             if (IsVirtualPath(virtualPath))
             {
                 var path = GetFullPath(virtualPath);
-                if (IsFile(path))
-                    return new FileInfo(virtualPath).LastAccessTimeUtc.ToString("T");
-                return new DirectoryInfo(virtualPath).LastAccessTimeUtc.ToString("T");
+                string hash = IsFile(path) 
+                    ? new FileInfo(virtualPath).LastAccessTimeUtc.ToString("T") 
+                    : new DirectoryInfo(virtualPath).LastAccessTimeUtc.ToString("T");
+
+                Trace.TraceInformation("[SubfolderVpp]: hash for '{0}' is '{1}'", virtualPath, hash);
+                return hash;
             }
 
             return base.GetFileHash(virtualPath, virtualPathDependencies);
