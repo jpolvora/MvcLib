@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Web.Hosting;
 
-namespace MvcLib.CustomVPP
+namespace MvcLib.CustomVPP.RemapperVpp
 {
     public class RemappedFile : VirtualFile
     {

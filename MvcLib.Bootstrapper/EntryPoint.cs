@@ -13,6 +13,7 @@ using MvcLib.Common.Cache;
 using MvcLib.Common.Mvc;
 using MvcLib.CustomVPP;
 using MvcLib.CustomVPP.Impl;
+using MvcLib.CustomVPP.RemapperVpp;
 using MvcLib.DbFileSystem;
 using MvcLib.FsDump;
 using MvcLib.HttpModules;

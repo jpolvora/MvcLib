@@ -10,12 +10,12 @@ namespace MvcLib.FsDump
 {
     public class DbToLocal
     {
-        static void RecursiveDelete(DirectoryInfo fsInfo)
+        static void RecursiveDelete(DirectoryInfo fsInfo, params  string[] extensions)
         {
             foreach (var info in fsInfo.EnumerateFileSystemInfos())
             {
                 if (info is DirectoryInfo)
-                    RecursiveDelete((DirectoryInfo)info);
+                    RecursiveDelete((DirectoryInfo)info, extensions);
 
                 info.Delete();
             }
@@ -29,8 +29,7 @@ namespace MvcLib.FsDump
 
             var appCode = HostingEnvironment.MapPath("~/App_Code/");
 
-            var appCodeInfo = new DirectoryInfo(appCode);
-            RecursiveDelete(appCodeInfo);
+            //var appCodeInfo = new DirectoryInfo(appCode);
 
             var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
             var dirInfo = new DirectoryInfo(root);

@@ -3,7 +3,7 @@ using System.IO;
 using System.Web;
 using System.Web.Hosting;
 
-namespace MvcLib.CustomVPP
+namespace MvcLib.CustomVPP.RemapperVpp
 {
     public class RemappedDir : VirtualDirectory
     {
