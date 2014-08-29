@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Web;
 using System.Web.Hosting;
 
 namespace MvcLib.CustomVPP.RemapperVpp
@@ -22,6 +23,12 @@ namespace MvcLib.CustomVPP.RemapperVpp
                               FileAccess.Read, FileShare.ReadWrite);
 
             return inStream;
+        }
+
+        public static RemappedFile CreateFromPath(string baseVirtualPath, FileInfo fileInfo)
+        {
+            var virtualPath = VirtualPathUtility.AppendTrailingSlash(baseVirtualPath) + fileInfo.Name;
+            return new RemappedFile(virtualPath, fileInfo.FullName);
         }
     }
 }

@@ -721,7 +721,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Teste.cs" />
+    <Compile Include="App_Code\Teste.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MvcLib.Bootstrapper\MvcLib.Bootstrapper.csproj">

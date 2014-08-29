@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Linq.Expressions;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
@@ -56,7 +58,6 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         public override VirtualDirectory GetDirectory(string virtualDir)
         {
-
             var rem = new RemappedDir(virtualDir, GetFullPath(virtualDir));
             if (rem.Exists)
             {
@@ -80,9 +81,18 @@ namespace MvcLib.CustomVPP.RemapperVpp
             if (IsVirtualPath(virtualPath))
             {
                 var path = GetFullPath(virtualPath);
-                string hash = IsFile(path) 
-                    ? new FileInfo(virtualPath).LastAccessTimeUtc.ToString("T") 
-                    : new DirectoryInfo(virtualPath).LastAccessTimeUtc.ToString("T");
+                string hash;
+
+                if (IsFile(path))
+                {
+                    var fInfo = new FileInfo(path);
+                    hash = fInfo.LastWriteTimeUtc.ToString("u");
+                }
+                else
+                {
+                    var dInfo = new DirectoryInfo(path);
+                    hash = dInfo.LastWriteTimeUtc.ToString("u");
+                }
 
                 Trace.TraceInformation("[SubfolderVpp]: hash for '{0}' is '{1}'", virtualPath, hash);
                 return hash;
@@ -96,7 +106,7 @@ namespace MvcLib.CustomVPP.RemapperVpp
             var path = GetFullPath(virtualPath);
 
             if (IsFile(path))
-                return File.Exists(path);
+                return true;
 
             return Directory.Exists(path);
         }
@@ -110,7 +120,11 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         private static bool IsFile(string fullPath)
         {
-            return Path.HasExtension(fullPath);
+            return File.Exists(fullPath);
+
+            //var attr = File.GetAttributes(fullPath);
+            //return !attr.HasFlag(FileAttributes.Directory);
+
         }
     }
 }

@@ -18,18 +18,6 @@ namespace MvcLib.CustomVPP.RemapperVpp
             Exists = FullPath.Exists;
         }
 
-        static RemappedDir CreateFromPath(string baseVirtualPath, DirectoryInfo directoryInfo)
-        {
-            var virtualDir = VirtualPathUtility.AppendTrailingSlash(baseVirtualPath) + directoryInfo.Name;
-            return new RemappedDir(virtualDir, directoryInfo.FullName);
-        }
-
-        static RemappedFile CreateFromPath(string baseVirtualPath, FileInfo fileInfo)
-        {
-            var virtualPath = VirtualPathUtility.AppendTrailingSlash(baseVirtualPath) + fileInfo.Name;
-            return new RemappedFile(virtualPath, fileInfo.FullName);
-        }
-
         public override IEnumerable Directories
         {
             get
@@ -52,7 +40,7 @@ namespace MvcLib.CustomVPP.RemapperVpp
                 {
                     foreach (var fileInfo in FullPath.EnumerateFiles())
                     {
-                        yield return CreateFromPath(this.VirtualPath, fileInfo);
+                        yield return RemappedFile.CreateFromPath(this.VirtualPath, fileInfo);
                     }
                 }
             }
@@ -66,13 +54,20 @@ namespace MvcLib.CustomVPP.RemapperVpp
                 {
                     foreach (var info in FullPath.EnumerateFileSystemInfos())
                     {
-                        if (info is DirectoryInfo)
-                            yield return CreateFromPath(this.VirtualPath, (DirectoryInfo)info);
-                        else if (info is FileInfo)
-                            yield return CreateFromPath(this.VirtualPath, (FileInfo)info);
+                        var directoryInfo = info as DirectoryInfo;
+                        if (directoryInfo != null)
+                            yield return CreateFromPath(this.VirtualPath, directoryInfo);
+                        else 
+                            yield return RemappedFile.CreateFromPath(this.VirtualPath, (FileInfo)info);
                     }
                 }
             }
+        }
+
+        public static RemappedDir CreateFromPath(string baseVirtualPath, DirectoryInfo directoryInfo)
+        {
+            var virtualDir = VirtualPathUtility.AppendTrailingSlash(baseVirtualPath) + directoryInfo.Name;
+            return new RemappedDir(virtualDir, directoryInfo.FullName);
         }
     }
 }

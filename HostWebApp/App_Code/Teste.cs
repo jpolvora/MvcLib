@@ -7,5 +7,9 @@ namespace HostWebApp
 {
     public class Teste
     {
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }
