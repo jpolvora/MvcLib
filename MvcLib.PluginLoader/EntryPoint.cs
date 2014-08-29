@@ -185,9 +185,10 @@ namespace MvcLib.PluginLoader
                 return;
             }
 
-            //var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
+            var path = Path.GetDirectoryName(args.LoadedAssembly.Location);
 
-            //if (!string.IsNullOrWhiteSpace(path) && path.StartsWith(PluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrWhiteSpace(path) ||
+                !path.StartsWith(PluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase)) return;
 
             try
             {
@@ -197,7 +198,6 @@ namespace MvcLib.PluginLoader
             {
                 Trace.TraceError(ex.Message);
             }
-
         }
 
         //public static void RecursiveDeleteDirectory(DirectoryInfo baseDir, bool self, params string[] extensions)

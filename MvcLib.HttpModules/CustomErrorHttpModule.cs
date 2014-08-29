@@ -67,12 +67,15 @@ namespace MvcLib.HttpModules
             {
                 var html = ViewRenderer.RenderView(errorViewPath, model);
                 response.Write(html);
-                
+
             }
             catch (Exception ex)
             {
                 var msg = string.Format("Error rendering view '{0}': {1}", errorViewPath, ex.Message);
                 response.Write(msg);
+                response.Write("<BR />");
+                response.Write(model.Message);
+                response.StatusCode = 500;
                 Trace.TraceError(msg);
             }
         }
@@ -97,7 +100,7 @@ namespace MvcLib.HttpModules
                 controller = factory.CreateController(requestContext, controllerName);
                 if (controller != null)
                 {
-                    
+
                     controller.Execute(requestContext);
                 }
             }
@@ -105,6 +108,9 @@ namespace MvcLib.HttpModules
             {
                 var msg = string.Format("Error executing controller {0}: {1}", controller, ex.Message);
                 context.Response.Write(msg);
+                context.Response.Write("<BR />");
+                context.Response.Write(model.Message);
+                context.Response.StatusCode = 500;
                 Trace.TraceError(msg);
             }
             finally

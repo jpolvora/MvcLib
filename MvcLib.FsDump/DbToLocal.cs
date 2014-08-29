@@ -27,14 +27,17 @@ namespace MvcLib.FsDump
 
             var path = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
 
+            var appCode = HostingEnvironment.MapPath("~/App_Code/");
+
+            var appCodeInfo = new DirectoryInfo(appCode);
+            RecursiveDelete(appCodeInfo);
+
             var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
             var dirInfo = new DirectoryInfo(root);
             if (!dirInfo.Exists)
                 dirInfo.Create();
             else
-            {
                 RecursiveDelete(dirInfo);
-            }
 
             //procurar por todos os arquivos CS no DbFileSystem
             using (var ctx = new DbFileContext())
@@ -49,7 +52,7 @@ namespace MvcLib.FsDump
                     if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
                     {
                         //copia p/ app_code
-                        localpath = Path.Combine(dirInfo.FullName, string.Format("App_Code{0}", dbFile.VirtualPath.Replace("/", "\\")));
+                        localpath = appCode + dbFile.VirtualPath.Replace("/", "\\");
                     }
                     else
                     {
