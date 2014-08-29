@@ -13,8 +13,13 @@
         {
             ctx.DbFiles.Remove(result);
             ctx.SaveChanges();
-            
+
+            foreach (var dbFile in result.Children)
+            {
+                DbToLocal.RemoveFromDisk(dbFile);
+            }
             DbToLocal.RemoveFromDisk(result);
+            
 
             ResponseExtensions.WriteAjax(Response, new { success = true });
             return;

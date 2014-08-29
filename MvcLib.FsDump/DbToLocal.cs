@@ -11,14 +11,23 @@ namespace MvcLib.FsDump
 {
     public class DbToLocal
     {
-        static void RecursiveDelete(DirectoryInfo fsInfo, params  string[] extensions)
+        static void RecursiveDelete(DirectoryInfo fsInfo, bool self = false)
         {
             foreach (var info in fsInfo.EnumerateFileSystemInfos())
             {
                 if (info is DirectoryInfo)
-                    RecursiveDelete((DirectoryInfo)info, extensions);
+                    RecursiveDelete((DirectoryInfo)info, true);
 
-                info.Delete();
+                //info.Delete();
+            }
+            try
+            {
+                if (self)
+                    fsInfo.Delete(true);
+            }
+            catch
+            {
+
             }
         }
 
@@ -130,6 +139,10 @@ namespace MvcLib.FsDump
                 {
                     Trace.TraceError(ex.Message);
                 }
+            }
+            else if (Directory.Exists(localpath))
+            {
+                RecursiveDelete(new DirectoryInfo(localpath), true);
             }
         }
     }
