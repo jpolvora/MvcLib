@@ -51,6 +51,7 @@
     <Compile Include="AuditableEntity.cs" />
     <Compile Include="DbFile.cs" />
     <Compile Include="DbFileContext.cs" />
+    <Compile Include="DbFileContextConfig.cs" />
     <Compile Include="DbFileContextMigrationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,6 +7,8 @@ namespace MvcLib.DbFileSystem
 {
     public class DbFileContext : DbContext
     {
+        private static bool _initialized;
+
         public DbSet<DbFile> DbFiles { get; set; }
 
         public static string ConnectionStringKey { get; private set; }
@@ -14,6 +16,9 @@ namespace MvcLib.DbFileSystem
 
         public static void Initialize()
         {
+            if (_initialized)
+                return;
+
             using (var db = new DbFileContext())
             {
                 using (DisposableTimer
@@ -21,6 +26,7 @@ namespace MvcLib.DbFileSystem
                     .Fmt(db.Database.Connection.ConnectionString)))
                 {
                     db.Database.Initialize(false);
+                    _initialized = true;
                 }
             }
         }
@@ -29,8 +35,6 @@ namespace MvcLib.DbFileSystem
         {
             ConnectionStringKey = Config.ValueOrDefault("DbFileContextKey", "DbFileContext");
             Verbose = Config.ValueOrDefault("DbFileContextVerbose", true);
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
-            System.Data.Entity.Database.SetInitializer(new NullDatabaseInitializer<DbFileContext>());
         }
 
         public DbFileContext()
