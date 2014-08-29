@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Web;
 using System.Web.Caching;
@@ -25,34 +26,12 @@ namespace MvcLib.CustomVPP.RemapperVpp
                 Directory.CreateDirectory(subfolder);
         }
 
-        string NewAbsolutePath(string virtualPath)
-        {
-            return string.Format("{0}{1}", _absolutePath, virtualPath.Substring(1));
-        }
-
-        string NewRelativePath(string virtualPath)
-        {
-            return string.Format("{0}/{1}", _relativePath, virtualPath.Substring(2));
-        }
-
-        string GetPath(string virtualPath)
-        {
-            return HostingEnvironment.MapPath(VirtualPathUtility.IsAbsolute(virtualPath)
-                ? NewAbsolutePath(virtualPath)
-                : NewRelativePath(virtualPath));
-        }
-
         public override bool DirectoryExists(string virtualDir)
         {
             if (base.DirectoryExists(virtualDir))
                 return true;
 
-            string fullPath = GetPath(virtualDir);
-
-            if (Directory.Exists(fullPath))
-                return true;
-
-            return false;
+            return IsVirtualPath(virtualDir);
         }
 
         public override bool FileExists(string virtualPath)
@@ -60,47 +39,75 @@ namespace MvcLib.CustomVPP.RemapperVpp
             if (base.FileExists(virtualPath))
                 return true;
 
-            string fullPath = GetPath(virtualPath);
-
-            if (File.Exists(fullPath))
-                return true;
-
-            return false;
+            return IsVirtualPath(virtualPath);
         }
 
         public override VirtualFile GetFile(string virtualPath)
         {
-            var rem = new RemappedFile(virtualPath, GetPath(virtualPath));
+            var rem = new RemappedFile(virtualPath, GetFullPath(virtualPath));
             if (rem.Exists)
+            {
+                Trace.TraceInformation("[SubfolderVpp]: remapping FILE {0} to {1}", virtualPath, rem.FullPath);
                 return rem;
+            }
 
             return base.GetFile(virtualPath);
-
         }
 
         public override VirtualDirectory GetDirectory(string virtualDir)
         {
-            var rem = new RemappedDir(virtualDir, GetPath(virtualDir));
+
+            var rem = new RemappedDir(virtualDir, GetFullPath(virtualDir));
             if (rem.Exists)
+            {
+                Trace.TraceInformation("[SubfolderVpp]: remapping DIR {0} to {1}", virtualDir, rem.FullPath.FullName);
                 return rem;
+            }
 
             return base.GetDirectory(virtualDir);
         }
 
         public override CacheDependency GetCacheDependency(string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
         {
-            if (Path.HasExtension(virtualPath))
-            {
-                if (GetFile(virtualPath) is RemappedFile)
-                    return null;
-            }
-            else
-            {
-                if (GetDirectory(virtualPath) is RemappedDir)
-                    return null;
-            }
-            
+            if (IsVirtualPath(virtualPath))
+                return null;
+
             return base.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
+        }
+
+        public override string GetFileHash(string virtualPath, IEnumerable virtualPathDependencies)
+        {
+            if (IsVirtualPath(virtualPath))
+            {
+                var path = GetFullPath(virtualPath);
+                if (IsFile(path))
+                    return new FileInfo(virtualPath).LastAccessTimeUtc.ToString("T");
+                return new DirectoryInfo(virtualPath).LastAccessTimeUtc.ToString("T");
+            }
+
+            return base.GetFileHash(virtualPath, virtualPathDependencies);
+        }
+
+        private bool IsVirtualPath(string virtualPath)
+        {
+            var path = GetFullPath(virtualPath);
+
+            if (IsFile(path))
+                return File.Exists(path);
+
+            return Directory.Exists(path);
+        }
+
+        string GetFullPath(string virtualPath)
+        {
+            return HostingEnvironment.MapPath(VirtualPathUtility.IsAbsolute(virtualPath)
+                ? string.Format("{0}{1}", _absolutePath, virtualPath.Substring(1))
+                : string.Format("{0}/{1}", _relativePath, virtualPath.Substring(2)));
+        }
+
+        private static bool IsFile(string fullPath)
+        {
+            return Path.HasExtension(fullPath);
         }
     }
 }

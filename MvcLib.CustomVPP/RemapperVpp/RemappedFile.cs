@@ -5,20 +5,20 @@ namespace MvcLib.CustomVPP.RemapperVpp
 {
     public class RemappedFile : VirtualFile
     {
-        private readonly string _fullPath;
+        public readonly string FullPath;
 
         public bool Exists { get; private set; }
 
         public RemappedFile(string virtualPath, string fullPath)
             : base(virtualPath)
         {
-            _fullPath = fullPath;
+            FullPath = fullPath;
             Exists = File.Exists(fullPath);
         }
 
         public override Stream Open()
         {
-            var inStream = new FileStream(_fullPath, FileMode.Open,
+            var inStream = new FileStream(FullPath, FileMode.Open,
                               FileAccess.Read, FileShare.ReadWrite);
 
             return inStream;

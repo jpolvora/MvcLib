@@ -7,15 +7,15 @@ namespace MvcLib.CustomVPP.RemapperVpp
 {
     public class RemappedDir : VirtualDirectory
     {
-        private readonly DirectoryInfo _fullPath;
+        public readonly DirectoryInfo FullPath;
         public bool Exists { get; private set; }
 
         public RemappedDir(string virtualPath, string fullPath)
             : base(virtualPath)
         {
-            _fullPath = new DirectoryInfo(fullPath);
+            FullPath = new DirectoryInfo(fullPath);
 
-            Exists = _fullPath.Exists;
+            Exists = FullPath.Exists;
         }
 
         static RemappedDir CreateFromPath(string baseVirtualPath, DirectoryInfo directoryInfo)
@@ -34,9 +34,9 @@ namespace MvcLib.CustomVPP.RemapperVpp
         {
             get
             {
-                if (_fullPath.Exists)
+                if (FullPath.Exists)
                 {
-                    foreach (var directoryInfo in _fullPath.EnumerateDirectories())
+                    foreach (var directoryInfo in FullPath.EnumerateDirectories())
                     {
                         yield return CreateFromPath(this.VirtualPath, directoryInfo);
                     }
@@ -48,9 +48,9 @@ namespace MvcLib.CustomVPP.RemapperVpp
         {
             get
             {
-                if (_fullPath.Exists)
+                if (FullPath.Exists)
                 {
-                    foreach (var fileInfo in _fullPath.EnumerateFiles())
+                    foreach (var fileInfo in FullPath.EnumerateFiles())
                     {
                         yield return CreateFromPath(this.VirtualPath, fileInfo);
                     }
@@ -62,9 +62,9 @@ namespace MvcLib.CustomVPP.RemapperVpp
         {
             get
             {
-                if (_fullPath.Exists)
+                if (FullPath.Exists)
                 {
-                    foreach (var info in _fullPath.EnumerateFileSystemInfos())
+                    foreach (var info in FullPath.EnumerateFileSystemInfos())
                     {
                         if (info is DirectoryInfo)
                             yield return CreateFromPath(this.VirtualPath, (DirectoryInfo)info);
