@@ -68,6 +68,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvcLib.Common\MvcLib.Common.csproj">
+      <Project>{7ea8cab5-30b9-4069-a8c5-d553ca4016b0}</Project>
+      <Name>MvcLib.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcLib.DbFileSystem\MvcLib.DbFileSystem.csproj">
       <Project>{969929c3-2898-49b8-9ec8-de7a28884524}</Project>
       <Name>MvcLib.DbFileSystem</Name>
