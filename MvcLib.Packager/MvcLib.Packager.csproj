@@ -69,10 +69,8 @@
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="content\dbfiles\dummy.txt" />
     <None Include="content\razorviews\index.cshtml" />
     <Content Include="content\readme.txt" />
-    <Content Include="content\_plugins\dummy.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
     <Content Include="lib\net451\MvcLib.Common.dll" />
     <Content Include="lib\net451\MvcLib.Common.Mvc.dll" />
