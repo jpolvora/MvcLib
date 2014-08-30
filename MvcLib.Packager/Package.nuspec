@@ -22,6 +22,8 @@
     <copyright>Copyright  2014</copyright>
     <dependencies>
       <group targetFramework="net451">
+        <dependency id="jQuery" version="1.11.1" />
+        <dependency id="bootstrap" version="3.2.0" />
         <dependency id="EntityFramework" version="6.1.1" />
         <dependency id="WebActivatorEx" version="2.0.5" />
         <dependency id="Microsoft.AspNet.Mvc" version="5.2.2" />

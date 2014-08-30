@@ -48,9 +48,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <None Include="content\App_Start\BundleConfig.cs.pp" />
+    <None Include="content\App_Start\FilterConfig.cs.pp" />
+    <None Include="content\App_Start\RouteConfig.cs.pp" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="content\Views\Web.config" />
     <None Include="NuGetPackage.ps1" />
     <None Include="NuGetSetup.ps1" />
     <None Include="NuGet.exe" />
@@ -65,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="content\readme.txt" />
+    <Content Include="content\_plugins\dummy.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
     <Content Include="lib\net451\MvcLib.Common.dll" />
     <Content Include="lib\net451\MvcLib.Common.Mvc.dll" />
