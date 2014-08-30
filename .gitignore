@@ -163,3 +163,4 @@ _plugins
 /MvcFromDbMinimal/_files
 /HostWebApp/dbfiles
 /TestNuget/dbfiles
+*.nupkg
