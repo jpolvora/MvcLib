@@ -53,11 +53,11 @@ namespace MvcLib.Bootstrapper
 
             using (DisposableTimer.StartNew("PRE_START"))
             {
-                if (Config.ValueOrDefault("TracerHttpModule", true))
+                if (Config.ValueOrDefault("TracerHttpModule", false))
                 {
                     DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
                 }
-                if (Config.ValueOrDefault("CustomErrorHttpModule", true))
+                if (Config.ValueOrDefault("CustomErrorHttpModule", false))
                 {
                     DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
                 }
@@ -153,7 +153,7 @@ namespace MvcLib.Bootstrapper
 
             using (DisposableTimer.StartNew("RUNNING POST_START ..."))
             {
-                if (Config.ValueOrDefault("MvcTracerFilter", true))
+                if (Config.ValueOrDefault("MvcTracerFilter", false))
                 {
                     GlobalFilters.Filters.Add(new MvcTracerFilter());
                 }

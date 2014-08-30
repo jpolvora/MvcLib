@@ -2,18 +2,18 @@
 <package >
   <metadata>
     <id>MvcLib.Nuget</id>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <title>MvcLib.Nuget</title>
     <authors>Jone Polvora</authors>
     <owners>Jone Polvora</owners>
+    <summary>
+      Contains all necessary assemblies to run dynamic Asp.Net applications with Roslyn compilation, dynamic module loading (Plugins)
+    </summary>
     <description>
       A long description of the package. This shows up in the right pane of the Add Package Dialog as well as in the Package Manager Console when listing packages using the Get-Package command.
     </description>
     <releaseNotes>
     </releaseNotes>
-    <summary>
-      A short description of the package. If specified, this shows up in the middle pane of the Add Package Dialog. If not specified, a truncated version of the description is used instead.
-    </summary>
     <language>en-US</language>
     <projectUrl>https://nuget.org/packages/MvcLib.Nuget</projectUrl>
     <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>

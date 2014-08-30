@@ -35,7 +35,7 @@ namespace MvcLib.DbFileSystem
         static DbFileContext()
         {
             ConnectionStringKey = Config.ValueOrDefault("DbFileContextKey", "DbFileContext");
-            Verbose = Config.ValueOrDefault("DbFileContextVerbose", true);
+            Verbose = Config.ValueOrDefault("DbFileContextVerbose", false);
         }
 
         public DbFileContext()
