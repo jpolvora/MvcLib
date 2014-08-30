@@ -51,6 +51,7 @@
     <None Include="content\App_Start\BundleConfig.cs.pp" />
     <None Include="content\App_Start\FilterConfig.cs.pp" />
     <None Include="content\App_Start\RouteConfig.cs.pp" />
+    <None Include="content\razorviews\Web.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="content\dbfiles\dummy.txt" />
-    <Content Include="content\index.html" />
+    <None Include="content\razorviews\index.cshtml" />
     <Content Include="content\readme.txt" />
     <Content Include="content\_plugins\dummy.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
@@ -81,6 +82,9 @@
     <Content Include="lib\net451\MvcLib.HttpModules.dll" />
     <Content Include="lib\net451\MvcLib.Kompiler.dll" />
     <Content Include="lib\net451\MvcLib.PluginLoader.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
