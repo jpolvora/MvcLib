@@ -49,6 +49,24 @@ namespace MvcLib.Common.Mvc
 
         }
 
+        public static void WriteAjax<T>(this HttpResponseBase response, T value)
+        {
+            response.Clear();
+            response.ContentType = "application/json";
+            response.StatusCode = 200;
+            SetNoCache(response);
+
+            var settings = new JsonSerializerSettings()
+            {
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                FloatParseHandling = FloatParseHandling.Decimal
+            };
+
+            var json = JsonConvert.SerializeObject(value, settings);
+
+            response.Write(json);
+        }
+
         public static void WriteAjax(this HttpResponseBase response, object obj, bool setNoCache = true, int status = 200, JsonSerializerSettings settings = null)
         {
             response.Clear();
