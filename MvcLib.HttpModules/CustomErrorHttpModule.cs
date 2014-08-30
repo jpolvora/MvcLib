@@ -36,9 +36,15 @@ namespace MvcLib.HttpModules
             var response = application.Response;
             var exception = server.GetLastError();
 
+            int statusCode = response.StatusCode;
+            if (exception != null && exception is HttpException)
+            {
+                statusCode = ((HttpException)exception).GetHttpCode();
+            }
+
             if (application.Context.Handler != null)
             {
-                Trace.TraceError("Handler is {0}. Status is {1}", application.Context.Handler, response.StatusCode);
+                Trace.TraceError("Handler is {0}. Status is {1}", application.Context.Handler, statusCode);
                 var handler = application.Context.Handler.GetType().Name;
                 if (handler.Equals("StaticFileHandler", StringComparison.OrdinalIgnoreCase))
                 {
@@ -51,11 +57,11 @@ namespace MvcLib.HttpModules
 
             var model = new ErrorModel()
             {
-                Message = exception != null ? exception.Message : "Erro: " + response.Status,
+                Message = exception != null ? exception.Message : "Erro: " + statusCode,
                 FullMessage = exception.LoopException(),
                 StackTrace = exception != null ? exception.StackTrace : "",
                 Url = application.Request.RawUrl,
-                StatusCode = response.StatusCode
+                StatusCode = statusCode
             };
 
             bool useController = !string.IsNullOrWhiteSpace(_errorController);
@@ -69,6 +75,7 @@ namespace MvcLib.HttpModules
             }
 
             Trace.TraceInformation("[CustomError]: Will end response now (avoid Transfer Handler)");
+            response.StatusCode = statusCode;
             response.End();
         }
 
