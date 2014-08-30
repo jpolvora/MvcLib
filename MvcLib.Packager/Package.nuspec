@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MvcLib.Nuget</id>
-    <version>1.0.0</version>
+    <version>$version$</version>
     <title>MvcLib.Nuget</title>
     <authors>Jone Polvora</authors>
     <owners>Jone Polvora</owners>
@@ -21,13 +21,13 @@
     <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
     <copyright>Copyright  2014</copyright>
     <dependencies>
-        <group targetFramework="net451">
-          <dependency id="WebActivatorEx" version="2.0.5" />
-          <dependency id="EntityFramework" version="6.1.1" />
-          <dependency id="Microsoft.AspNet.Mvc" version="5.2.2" />
-          <dependency id="Microsoft.AspNet.WebPages" version="3.2.2" />
-          <dependency id="Roslyn.Services.CSharp" version="1.2.20906.2" />
-        </group>
+      <group targetFramework="net451">
+        <dependency id="WebActivatorEx" version="2.0.5" />
+        <dependency id="EntityFramework" version="6.1.1" />
+        <dependency id="Microsoft.AspNet.Mvc" version="5.2.2" />
+        <dependency id="Microsoft.AspNet.WebPages" version="3.2.2" />
+        <dependency id="Roslyn.Services.CSharp" version="1.2.20906.2" />
+      </group>
     </dependencies>
     <references></references>
     <tags></tags>
