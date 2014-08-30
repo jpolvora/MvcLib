@@ -30,17 +30,12 @@ namespace MvcLib.FsDump
 
             }
         }
-
-        private static readonly string AppCode;
+        
         private static readonly DirectoryInfo DirInfo;
 
         static DbToLocal()
         {
             var path = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
-
-            AppCode = HostingEnvironment.MapPath("~/App_Code/");
-
-            //var appCodeInfo = new DirectoryInfo(appCode);
 
             var root = Path.GetFullPath(HostingEnvironment.MapPath(path));
             DirInfo = new DirectoryInfo(root);
@@ -69,17 +64,7 @@ namespace MvcLib.FsDump
 
         static string GetLocalPath(DbFile dbFile)
         {
-            string localpath;
-            //if (dbFile.Extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    //copia p/ app_code
-            //    localpath = AppCode + dbFile.VirtualPath.Replace("/", "\\");
-            //}
-            //else
-            {
-                localpath = DirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
-            }
-
+            string localpath = DirInfo.FullName + dbFile.VirtualPath.Replace("/", "\\");
             return localpath;
         }
 
