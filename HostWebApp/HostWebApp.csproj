@@ -55,32 +55,41 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.Bootstrapper">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.Bootstrapper.dll</HintPath>
+    <Reference Include="MvcLib.Bootstrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.Bootstrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.Common">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.Common.dll</HintPath>
+    <Reference Include="MvcLib.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.Common.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.Common.Mvc">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.Common.Mvc.dll</HintPath>
+    <Reference Include="MvcLib.Common.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.Common.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.CustomVPP">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.CustomVPP.dll</HintPath>
+    <Reference Include="MvcLib.CustomVPP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.CustomVPP.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.DbFileSystem">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.DbFileSystem.dll</HintPath>
+    <Reference Include="MvcLib.DbFileSystem, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.DbFileSystem.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.FsDump">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.FsDump.dll</HintPath>
+    <Reference Include="MvcLib.FsDump, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.FsDump.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.HttpModules">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.HttpModules.dll</HintPath>
+    <Reference Include="MvcLib.HttpModules, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.HttpModules.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.Kompiler">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.Kompiler.dll</HintPath>
+    <Reference Include="MvcLib.Kompiler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.Kompiler.dll</HintPath>
     </Reference>
-    <Reference Include="MvcLib.PluginLoader">
-      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00016\lib\net451\MvcLib.PluginLoader.dll</HintPath>
+    <Reference Include="MvcLib.PluginLoader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcLib.Nuget.1.0.0-CI00028\lib\net451\MvcLib.PluginLoader.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -641,10 +650,11 @@
     <Content Include="readme.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="razorviews\Web.config" />
+    <Content Include="razorviews\customerror.cshtml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
-    <Content Include="_plugins\dummy.txt" />
     <Content Include="Scripts\CodeMirror\active-line.js" />
     <Content Include="Scripts\CodeMirror\brace-fold.js" />
     <Content Include="Scripts\CodeMirror\clike.js" />
@@ -669,10 +679,17 @@
     <Content Include="Scripts\ext\ext-all-debug-w-comments.js" />
     <Content Include="Scripts\ext\ext-all.js" />
     <Content Include="Scripts\ext\ext-lang-pt_BR.js" />
-    <Content Include="Views\Web.config" />
     <Content Include="packages.config" />
     <Content Include="Content\ext-theme-classic\Readme.md" />
     <Content Include="default.cshtml" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -710,6 +727,7 @@
     <Content Include="_Apps\Developer\_Layout.cshtml" />
     <Content Include="_Apps\Developer\_PageStart.cshtml" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />
+    <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\dummy.txt" />
@@ -770,6 +788,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dbfiles\" />
+    <Folder Include="_plugins\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
