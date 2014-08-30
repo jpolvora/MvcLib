@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomPageBase.cs" />
     <Compile Include="CustomWebViewPage.cs" />
     <Compile Include="ExtJs\ExtJsBase.cs" />
     <Compile Include="ExtJs\ExtJsCreator.cs" />
