@@ -69,7 +69,7 @@
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="content\razorviews\index.cshtml" />
+    <None Include="content\razorviews\customerror.cshtml" />
     <Content Include="content\readme.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
     <Content Include="lib\net451\MvcLib.Common.dll" />

@@ -42,6 +42,7 @@ namespace MvcLib.HttpModules
             var model = new ErrorModel()
             {
                 Message = exception != null ? exception.Message : "Erro: " + response.Status,
+                FullMessage = exception.LoopException(),
                 StackTrace = exception != null ? exception.StackTrace : "",
                 Url = application.Request.RawUrl,
                 StatusCode = response.StatusCode
@@ -129,6 +130,7 @@ namespace MvcLib.HttpModules
         public class ErrorModel
         {
             public string Message { get; set; }
+            public string FullMessage { get; set; }
             public string StackTrace { get; set; }
             public string Url { get; set; }
             public int StatusCode { get; set; }
