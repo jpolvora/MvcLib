@@ -26,8 +26,12 @@ namespace ConsoleApplication1
 
             while (true)
             {
-                Console.WriteLine("Digite 1 para ler do banco ou 2 para gravar no banco.");
+                Console.WriteLine("1: Db To Local");
+                Console.WriteLine("2: Local To Db");
+
                 var option = Console.ReadKey();
+                Console.WriteLine("Opção escolhida: {0} ", option);
+                Console.WriteLine();
                 bool ok = false;
                 switch (option.Key)
                 {
@@ -51,7 +55,7 @@ namespace ConsoleApplication1
                                 catch (Exception ex)
                                 {
                                     Console.WriteLine(ex);
-                                    Console.Beep(440, 500);
+                                    Console.Beep(880, 500);
                                 }
                             }
                             break;
@@ -74,7 +78,7 @@ namespace ConsoleApplication1
                                 catch (Exception ex)
                                 {
                                     Console.WriteLine(ex);
-                                    Console.Beep(440, 500);
+                                    Console.Beep(880, 500);
                                 }
 
                                 break;
@@ -94,7 +98,7 @@ namespace ConsoleApplication1
 
             Console.WriteLine("");
             Console.WriteLine("Fim. Pression qualquer tecla ...");
-            Console.Beep(440, 3000);
+            Console.Beep(440, 1000);
             Console.ReadLine();
         }
 
