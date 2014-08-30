@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MvcLib.Nuget</id>
+    <version>1.0.0</version>
+    <title>MvcLib.Nuget</title>
+    <authors>Jone Polvora</authors>
+    <owners>Jone Polvora</owners>
+    <description>
+      A long description of the package. This shows up in the right pane of the Add Package Dialog as well as in the Package Manager Console when listing packages using the Get-Package command.
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      A short description of the package. If specified, this shows up in the middle pane of the Add Package Dialog. If not specified, a truncated version of the description is used instead.
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://nuget.org/packages/MvcLib.Nuget</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <copyright>Copyright  2014</copyright>
+    <dependencies>
+        <group targetFramework="net451">
+          <dependency id="WebActivatorEx" version="2.0.5" />
+          <dependency id="EntityFramework" version="6.1.1" />
+          <dependency id="Microsoft.AspNet.Mvc" version="5.2.2" />
+          <dependency id="Microsoft.AspNet.WebPages" version="3.2.2" />
+          <dependency id="Roslyn.Services.CSharp" version="1.2.20906.2" />
+        </group>
+    </dependencies>
+    <references></references>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="lib\" target="lib" />
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+  </files>
+</package>
