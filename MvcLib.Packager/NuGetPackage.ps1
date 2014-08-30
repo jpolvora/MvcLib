@@ -180,74 +180,6 @@ function Create-Process() {
 	return $p
 }
 
-function HandlePublishError {
-	param([string] $ErrorMessage)
-
-	# Run NuGet Setup
-	$encodedMessage = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($ErrorMessage))
-	$setupTask = Start-Process PowerShell.exe "-ExecutionPolicy Unrestricted -File .\NuGetSetup.ps1 -Url $url -Base64EncodedMessage $encodedMessage" -Wait -PassThru
-
-	#Write-Log ("NuGet Setup Task Exit Code: " + $setupTask.ExitCode)
-
-	if ($setupTask.ExitCode -eq 0) {
-		# Try to push package again
-		$publishTask = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
-		$publishTask.Start() | Out-Null
-		$publishTask.WaitForExit()
-			
-		$output = ($publishTask.StandardOutput.ReadToEnd() -Split '[\r\n]') |? {$_}
-		$error = (($publishTask.StandardError.ReadToEnd() -Split '[\r\n]') |? {$_}) 
-		Write-Log $output
-		Write-Log $error Error
-
-		if ($publishTask.ExitCode -eq 0) {
-			$global:ExitCode = 0
-		}
-	}
-	elseif ($setupTask.ExitCode -eq 2) {
-		$global:ExitCode = 2
-	}
-	else {
-		$global:ExitCode = 0
-	}
-}
-
-function Publish {
-
-	Write-Log " "
-	Write-Log "Publishing package..." -ForegroundColor Green
-
-	# Get nuget config
-	[xml]$nugetConfig = Get-Content .\NuGet.Config
-	
-	$nugetConfig.configuration.packageSources.add | ForEach-Object {
-		$url = $_.value
-
-		Write-Log "Repository Url: $url"
-		Write-Log " "
-
-		Get-ChildItem *.nupkg | Where-Object { $_.Name.EndsWith(".symbols.nupkg") -eq $false } | ForEach-Object { 
-
-			# Try to push package
-			$task = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
-			$task.Start() | Out-Null
-			$task.WaitForExit()
-			
-			$output = ($task.StandardOutput.ReadToEnd() -Split '[\r\n]') |? { $_ }
-			$error = ($task.StandardError.ReadToEnd() -Split '[\r\n]') |? { $_ }
-			Write-Log $output
-			Write-Log $error Error
-		   
-			if ($task.ExitCode -gt 0) {
-				HandlePublishError -ErrorMessage $error
-				#Write-Log ("HandlePublishError() Exit Code: " + $global:ExitCode)
-			}
-			else {
-				$global:ExitCode = 0
-			}                
-		}
-	}
-}
 
 Write-Log " "
 Write-Log "NuGet Packager 2.0.3" -ForegroundColor Yellow
@@ -299,11 +231,6 @@ Else {
 	Write-Log $error Error
 
 	$global:ExitCode = $packageTask.ExitCode
-}
-
-# Check if package should be published
-if ($Publish -and $global:ExitCode -eq 0) {
-	Publish
 }
 
 Write-Log " "
