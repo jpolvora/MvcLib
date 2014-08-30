@@ -31,7 +31,7 @@ namespace MvcLib.CustomVPP.RemapperVpp
             if (base.DirectoryExists(virtualDir))
                 return true;
 
-            return IsVirtualPath(virtualDir);
+            return IsVirtualPath(virtualDir, true, false);
         }
 
         public override bool FileExists(string virtualPath)
@@ -39,16 +39,19 @@ namespace MvcLib.CustomVPP.RemapperVpp
             if (base.FileExists(virtualPath))
                 return true;
 
-            return IsVirtualPath(virtualPath);
+            return IsVirtualPath(virtualPath, false, true);
         }
 
         public override VirtualFile GetFile(string virtualPath)
         {
-            var rem = new RemappedFile(virtualPath, GetFullPath(virtualPath));
-            if (rem.Exists)
+            if (IsVirtualPath(virtualPath, false, true))
             {
-                Trace.TraceInformation("[SubfolderVpp]: remapping FILE {0} to {1}", virtualPath, rem.FullPath);
-                return rem;
+                var rem = new RemappedFile(virtualPath, GetFullPath(virtualPath));
+                if (rem.Exists)
+                {
+                    Trace.TraceInformation("[SubfolderVpp]: remapping FILE {0} to {1}", virtualPath, rem.FullPath);
+                    return rem;
+                }
             }
 
             return base.GetFile(virtualPath);
@@ -56,11 +59,14 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         public override VirtualDirectory GetDirectory(string virtualDir)
         {
-            var rem = new RemappedDir(virtualDir, GetFullPath(virtualDir));
-            if (rem.Exists)
+            if (IsVirtualPath(virtualDir, true, false))
             {
-                Trace.TraceInformation("[SubfolderVpp]: remapping DIR {0} to {1}", virtualDir, rem.FullPath.FullName);
-                return rem;
+                var rem = new RemappedDir(virtualDir, GetFullPath(virtualDir));
+                if (rem.Exists)
+                {
+                    Trace.TraceInformation("[SubfolderVpp]: remapping DIR {0} to {1}", virtualDir, rem.FullPath.FullName);
+                    return rem;
+                }
             }
 
             return base.GetDirectory(virtualDir);
@@ -68,7 +74,7 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         public override CacheDependency GetCacheDependency(string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
         {
-            if (IsVirtualPath(virtualPath))
+            if (IsVirtualPath(virtualPath, true, true))
                 return null;
 
             return base.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
@@ -76,7 +82,7 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         public override string GetFileHash(string virtualPath, IEnumerable virtualPathDependencies)
         {
-            if (IsVirtualPath(virtualPath))
+            if (IsVirtualPath(virtualPath, true, true))
             {
                 var path = GetFullPath(virtualPath);
                 string hash;
@@ -99,14 +105,17 @@ namespace MvcLib.CustomVPP.RemapperVpp
             return base.GetFileHash(virtualPath, virtualPathDependencies);
         }
 
-        private bool IsVirtualPath(string virtualPath)
+        private bool IsVirtualPath(string virtualPath, bool dir, bool file)
         {
             var path = GetFullPath(virtualPath);
 
-            if (IsFile(path))
+            if (dir && IsDirectory(path))
                 return true;
 
-            return Directory.Exists(path);
+            if (file && IsFile(path))
+                return true;
+
+            return false;
         }
 
         string GetFullPath(string virtualPath)
@@ -119,6 +128,15 @@ namespace MvcLib.CustomVPP.RemapperVpp
         private static bool IsFile(string fullPath)
         {
             return File.Exists(fullPath);
+
+            //var attr = File.GetAttributes(fullPath);
+            //return !attr.HasFlag(FileAttributes.Directory);
+
+        }
+
+        private static bool IsDirectory(string fullPath)
+        {
+            return Directory.Exists(fullPath);
 
             //var attr = File.GetAttributes(fullPath);
             //return !attr.HasFlag(FileAttributes.Directory);

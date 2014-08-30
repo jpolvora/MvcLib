@@ -76,13 +76,13 @@ namespace MvcLib.Kompiler
 
                 if (string.IsNullOrWhiteSpace(msg) && buffer.Length > 0)
                 {
-                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: SUCCESS");
+                    Trace.TraceInformation("[Kompiler]: DB Compilation Result: SUCCESS");
 
                     PluginLoader.EntryPoint.LoadPlugin(CompiledAssemblyName + ".dll", buffer);
                 }
                 else
                 {
-                    Trace.TraceInformation("[PluginLoader]: DB Compilation Result: Bytes:{0}, Msg:{1}",
+                    Trace.TraceInformation("[Kompiler]: DB Compilation Result: Bytes:{0}, Msg:{1}",
                         buffer.Length, msg);
                 }
             }
