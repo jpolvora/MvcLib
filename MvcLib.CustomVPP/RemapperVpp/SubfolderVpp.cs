@@ -14,16 +14,19 @@ namespace MvcLib.CustomVPP.RemapperVpp
         private readonly string _relativePath;
         private readonly string _absolutePath;
 
-        public SubfolderVpp()
+        public SubfolderVpp(string cfg)
         {
-            var cfg = Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles");
-
             _relativePath = VirtualPathUtility.AppendTrailingSlash(VirtualPathUtility.ToAppRelative(cfg));
             _absolutePath = VirtualPathUtility.AppendTrailingSlash(VirtualPathUtility.ToAbsolute(cfg));
 
             string subfolder = HostingEnvironment.MapPath(_relativePath);
             if (!Directory.Exists(subfolder))
                 Directory.CreateDirectory(subfolder);
+        }
+
+        public SubfolderVpp()
+            : this(Config.ValueOrDefault("DumpToLocalFolder", "~/dbfiles"))
+        {
         }
 
         public override bool DirectoryExists(string virtualDir)
@@ -120,14 +123,13 @@ namespace MvcLib.CustomVPP.RemapperVpp
 
         string GetRemappedFullPath(string virtualPath)
         {
+            //se o path iniciar com ~/dbfiles / cfg
+            if (virtualPath.StartsWith(_absolutePath) || virtualPath.StartsWith(_relativePath))
+                return HostingEnvironment.MapPath(virtualPath);
+
             return HostingEnvironment.MapPath(VirtualPathUtility.IsAbsolute(virtualPath)
                 ? string.Format("{0}{1}", _absolutePath, virtualPath.Substring(1))
                 : string.Format("{0}/{1}", _relativePath, virtualPath.Substring(2)));
-        }
-
-        string GetOriginalFullPath(string virtualPath)
-        {
-            return HostingEnvironment.MapPath(VirtualPathUtility.ToAbsolute(virtualPath));
         }
 
         private static bool IsFile(string fullPath)
