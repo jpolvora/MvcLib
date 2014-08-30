@@ -10,7 +10,7 @@ namespace MvcLib.DbFileSystem
         public DbFileContextConfig()
         {
             //Database.SetInitializer(new MigrateDatabaseToLatestVersion<DbFileContext, DbFileContextMigrationConfiguration>());
-            SetDatabaseInitializer<DbFileContext>(null);
+            //SetDatabaseInitializer<DbFileContext>(null);
             SetManifestTokenResolver(new MyManifestTokenResolver());
         }
 

@@ -36,6 +36,16 @@ namespace MvcLib.HttpModules
             var response = application.Response;
             var exception = server.GetLastError();
 
+            if (application.Context.Handler != null)
+            {
+                Trace.TraceError("Handler is {0}. Status is {1}", application.Context.Handler, response.StatusCode);
+                var handler = application.Context.Handler.GetType().Name;
+                if (handler.Equals("StaticFileHandler", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
             server.ClearError();
             response.Clear();
 

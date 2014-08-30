@@ -52,7 +52,7 @@
     <Compile Include="DbFile.cs" />
     <Compile Include="DbFileContext.cs" />
     <Compile Include="DbFileContextConfig.cs" />
-    <Compile Include="DbFileContextInitializer.cs" />
+    <Compile Include="DbFileContextMigrationInitializer.cs" />
     <Compile Include="DbFileContextMigrationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -16,6 +16,11 @@ include this web.config entries
 <configuration>
   <configSections>
 
+    <sectionGroup name="system.web.webPages.razor" type="System.Web.WebPages.Razor.Configuration.RazorWebSectionGroup, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35">
+      <section name="host" type="System.Web.WebPages.Razor.Configuration.HostSection, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" requirePermission="false" />
+      <section name="pages" type="System.Web.WebPages.Razor.Configuration.RazorPagesSection, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" requirePermission="false" />
+    </sectionGroup>
+    
     <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
     <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
   </configSections>
@@ -92,6 +97,9 @@ include this web.config entries
     <handlers>
       <add name="AspNetStaticFileHandler-CSS" path="*.css" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
       <add name="AspNetStaticFileHandler-JS" path="*.js" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
+      <add name="AspNetStaticFileHandler-JPPG" path="*.jpg" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
+      <add name="AspNetStaticFileHandler-png" path="*.png" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
+      <add name="AspNetStaticFileHandler-txt" path="*.txt" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
     </handlers>
     <staticContent>
       <clientCache cacheControlMode="UseMaxAge" cacheControlMaxAge="7.00:00:00" />
@@ -101,6 +109,25 @@ include this web.config entries
 
   </system.webServer>
 
+  <system.web.webPages.razor>
+    <host factoryType="System.Web.WebPages.Razor.WebRazorHostFactory" />
+    <pages pageBaseType="MvcLib.Common.Mvc.CustomPageBase">
+      <namespaces>
+        <add namespace="System" />
+        <add namespace="System.Web" />
+        <add namespace="System.Web.Helpers" />
+        <add namespace="System.Web.WebPages" />
+        <add namespace="System.Web.WebPages" />
+        <add namespace="System.Web.WebPages.Razor" />
+        <add namespace="System.Web.WebPages.Html" />
+        <add namespace="System.Web.Optimization" />
+        <add namespace="System.Web.Routing" />
+        <add namespace="MvcLib.Common" />
+        <add namespace="MvcLib.Common.Mvc" />
+      </namespaces>
+    </pages>
+  </system.web.webPages.razor>
+  
   <runtime>
     <!--<probing privatePath="~/_Plugins/" />-->
     <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
@@ -134,8 +161,8 @@ include this web.config entries
   <entityFramework codeConfigurationType="MvcLib.DbFileSystem.DbFileContextConfig, MvcLib.DbFileSystem">
     <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
     <contexts>
-      <context type="MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileSystem" disableDatabaseInitialization="true">
-        
+      <context type="MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileSystem" disableDatabaseInitialization="false">
+        <databaseInitializer type="MvcLib.DbFileSystem.DbFileContextMigrationInitializer, MvcLib.DbFileSystem" />
       </context>
     </contexts>
     <providers>

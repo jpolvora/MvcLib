@@ -4,7 +4,10 @@ using MvcLib.Common;
 
 namespace MvcLib.DbFileSystem
 {
-    public sealed class DbFileContextMigrationConfiguration : DbMigrationsConfiguration<DbFileContext>
+    /// <summary>
+    /// Changed to public in order to run updata-database in the main project (i.e., the project that referenced this library)
+    /// </summary>
+    public class DbFileContextMigrationConfiguration : DbMigrationsConfiguration<DbFileContext>
     {
         public DbFileContextMigrationConfiguration()
         {
