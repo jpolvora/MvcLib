@@ -59,10 +59,10 @@
     <None Include="tools\uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="content\" />
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\readme.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
     <Content Include="lib\net451\MvcLib.Common.dll" />
     <Content Include="lib\net451\MvcLib.Common.Mvc.dll" />
