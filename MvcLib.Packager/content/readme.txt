@@ -1,5 +1,13 @@
 ﻿this is a dummy readme file.
 
+add a global.asax file to the root:
+
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+
+include this web.config entries
+
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   For more information on how to configure your ASP.NET application, please visit
@@ -127,7 +135,7 @@
     <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
     <contexts>
       <context type="MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileSystem" disableDatabaseInitialization="true">
-        <databaseInitializer type="System.Data.Entity.MigrateDatabaseToLatestVersion`2[[MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileContext], [MvcLib.DbFileSystem.DbFileContextMigrationConfiguration, MvcLib.DbFileSystem]], EntityFramework" />
+        
       </context>
     </contexts>
     <providers>

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MvcLib.Nuget</id>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <title>MvcLib.Nuget</title>
     <authors>Jone Polvora</authors>
     <owners>Jone Polvora</owners>
@@ -10,7 +10,7 @@
       Contains all necessary assemblies to run dynamic Asp.Net applications with Roslyn compilation, dynamic module loading (Plugins)
     </summary>
     <description>
-      A long description of the package. This shows up in the right pane of the Add Package Dialog as well as in the Package Manager Console when listing packages using the Get-Package command.
+      Contains all necessary assemblies to run dynamic Asp.Net applications with Roslyn compilation, dynamic module loading (Plugins)
     </description>
     <releaseNotes>
     </releaseNotes>

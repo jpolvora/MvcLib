@@ -68,6 +68,8 @@
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\dbfiles\dummy.txt" />
+    <Content Include="content\index.html" />
     <Content Include="content\readme.txt" />
     <Content Include="content\_plugins\dummy.txt" />
     <Content Include="lib\net451\MvcLib.Bootstrapper.dll" />
