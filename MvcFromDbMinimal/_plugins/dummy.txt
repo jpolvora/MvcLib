@@ -1,2 +1,0 @@
-﻿this is a dummy folder.
-at runtime, the files will be copied here.

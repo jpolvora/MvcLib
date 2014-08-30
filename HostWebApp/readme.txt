@@ -1,36 +1,42 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿this is a dummy readme file.
+
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   For more information on how to configure your ASP.NET application, please visit
   http://go.microsoft.com/fwlink/?LinkId=169433
   -->
 <configuration>
   <configSections>
-    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+
     <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
   </configSections>
   <appSettings>
-    
+
     <add key="TracerHttpModule" value="True" />
-    
+    <add key="TracerHttpModuleEvents" value="dummy" />
+
     <add key="CustomErrorHttpModule" value="True" />
     <add key="CustomErrorViewPath" value="~/views/shared/customerror.cshtml" />
     <add key="CustomErrorController" value="" />
-    
+
     <add key="DbFileContextKey" value="DbFileContext" />
     <add key="DbFileContextVerbose" value="True" />
-    
-    <add key="CustomVirtualPathProvider" value="True" />
-    <add key="WebCacheWrapper" value="True" />
-    
-    <add key="DumpToLocal" value="False" />
-    
+
+    <add key="CustomVirtualPathProvider" value="False" />
+    <add key="WebCacheWrapper" value="False" />
+
+    <add key="DumpToLocal" value="True" />
+    <add key="DumpToLocalFolder" value="~/dbfiles" />
+
     <add key="PluginLoader" value="True" />
     <add key="Kompiler" value="True" />
-    
-    <add key="MvcTracerFilter" value="True" />
+    <add key="KompilerForceRecompilation" value="True" />
+
+    <add key="MvcTracerFilter" value="False" />
 
     <add key="webpages:Version" value="3.0.0.0" />
-    <add key="webpages:Enabled" value="false" />
+    <add key="webpages:Enabled" value="true" />
     <add key="enableSimpleMembership" value="false" />
     <add key="ClientValidationEnabled" value="true" />
     <add key="UnobtrusiveJavaScriptEnabled" value="true" />
@@ -43,21 +49,20 @@
 
   <connectionStrings>
     <add name="DbFileContext" connectionString="Server=.\SQLEXPRESS;Database=MvcFromDb; Integrated Security=True;" providerName="System.Data.SqlClient" />
-    <!--<add name="DbFileContext" connectionString="Server=6bd37ddc-2b63-4990-9c8d-a391002556be.sqlserver.sequelizer.com;Database=db6bd37ddc2b6349909c8da391002556be;User ID=kbpkprlpuhwabeti;Password=ysuYHrBokerZs5pQHu2ug5LCrGTB3zwKcf2xJLUhGvnExJr2cmzPqyoBPZFbEauT;MultipleActiveResultSets=True;" providerName="System.Data.SqlClient" />-->
   </connectionStrings>
 
   <system.web>
     <compilation debug="true" targetFramework="4.5.1" />
 
     <trace enabled="false" localOnly="true" />
-    <httpRuntime delayNotificationTimeout="20" waitChangeNotification="30" maxWaitChangeNotification="30" targetFramework="4.5.1" maxRequestLength="102400" executionTimeout="3600" />
+    <httpRuntime delayNotificationTimeout="120" waitChangeNotification="180" maxWaitChangeNotification="30" targetFramework="4.5.1" maxRequestLength="102400" executionTimeout="3600" />
     <globalization culture="pt-BR" uiCulture="pt-BR" enableClientBasedCulture="false" requestEncoding="utf-8" responseEncoding="utf-8" fileEncoding="utf-8" enableBestFitResponseEncoding="false" />
     <authentication mode="None">
 
     </authentication>
     <customErrors mode="RemoteOnly" />
 
-    <healthMonitoring enabled="true" heartbeatInterval="0">
+    <!--<healthMonitoring enabled="true" heartbeatInterval="0">
       <providers>
         <add name="TraceEventProvider" type="System.Web.Management.TraceWebEventProvider,             System.Web,Version=4.0.0.0, Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a" />
       </providers>
@@ -71,13 +76,11 @@
         <remove name="Application Events" />
         <add name="Application Events" eventName="Application Lifetime Events" provider="TraceEventProvider" profile="Default" minInstances="1" maxLimit="Infinite" minInterval="00:00:05" custom="" />
       </rules>
-    </healthMonitoring>
+    </healthMonitoring>-->
+
   </system.web>
 
   <system.webServer>
-    <httpErrors errorMode="Detailed" existingResponse="Auto">
-
-    </httpErrors>
     <handlers>
       <add name="AspNetStaticFileHandler-CSS" path="*.css" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
       <add name="AspNetStaticFileHandler-JS" path="*.js" verb="GET,HEAD" type="System.Web.StaticFileHandler" />
@@ -99,7 +102,7 @@
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-1.5.2.14234" newVersion="1.5.2.14234" />
+        <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
@@ -113,11 +116,20 @@
         <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
         <bindingRedirect oldVersion="1.0.0.0-5.2.2.0" newVersion="5.2.2.0" />
       </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
+      </dependentAssembly>
     </assemblyBinding>
   </runtime>
 
-  <entityFramework>
+  <entityFramework codeConfigurationType="MvcLib.DbFileSystem.DbFileContextConfig, MvcLib.DbFileSystem">
     <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
+    <contexts>
+      <context type="MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileSystem" disableDatabaseInitialization="true">
+        <databaseInitializer type="System.Data.Entity.MigrateDatabaseToLatestVersion`2[[MvcLib.DbFileSystem.DbFileContext, MvcLib.DbFileContext], [MvcLib.DbFileSystem.DbFileContextMigrationConfiguration, MvcLib.DbFileSystem]], EntityFramework" />
+      </context>
+    </contexts>
     <providers>
       <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
     </providers>
