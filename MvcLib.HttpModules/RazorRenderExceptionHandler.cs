@@ -21,11 +21,10 @@ namespace MvcLib.HttpModules
         {
             var status = exception.GetHttpCode();
             if (status < 500) return;
-            LogEvent.Raise(exception.Message, exception.GetBaseException());
-
             var cfg = BootstrapperSection.Instance;
 
-            if (cfg.Mail.SendExceptionToDeveloper)
+            if (cfg.Mail.SendExceptionToDeveloper &&
+                (HttpContext.Current == null || !HttpContext.Current.IsDebuggingEnabled))
             {
                 Trace.TraceInformation("[RazorRenderExceptionHandler]: Preparing to send email to developer");
                 string body = exception.GetHtmlErrorMessage();
@@ -40,17 +39,22 @@ namespace MvcLib.HttpModules
                             {
                                 IsBodyHtml = true
                             };
-
+                            
                             client.Send(msg);
-                            Trace.TraceInformation("[RazorRenderExceptionHandler]: Email was sent to {0}", cfg.Mail.MailDeveloper);
+                            Trace.TraceInformation("[RazorRenderExceptionHandler]: Email was sent to {0}",
+                                cfg.Mail.MailDeveloper);
                         }
                     }
                     catch (Exception ex)
                     {
                         Trace.TraceError("[RazorRenderExceptionHandler]: Failed to send email. {0}", ex.Message);
+                        LogEvent.Raise(exception.Message, exception.GetBaseException());
                     }
                 });
-
+            }
+            else
+            {
+                LogEvent.Raise(exception.Message, exception.GetBaseException());
             }
         }
 

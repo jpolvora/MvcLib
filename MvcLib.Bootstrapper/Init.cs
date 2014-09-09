@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -277,7 +279,7 @@ namespace MvcLib.Bootstrapper
                 }
 
                 //envia log de startup por email
-                if (cfg.Mail.SendStartupLog)
+                if (cfg.Mail.SendStartupLog && !Config.IsInDebugMode)
                 {
                     try
                     {
@@ -287,11 +289,19 @@ namespace MvcLib.Bootstrapper
 
                         using (var client = new SmtpClient())
                         {
-                            var msg = new MailMessage(cfg.Mail.MailAdmin, cfg.Mail.MailDeveloper,
-                                cfg.Mail.MailAdmin + ": Application Start Log", body)
+                            var msg = new MailMessage(
+                                new MailAddress(cfg.Mail.MailAdmin, "Admin"),
+                                new MailAddress(cfg.Mail.MailDeveloper))
                             {
-                                IsBodyHtml = false
+                                Subject = "App Startup Log",
+                                IsBodyHtml = false,
+                                BodyEncoding = Encoding.UTF8,
+                                Body =  ""
                             };
+                            
+                            var alternate = AlternateView.CreateAlternateViewFromString(body,
+                                new ContentType("text/plain"));
+                            msg.AlternateViews.Add(alternate);
 
                             //msg.Attachments.Add(new Attachment(_traceFileName));
                             client.Send(msg);
