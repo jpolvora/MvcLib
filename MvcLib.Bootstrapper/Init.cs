@@ -6,10 +6,12 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.UI;
 using System.Web.WebPages;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using MvcLib.Bootstrapper;
@@ -38,42 +40,53 @@ namespace MvcLib.Bootstrapper
 
         public static void PreStart()
         {
-            using (DisposableTimer.StartNew("PRE_START"))
-            {
-                var cfg = BootstrapperSection.Initialize();
+            var cfg = BootstrapperSection.Initialize();
 
-                //cria um text logger somente para o startup
-                //remove no post start
-                try
+            //cria um text logger somente para o startup
+            //remove no post start
+            try
+            {
+                _traceFileName = HostingEnvironment.MapPath(cfg.TraceOutput);
+                if (!string.IsNullOrWhiteSpace(_traceFileName))
                 {
-                    _traceFileName = HostingEnvironment.MapPath(cfg.TraceOutput);
                     if (File.Exists(_traceFileName))
                         File.Delete(_traceFileName);
 
                     var listener = new TextWriterTraceListener(_traceFileName, "StartupListener");
 
                     Trace.Listeners.Add(listener);
+
+                    Trace.TraceInformation("[Bootstrapper]: StartupLog added: {0}", listener);
                 }
-                catch { }
+            }
+            catch
+            {
+            }
 
+            using (DisposableTimer.StartNew("[Bootstrapper]:PRE_START"))
+            {
                 var executingAssembly = Assembly.GetExecutingAssembly();
-                Trace.TraceInformation("Entry Assembly: {0}", executingAssembly.GetName().Name);
+                Trace.TraceInformation("[Bootstrapper]:Entry Assembly: {0}", executingAssembly.GetName().Name);
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.HttpModules.Trace.Enabled = {0}", cfg.HttpModules.Trace.Enabled);
                 if (cfg.HttpModules.Trace.Enabled)
                 {
                     DynamicModuleUtility.RegisterModule(typeof(TracerHttpModule));
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.StopMonitoring = {0}", cfg.StopMonitoring);
                 if (cfg.StopMonitoring)
                 {
                     HttpInternals.StopFileMonitoring();
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.HttpModules.CustomError.Enabled = {0}", cfg.HttpModules.CustomError.Enabled);
                 if (cfg.HttpModules.CustomError.Enabled)
                 {
                     DynamicModuleUtility.RegisterModule(typeof(CustomErrorHttpModule));
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.HttpModules.WhiteSpace.Enabled = {0}", cfg.HttpModules.WhiteSpace.Enabled);
                 if (cfg.HttpModules.WhiteSpace.Enabled)
                 {
                     DynamicModuleUtility.RegisterModule(typeof(WhitespaceModule));
@@ -84,6 +97,7 @@ namespace MvcLib.Bootstrapper
                     DbFileContext.Initialize();
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.PluginLoader.Enabled = {0}", cfg.PluginLoader.Enabled);
                 if (cfg.PluginLoader.Enabled)
                 {
                     using (DisposableTimer.StartNew("PluginLoader"))
@@ -92,20 +106,13 @@ namespace MvcLib.Bootstrapper
                     }
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.VirtualPathProviders.SubFolderVpp.Enabled = {0}", cfg.VirtualPathProviders.SubFolderVpp.Enabled);
                 if (cfg.VirtualPathProviders.SubFolderVpp.Enabled)
                 {
                     SubfolderVpp.SelfRegister();
                 }
 
-                if (cfg.DumpToLocal.Enabled)
-                {
-                    using (DisposableTimer.StartNew("DumpToLocal"))
-                    {
-                        DbToLocal.Execute();
-                    }
-                }
-
-                //todo: Dependency Injection
+                Trace.TraceInformation("[Bootstrapper]:cfg.VirtualPathProviders.DbFileSystemVpp.Enabled = {0}", cfg.VirtualPathProviders.DbFileSystemVpp.Enabled);
                 if (cfg.VirtualPathProviders.DbFileSystemVpp.Enabled)
                 {
                     var customvpp = new CustomVirtualPathProvider()
@@ -113,13 +120,27 @@ namespace MvcLib.Bootstrapper
                     HostingEnvironment.RegisterVirtualPathProvider(customvpp);
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.DumpToLocal.Enabled = {0}", cfg.DumpToLocal.Enabled);
+                if (cfg.DumpToLocal.Enabled)
+                {
+                    DynamicModuleUtility.RegisterModule(typeof(PathRewriterHttpModule));
+
+                    using (DisposableTimer.StartNew("DumpToLocal"))
+                    {
+                        DbToLocal.Execute();
+                    }
+                }
+
+                Trace.TraceInformation("[Bootstrapper]:cfg.Kompiler.Enabled = {0}", cfg.Kompiler.Enabled);
                 KompilerEntryPoint.AddReferences(
-                    typeof(Controller),
-                    typeof(WebPageRenderingBase),
-                    typeof(WebCacheWrapper),
-                    typeof(ViewRenderer),
-                    typeof(DbToLocal),
-                    typeof(ErrorModel));
+                    typeof(Controller), //mvc
+                    typeof(WebPageRenderingBase), //webpages
+                    typeof(WebCacheWrapper), // mvclib.common
+                    typeof(ViewRenderer), //mvclib.common.mvc
+                    typeof(DbToLocal), //mvclib.fsdump
+                    typeof(IPlugin), //mvclib.pluginloader
+                    typeof(DbFileContext), //mvclib.dbfilesystem
+                    typeof(ErrorModel)); //mvclib.httpmodules
 
                 if (cfg.Kompiler.Enabled)
                 {
@@ -129,6 +150,7 @@ namespace MvcLib.Bootstrapper
                     }
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.InsertRoutes = {0}", cfg.InsertRoutes);
                 if (cfg.InsertRoutes)
                 {
                     var routes = RouteTable.Routes;
@@ -144,14 +166,6 @@ namespace MvcLib.Bootstrapper
                     routes.IgnoreRoute("Content/{*pathInfo}");
                     routes.IgnoreRoute("Scripts/{*pathInfo}");
                     routes.IgnoreRoute("Bundles/{*pathInfo}");
-
-                    //routes.MapRoute("MvcLib", "{controller}/{action}", new string[] { "" });
-
-
-                    if (cfg.TraceOutput.IsNotNullOrWhiteSpace())
-                    {
-                        //routes.MapHttpHandler<WebPagesRouteHandler>("~/dump.cshtml");
-                    }
                 }
             }
         }
@@ -163,20 +177,21 @@ namespace MvcLib.Bootstrapper
 
             _initialized = true;
 
-            using (DisposableTimer.StartNew("POST_START ..."))
+            var cfg = BootstrapperSection.Instance;
+            using (DisposableTimer.StartNew("[Bootstrapper]:POST_START ..."))
             {
-                Trace.TraceInformation("Debugging Enabled: {0}", HttpContext.Current.IsDebuggingEnabled);
-                Trace.TraceInformation("CustomErrors Enabled: {0}", HttpContext.Current.IsCustomErrorEnabled);
+                Trace.TraceInformation("[Bootstrapper]:Debugging Enabled: {0}", HttpContext.Current.IsDebuggingEnabled);
+                Trace.TraceInformation("[Bootstrapper]:CustomErrors Enabled: {0}", HttpContext.Current.IsCustomErrorEnabled);
                 var commitId = Config.ValueOrDefault("appharbor.commit_id", "");
-                Trace.TraceInformation("Commit Id: {0}", commitId);
+                Trace.TraceInformation("[Bootstrapper]:Commit Id: {0}", commitId);
 
-                var cfg = BootstrapperSection.Instance;
-
+                Trace.TraceInformation("[Bootstrapper]:cfg.MvcTrace.Enabled = {0}", cfg.MvcTrace.Enabled);
                 if (cfg.MvcTrace.Enabled)
                 {
                     GlobalFilters.Filters.Add(new MvcTracerFilter());
                 }
 
+                Trace.TraceInformation("[Bootstrapper]:cfg.Verbose = {0}", cfg.Verbose);
                 if (cfg.Verbose)
                 {
                     var application = HttpContext.Current.ApplicationInstance;
@@ -188,15 +203,13 @@ namespace MvcLib.Bootstrapper
                         Trace.TraceInformation("Module Loaded: {0}", module);
                     }
                     Trace.Unindent();
-                }
 
-                //dump routes
-                var routes = RouteTable.Routes;
+                    //dump routes
+                    var routes = RouteTable.Routes;
 
-                if (cfg.Verbose)
-                {
+
                     var i = routes.Count;
-                    Trace.TraceInformation("Found {0} routes in RouteTable", i);
+                    Trace.TraceInformation("[Bootstrapper]:Found {0} routes in RouteTable", i);
                     Trace.Indent();
                     foreach (var routeBase in routes)
                     {
@@ -212,7 +225,7 @@ namespace MvcLib.Bootstrapper
                 var razorViewEngine = ViewEngines.Engines.OfType<RazorViewEngine>().FirstOrDefault();
                 if (razorViewEngine != null)
                 {
-                    Trace.TraceInformation("Configuring RazorViewEngine Location Formats");
+                    Trace.TraceInformation("[Bootstrapper]:Configuring RazorViewEngine Location Formats");
                     var vlf = new string[]
                     {
                         mvcroot + "/Views/{1}/{0}.cshtml",
@@ -270,53 +283,55 @@ namespace MvcLib.Bootstrapper
                 }
                 else
                 {
-                    Trace.TraceInformation("Cannot Configure RazorViewEngine: View Engine not found");
+                    Trace.TraceInformation("[Bootstrapper]:Cannot Configure RazorViewEngine: View Engine not found");
                 }
+            }
 
+            Trace.Flush();
+            var listener = Trace.Listeners["StartupListener"] as TextWriterTraceListener;
+            if (listener != null)
+            {
+                listener.Flush();
+                listener.Close();
+                Trace.Listeners.Remove(listener);
+            }
 
-                Trace.Flush();
-                var listener = Trace.Listeners["StartupListener"] as TextWriterTraceListener;
-                if (listener != null)
-                {
-                    listener.Flush();
-                    listener.Close();
-                    Trace.Listeners.Remove(listener);
-                }
-
-                //envia log de startup por email
-                if (cfg.Mail.SendStartupLog && !Config.IsInDebugMode)
+            //envia log de startup por email
+            Trace.TraceInformation("[Bootstrapper]:cfg.Mail.SendStartupLog = {0}", cfg.Mail.SendStartupLog);
+            if (cfg.Mail.SendStartupLog && !Config.IsInDebugMode)
+            {
+                if (!File.Exists(_traceFileName)) return;
+                ThreadPool.QueueUserWorkItem(state =>
                 {
                     try
                     {
-                        if (!File.Exists(_traceFileName)) return;
-                        var txt = File.ReadAllText(_traceFileName);
-                        var body = txt + "\r\n";
+                        var body = File.ReadAllText(_traceFileName);
 
                         using (var client = new SmtpClient())
                         {
                             var msg = new MailMessage(
                                 new MailAddress(cfg.Mail.MailAdmin, "Admin"),
-                                new MailAddress(cfg.Mail.MailDeveloper))
+                                new MailAddress(cfg.Mail.MailDeveloper, "Developer"))
                             {
-                                Subject = "App Startup Log",
+                                Subject = "App Startup Log: " + DateTime.Now,
                                 IsBodyHtml = false,
-                                BodyEncoding = Encoding.UTF8,
-                                Body =  ""
+                                BodyEncoding = Encoding.ASCII
                             };
-                            
+
                             var alternate = AlternateView.CreateAlternateViewFromString(body,
                                 new ContentType("text/plain"));
+                            
                             msg.AlternateViews.Add(alternate);
 
-                            //msg.Attachments.Add(new Attachment(_traceFileName));
+                            Trace.TraceInformation("[Bootstrapper]:Sending startup log email to {0}", cfg.Mail.MailDeveloper);
                             client.Send(msg);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceError(ex.Message);
+                        Trace.TraceError("[Bootstrapper]:Error sending startup log email: {0}", ex.Message);
                     }
-                }
+                });
             }
         }
     }

@@ -4,7 +4,6 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using System.Web.WebPages;
 
 namespace MvcLib.Common.Mvc
 {
@@ -14,7 +13,7 @@ namespace MvcLib.Common.Mvc
         {
             if (HttpContext.Current.Request.IsLocal)
                 return rootRelativePath;
-         
+
             if (HttpRuntime.Cache[rootRelativePath] == null)
             {
                 string relative = VirtualPathUtility.ToAbsolute("~" + rootRelativePath);
@@ -34,44 +33,44 @@ namespace MvcLib.Common.Mvc
             return HttpRuntime.Cache[rootRelativePath] as string;
         }
 
-        public static Chunk BeginChunk(this WebPageBase page, string tag, string info, params string[] classes)
+        public static Chunk BeginChunk(this TextWriter writer, string tag, string info, bool isSection, params string[] classes)
         {
-            TagBuilder tagBuilder = null;
-            if (!string.IsNullOrEmpty(tag))
+            if (string.IsNullOrWhiteSpace(tag))
+                throw new ArgumentNullException("tag");
+
+            var tagBuilder = new TagBuilder(tag);
+            if (isSection)
             {
-                tagBuilder = new TagBuilder(tag);
-                tagBuilder.Attributes["data-virtualpath"] = VirtualPathUtility.ToAbsolute(page.VirtualPath);
-
-                foreach (var @class in classes)
-                {
-                    tagBuilder.AddCssClass(@class);
-                }
+                tagBuilder.Attributes["data-section"] = info.ToLowerInvariant();
             }
-            return new Chunk(page, tagBuilder, info);
+            else
+            {
+                tagBuilder.Attributes["data-virtualpath"] = info.TrimStart('~').ToLowerInvariant();
+            }
+
+
+            foreach (var @class in classes)
+            {
+                tagBuilder.AddCssClass(@class);
+            }
+
+            return new Chunk(writer, tagBuilder);
         }
-
-
 
         public class Chunk : IDisposable
         {
-            private readonly WebPageBase _page;
+            private readonly TextWriter _writer;
             private readonly TagBuilder _tagBuilder;
-            private readonly string _info;
 
-            public Chunk(WebPageBase page, TagBuilder tagBuilder, string info)
+            public Chunk(TextWriter writer, TagBuilder tagBuilder)
             {
-                _page = page;
+                _writer = writer;
                 _tagBuilder = tagBuilder;
-                _info = info;
 
 
                 if (tagBuilder == null) return;
 
-                
-                if (HttpContext.Current.IsDebuggingEnabled)
-                    page.Output.WriteLine("<!-- BEGIN {0} -->", page.VirtualPath);
-
-                page.Output.WriteLine(Environment.NewLine + tagBuilder.ToString(TagRenderMode.StartTag));
+                writer.WriteLine(Environment.NewLine + tagBuilder.ToString(TagRenderMode.StartTag));
                 tagBuilder.ToString(TagRenderMode.Normal);
             }
 
@@ -79,10 +78,7 @@ namespace MvcLib.Common.Mvc
             {
                 if (_tagBuilder == null) return;
 
-                _page.Output.WriteLine(Environment.NewLine + _tagBuilder.ToString(TagRenderMode.EndTag));
-
-                if (HttpContext.Current.IsDebuggingEnabled)
-                    _page.Output.WriteLine("<!-- END {0} -->", _page.VirtualPath);
+                _writer.WriteLine(Environment.NewLine + _tagBuilder.ToString(TagRenderMode.EndTag));
             }
         }
     }

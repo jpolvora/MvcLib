@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPlugin.cs" />
     <Compile Include="PluginLoaderEntryPoint.cs" />
     <Compile Include="PluginStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

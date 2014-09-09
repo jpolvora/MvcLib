@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Web.WebPages;
 
 namespace MvcLib.Common.Mvc
@@ -22,15 +23,15 @@ namespace MvcLib.Common.Mvc
 
         public override void ExecutePageHierarchy()
         {
-            if (IsAjax || string.IsNullOrWhiteSpace(Layout))
+            if (IsAjax)
             {
                 base.ExecutePageHierarchy();
                 return;
             }
 
-            using (DisposableTimer.StartNew(GetType().Name))
+            using (DisposableTimer.StartNew("CustomPageBase: " + this.VirtualPath))
             {
-                using (this.BeginChunk("div", VirtualPath, "section"))
+                using (Output.BeginChunk("div", VirtualPath, false, "page"))
                 {
                     base.ExecutePageHierarchy();
                 }
@@ -39,10 +40,21 @@ namespace MvcLib.Common.Mvc
 
         public HelperResult RenderSectionEx(string name, bool required = false)
         {
-            using (this.BeginChunk("div", "RenderSection: " + name, "section"))
+            if (IsAjax)
             {
-                return RenderSection(name, false);
+                return RenderSection(name, required);
             }
+
+            var result = RenderSection(name, required);
+
+            //encapsula o resultado da section num novo resultado
+            return new HelperResult(writer =>
+            {
+                using (writer.BeginChunk("div", name, true, "section"))
+                {
+                    result.WriteTo(writer);
+                }
+            });
         }
     }
 }

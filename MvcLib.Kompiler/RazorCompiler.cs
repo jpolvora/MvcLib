@@ -20,7 +20,7 @@ namespace MvcLib.Kompiler
 {
     public class RazorCompiler
     {
-        public static string GenereateCode(string sourceRazor, string virtualPath, bool throws = false)
+        public static string ParseRazor(string sourceRazor, string virtualPath, bool throws = false)
         {
             try
             {

@@ -23,7 +23,7 @@ namespace MvcLib.PluginLoader
 
             if (!AppDomain.CurrentDomain.IsFullyTrusted)
             {
-                Trace.TraceWarning("We are not in FULL TRUST! We must use private probing path in Web.Config");
+                Trace.TraceWarning("[PluginLoader]: We are not in FULL TRUST! We must use private probing path in Web.Config");
             }
         }
 
@@ -33,8 +33,9 @@ namespace MvcLib.PluginLoader
         {
             if (args.LoadedAssembly.GlobalAssemblyCache)
                 return;
+            var name = args.LoadedAssembly.GetName().Name;
 
-            Trace.TraceInformation("Assembly Loaded... {0}", args.LoadedAssembly.Location);
+            Trace.TraceInformation("[PluginLoader]:Assembly Loaded... {0}", name);
 
             if (args.LoadedAssembly.Location.StartsWith(_pluginFolder.FullName, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -46,20 +47,59 @@ namespace MvcLib.PluginLoader
 
                     if (types.Any())
                     {
+                        Trace.Indent();
                         foreach (var type in types)
                         {
                             Trace.TraceInformation("Type exported: {0}", type.FullName);
                         }
+                        Trace.Unindent();
+
+                        ExecutePlugin(args.LoadedAssembly);
                     }
                     else
                     {
-                        Trace.TraceInformation("No types exported by Assembly: '{0}'",
-                            args.LoadedAssembly.GetName().Name);
+                        Trace.TraceInformation("No types exported by Assembly: '{0}'", name);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceInformation(ex.Message);
+                    Trace.TraceError(ex.Message);
+                }
+            }
+        }
+
+        private static void ExecutePlugin(Assembly assembly)
+        {
+            var plugins = assembly.GetExportedTypes().Where(x => typeof(IPlugin).IsAssignableFrom(x));
+            foreach (var plugin in plugins)
+            {
+                Trace.TraceInformation("[PluginLoader]: Found implementation of IPlugin '{0}'", plugin.FullName);
+                IPlugin instance = null;
+                try
+                {
+                    instance = Activator.CreateInstance(plugin) as IPlugin;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("[PluginLoader]:Could not create instance from type '{0}'. {1}", plugin, ex.Message);
+                }
+                finally
+                {
+                    if (instance != null)
+                    {
+                        Trace.TraceInformation("[PluginLoader]: Executing Plugin: {0}", instance.PluginName);
+                        try
+                        {
+                            using (DisposableTimer.StartNew(instance.PluginName))
+                            {
+                                instance.Start();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError(ex.Message);
+                        }
+                    }
                 }
             }
         }
@@ -69,11 +109,11 @@ namespace MvcLib.PluginLoader
             if (args.RequestingAssembly != null)
                 return args.RequestingAssembly;
 
-            var ass = FindAssembly(args.Name);
-            if (ass != null)
+            var assembly = FindAssembly(args.Name);
+            if (assembly != null)
             {
-                Trace.TraceInformation("Assembly found and resolved: {0} = {1}", ass.FullName, ass.Location);
-                return ass;
+                Trace.TraceInformation("[PluginLoader]:Assembly found and resolved: {0} = {1}", assembly.FullName, assembly.Location);
+                return assembly;
             }
             return null; //not found
         }
@@ -92,7 +132,7 @@ namespace MvcLib.PluginLoader
             }
             catch (Exception ex)
             {
-                var msg = "ERRO LOADING ASSEMBLY: {0}: {1}".Fmt(fileName, ex);
+                var msg = "[PluginLoader]:ERRO LOADING ASSEMBLY: {0}: {1}".Fmt(fileName, ex);
                 Trace.TraceInformation(msg);
                 LogEvent.Raise(ex.Message, ex);
             }

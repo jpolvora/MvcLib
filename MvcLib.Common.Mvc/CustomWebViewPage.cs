@@ -18,15 +18,15 @@ namespace MvcLib.Common.Mvc
 
         public override void ExecutePageHierarchy()
         {
-            if (IsAjax || string.IsNullOrWhiteSpace(Layout))
+            if (IsAjax)
             {
                 base.ExecutePageHierarchy();
                 return;
             }
 
-            using (DisposableTimer.StartNew(GetType().Name))
+            using (DisposableTimer.StartNew("CustomWebViewPage: " + this.VirtualPath))
             {
-                using (this.BeginChunk("div", VirtualPath, "section"))
+                using (Output.BeginChunk("div", VirtualPath, false, "view"))
                 {
                     base.ExecutePageHierarchy();
                 }
@@ -35,10 +35,21 @@ namespace MvcLib.Common.Mvc
 
         public HelperResult RenderSectionEx(string name, bool required = false)
         {
-            using (this.BeginChunk("div", "RenderSection: " + name, "section"))
+            if (IsAjax)
             {
-                return RenderSection(name, false);
+                return RenderSection(name, required);
             }
+
+            var result = RenderSection(name, required);
+
+            //encapsula o resultado da section num novo resultado
+            return new HelperResult(writer =>
+            {
+                using (writer.BeginChunk("div", name, true, "section"))
+                {
+                    result.WriteTo(writer);
+                }
+            });
         }
     }
 
@@ -57,15 +68,15 @@ namespace MvcLib.Common.Mvc
 
         public override void ExecutePageHierarchy()
         {
-            if (IsAjax || string.IsNullOrWhiteSpace(Layout))
+            if (IsAjax)
             {
                 base.ExecutePageHierarchy();
                 return;
             }
 
-            using (DisposableTimer.StartNew(GetType().Name))
+            using (DisposableTimer.StartNew("CustomWebViewPage<" + typeof(T).Name + ">: " + this.VirtualPath))
             {
-                using (this.BeginChunk("div", VirtualPath, "section"))
+                using (Output.BeginChunk("div", VirtualPath, false, "view"))
                 {
                     base.ExecutePageHierarchy();
                 }
@@ -74,11 +85,21 @@ namespace MvcLib.Common.Mvc
 
         public HelperResult RenderSectionEx(string name, bool required = false)
         {
-            using (this.BeginChunk("div", "RenderSection: " + name, "section"))
+            if (IsAjax)
             {
-                return RenderSection(name, false);
+                return RenderSection(name, required);
             }
-        }
 
+            var result = RenderSection(name, required);
+
+            //encapsula o resultado da section num novo resultado
+            return new HelperResult(writer =>
+            {
+                using (writer.BeginChunk("div", name, true, "section"))
+                {
+                    result.WriteTo(writer);
+                }
+            });
+        }
     }
 }

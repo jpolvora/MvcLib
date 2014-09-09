@@ -19,9 +19,9 @@ namespace MvcLib.Common.Configuration
         }
 
         [ConfigurationProperty("whitespace")]
-        public CustomErrorElement WhiteSpace
+        public WhiteSpaceElement WhiteSpace
         {
-            get { return (CustomErrorElement)this["whitespace"]; }
+            get { return (WhiteSpaceElement)this["whitespace"]; }
             set { this["whitespace"] = value; }
         }
     }

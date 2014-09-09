@@ -28,6 +28,9 @@ namespace MvcLib.HttpModules
             {
                 Trace.TraceInformation("[RazorRenderExceptionHandler]: Preparing to send email to developer");
                 string body = exception.GetHtmlErrorMessage();
+                if (string.IsNullOrWhiteSpace(body))
+                    body = exception.ToString();
+
                 string subject = exception.Message;
                 ThreadPool.QueueUserWorkItem(x =>
                 {

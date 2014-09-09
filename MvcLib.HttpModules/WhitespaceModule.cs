@@ -33,7 +33,7 @@ namespace MvcLib.HttpModules
 
             if (contentType == "text/html" && method == "GET" && status == 200 && handler != null)
             {
-                Trace.TraceInformation("Applying Html Minification to '{0}'", app.Request.CurrentExecutionFilePath);
+                Trace.TraceInformation("[WhitespaceModule]:Applying Html Minification to '{0}'", app.Request.CurrentExecutionFilePath);
                 app.Response.Filter = new WhitespaceFilter(app.Response.Filter, app.Request.ContentEncoding);
             }
         }

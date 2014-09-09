@@ -25,14 +25,13 @@ namespace MvcLib.Common
             _msg = msg;
             _callback = callback;
 
-            Trace.TraceInformation("[Begin]:{0}, Initialized by: {1}", _msg, caller);
             Trace.Indent();
+            Trace.TraceInformation("[{0}]: Begin Timer: {1}", _msg, caller);
             _stopwatch = Stopwatch.StartNew();
         }
 
         public void Dispose()
         {
-            Trace.Unindent();
             _stopwatch.Stop();
             var ms = _stopwatch.Elapsed.TotalSeconds;
 
@@ -40,7 +39,8 @@ namespace MvcLib.Common
             {
                 _callback.Invoke(ms);
             }
-            Trace.TraceInformation("[End]:{0}, Completed: {1}ms", _msg, ms.ToString("##.000"));
+            Trace.TraceInformation("[{0}], Execution time: {1}ms", _msg, ms.ToString("##.000"));
+            Trace.Unindent();
         }
     }
 }

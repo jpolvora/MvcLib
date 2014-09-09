@@ -17,5 +17,12 @@ namespace MvcLib.Common.Configuration
             get { return (bool)this["deletefiles"]; }
             set { this["deletefiles"] = value; }
         }
+
+        [ConfigurationProperty("sync", DefaultValue = false)]
+        public bool Sync
+        {
+            get { return (bool)this["sync"]; }
+            set { this["sync"] = value; }
+        }
     }
 }

@@ -121,6 +121,7 @@ namespace MvcLib.Kompiler
                     typeof(System.Data.DbType).Assembly.Location, //System.Data         
                     typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly.Location, //Microsoft.CSharp
                     typeof(System.Web.HttpApplication).Assembly.Location,
+                    typeof(Trace).Assembly.Location,
                     typeof(System.ComponentModel.DataAnnotations.DataType).Assembly.Location,
                     typeof(DbContext).Assembly.Location,
                     typeof(CodeDomWrapper).Assembly.Location

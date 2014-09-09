@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
@@ -16,8 +15,7 @@ namespace MvcLib.HttpModules
 
         private const string Stopwatch = "_request:sw";
 
-        //private HttpApplication _application;
-
+        
         public void Dispose()
         {
         }
@@ -63,7 +61,9 @@ namespace MvcLib.HttpModules
             //only iis7
             on.MapRequestHandler += (sender, args) => TraceNotification(on, "MapRequestHandler");
 
-            //An appropriate handler is selected based on the file-name extension of the requested resource. The handler can be a native-code module such as the IIS 7.0 StaticFileModule or a managed-code module such as the PageHandlerFactory class (which handles .aspx files). 
+            //An appropriate handler is selected based on the file-name extension of the requested resource. 
+            //The handler can be a native-code module such as the IIS 7.0 StaticFileModule or a managed-code module
+            //such as the PageHandlerFactory class (which handles .aspx files). 
             on.PostMapRequestHandler += (sender, args) => TraceNotification(on, "PostMapRequestHandler");
 
             on.AcquireRequestState += (sender, args) => TraceNotification(on, "AcquireRequestState");
@@ -79,7 +79,8 @@ namespace MvcLib.HttpModules
             on.UpdateRequestCache += (sender, args) => TraceNotification(on, "UpdateRequestCache");
             on.PostUpdateRequestCache += (sender, args) => TraceNotification(on, "PostUpdateRequestCache");
 
-            //The MapRequestHandler, LogRequest, and PostLogRequest events are supported only if the application is running in Integrated mode in IIS 7.0 and with the .NET Framework 3.0 or later.
+            //The MapRequestHandler, LogRequest, and PostLogRequest events are supported only if the application 
+            //is running in Integrated mode in IIS 7.0 and with the .NET Framework 3.0 or later.
             on.LogRequest += (sender, args) => TraceNotification(on, "LogRequest"); //iis7
             on.PostLogRequest += (sender, args) => TraceNotification(on, "PostLogRequest"); //iis7
             on.EndRequest += (sender, args) => TraceNotification(on, "EndRequest");
@@ -93,8 +94,8 @@ namespace MvcLib.HttpModules
                 return;
 
             var rid = application.Context.Items[RequestId];
-            Trace.TraceInformation("[TracerHttpModule]:[{0}]:[{1}] {2}, [{3}], {4}",
-                application.Context.CurrentNotification, rid, application.Context.IsPostNotification ? "POST" : "PRE", application.Context.CurrentHandler,
+            Trace.TraceInformation("[TracerHttpModule]:{0}, rid: [{1}], [{2}], {3}",
+                eventName, rid, application.Context.CurrentHandler,
                 application.User != null ? application.User.Identity.Name : "-");
 
             switch (application.Context.CurrentNotification)
@@ -106,6 +107,8 @@ namespace MvcLib.HttpModules
                     }
                 case RequestNotification.PreExecuteRequestHandler:
                     {
+                        //will call ProcessRequest of IHttpHandler
+
                         var mvcHandler = application.Context.Handler as MvcHandler;
                         if (mvcHandler != null)
                         {
@@ -113,19 +116,19 @@ namespace MvcLib.HttpModules
                             var action = mvcHandler.RequestContext.RouteData.GetRequiredString("action");
                             var area = mvcHandler.RequestContext.RouteData.DataTokens["area"];
 
-                            Trace.TraceInformation("Entering MVC Pipeline. Area: '{0}', Controller: '{1}', Action: '{2}'", area,
+                            Trace.TraceInformation(
+                                "Entering MVC Pipeline. Area: '{0}', Controller: '{1}', Action: '{2}'", area,
                                 controller, action);
+                        }
+                        else
+                        {
+                            Trace.TraceInformation("[TracerHttpModule]:Executing ProcessRequest of Handler {0}", application.Context.CurrentHandler);
                         }
                     }
                     break;
-                case RequestNotification.ExecuteRequestHandler:
-                    {
-                        Trace.TraceInformation("Executing ProcessRequest of Handler {0}", application.Context.CurrentHandler);
-                        break;
-                    }
                 case RequestNotification.ReleaseRequestState:
                     {
-                        Trace.TraceInformation("Response Filter: {0}", application.Context.Response.Filter);
+                        Trace.TraceInformation("[TracerHttpModule]:Response Filter: {0}", application.Context.Response.Filter);
                         break;
                     }
                 case RequestNotification.EndRequest:
@@ -154,10 +157,13 @@ namespace MvcLib.HttpModules
 
             if (context.Items.Contains("IIS_WasUrlRewritten") || context.Items.Contains("HTTP_X_ORIGINAL_URL"))
             {
-                Trace.TraceInformation("Url was rewriten from '{0}' to '{1}'", context.Request.ServerVariables["HTTP_X_ORIGINAL_URL"], context.Request.ServerVariables["SCRIPT_NAME"]);
+                Trace.TraceInformation("[TracerHttpModule]:Url was rewriten from '{0}' to '{1}'",
+                    context.Request.ServerVariables["HTTP_X_ORIGINAL_URL"],
+                    context.Request.ServerVariables["SCRIPT_NAME"]);
             }
 
-            Trace.TraceInformation("[BeginRequest]:[{0}] {1} {2} {3}", rid, context.Request.HttpMethod, context.Request.RawUrl, isAjax ? "Ajax: True" : "");
+            Trace.TraceInformation("[BeginRequest]:[{0}] {1} {2} {3}", rid, context.Request.HttpMethod,
+                context.Request.RawUrl, isAjax ? "Ajax: True" : "");
         }
 
         private static void OnEndRequest(HttpApplication application)
@@ -169,7 +175,9 @@ namespace MvcLib.HttpModules
 
             var rid = context.Items[RequestId];
 
-            var msg = string.Format("[EndRequest]:[{0}], Content-Type: {1}, Status: {2}, Render: {3}, url: {4}", rid, context.Response.ContentType, context.Response.StatusCode, GetTime(application), context.Request.Url);
+            var msg = string.Format("[EndRequest]:[{0}], Content-Type: {1}, Status: {2}, Render: {3}, url: {4}",
+                rid, context.Response.ContentType, context.Response.StatusCode, GetTime(application),
+                context.Request.Url);
             Trace.TraceInformation(msg);
 
             if (context.Request.IsAuthenticated && context.Response.StatusCode == 403)
@@ -188,7 +196,9 @@ namespace MvcLib.HttpModules
             StopTimer(application);
             Trace.Flush();
             var rid = application.Context.Items[RequestId];
-            Trace.TraceInformation("[TracerHttpModule]: Error at {0}, request {1}, Handler: {2}, Message:'{3}'", application.Context.CurrentNotification, rid, application.Context.CurrentHandler, application.Context.Error);
+            Trace.TraceInformation("[TracerHttpModule]: Error at {0}, request {1}, Handler: {2}, Message:'{3}'",
+                application.Context.CurrentNotification, rid, application.Context.CurrentHandler,
+                application.Context.Error);
         }
 
         private static void StopTimer(HttpApplication application)

@@ -40,7 +40,7 @@ namespace MvcLib.PluginLoader
                 if (probingElement != null)
                 {
                     var paths = probingElement.Attribute("privatePath").Value; //pode conter vários paths, separados por ';'
-                    Trace.TraceInformation("Private Path is '{0}'", paths);
+                    Trace.TraceInformation("[PluginLoader]:Private Path is '{0}'", paths);
                     privatePath = paths.Split(';')[0];
                 }
             }
@@ -116,7 +116,7 @@ namespace MvcLib.PluginLoader
 
         public static void SaveAndLoadAssembly(string fileName, byte[] bytes)
         {
-            Trace.TraceInformation("Writing and Loading new compiled assembly: '{0}'", fileName);
+            Trace.TraceInformation("[PluginLoader]:Writing and Loading new compiled assembly: '{0}'", fileName);
             var kvp = new KeyValuePair<string, byte[]>(fileName, bytes);
 
             var fileNames = WriteToDisk(new[] { kvp });

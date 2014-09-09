@@ -78,6 +78,7 @@
     <Compile Include="CustomErrorHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazorRenderExceptionHandler.cs" />
+    <Compile Include="PathRewriterHttpModule.cs" />
     <Compile Include="SetCacheHttpModule.cs" />
     <Compile Include="TracerHttpModule.cs" />
     <Compile Include="WhitespaceModule.cs" />

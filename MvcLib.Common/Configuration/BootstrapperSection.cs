@@ -21,6 +21,31 @@ namespace MvcLib.Common.Configuration
             }
             finally
             {
+                if (Instance == null)
+                {
+                    Trace.TraceInformation("MvcLib section loaded with default values");
+                    Instance = new BootstrapperSection()
+                    {
+                        DbFileContext = new DbFileContextElement(),
+                        DumpToLocal = new DumpToLocalElement(),
+                        HttpModules = new HttpModulesElement()
+                        {
+                            Trace = new TraceElement(),
+                            CustomError = new CustomErrorElement(),
+                            WhiteSpace = new WhiteSpaceElement()
+                        },
+                        Kompiler = new KompilerElement(),
+                        Mail = new MailConfig(),
+                        PluginLoader = new PluginLoaderElementBase(),
+                        VirtualPathProviders = new VirtualPathProviderElement()
+                        {
+                            SubFolderVpp = new SubFolderVppElement(),
+                            DbFileSystemVpp = new DbFsVppElement()
+                        },
+                        MvcTrace = new MvcTraceElement()
+                    };
+
+                }
                 Trace.TraceInformation("Reading MvcLib section configuration: {0}", Instance != null);
             }
             return Instance;
