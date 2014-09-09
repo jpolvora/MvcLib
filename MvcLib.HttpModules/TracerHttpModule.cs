@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
-using MvcLib.Common;
 using MvcLib.Common.Configuration;
 using MvcLib.Common.Mvc;
 
@@ -12,55 +12,45 @@ namespace MvcLib.HttpModules
 {
     public class TracerHttpModule : IHttpModule
     {
-        private static int _counter;
         private const string RequestId = "_request:id";
 
-        private const string Stopwatch = "__StopWatch";
+        private const string Stopwatch = "_request:sw";
 
         //private HttpApplication _application;
 
         public void Dispose()
         {
-            Trace.TraceInformation("Dispose: {0}", this);
         }
 
-        public override string ToString()
+        static TracerHttpModule()
         {
-            return string.Format("{0} = {1}", _counter, base.ToString());
+            EventsToTrace = BootstrapperSection.Instance.HttpModules.Trace.Events.Split(',');
         }
 
-        private static string[] _eventsToTrace = new string[0];
+        private static readonly string[] EventsToTrace = new string[0];
 
         static bool MustLog(string eventName)
         {
-            if (_eventsToTrace.Length == 0)
+            if (EventsToTrace.Length == 0)
                 return true;
 
-            if (_eventsToTrace.Any(x => x.IsEmpty()))
+            if (EventsToTrace.Any(x => x.IsEmpty()))
                 return true;
 
-            return _eventsToTrace.Any(x => x.Equals(eventName, StringComparison.OrdinalIgnoreCase));
+            foreach (var x in EventsToTrace)
+            {
+                if (x.Equals(eventName, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
         }
 
         public void Init(HttpApplication on)
         {
-            _eventsToTrace = BootstrapperSection.Instance.HttpModules.Trace.Events.Split(',');
-
-            _counter++;
-            Trace.TraceInformation("Init: {0}", this);
-
             //http://msdn.microsoft.com/en-us/library/bb470252(v=vs.100).aspx
 
-            /*
-             * The following tasks are performed by the HttpApplication class while the request is being processed. The events are useful for page developers who want to run code when key request pipeline events are raised. They are also useful if you are developing a custom module and you want the module to be invoked for all requests to the pipeline. Custom modules implement the IHttpModule interface. In Integrated mode in IIS 7.0, you must register event handlers in a module's Init method.
-        Validate the request, which examines the information sent by the browser and determines whether it contains potentially malicious markup. For more information, see ValidateRequest and Script Exploits Overview.
-        Perform URL mapping, if any URLs have been configured in the UrlMappingsSection section of the Web.config file.
-             */
+            on.Error += (sender, args) => OnError(sender);
 
-
-            on.Error += (sender, args) => OnError(on);
-
-            on.BeginRequest += (sender, args) => OnBeginRequest(on);
+            on.BeginRequest += (sender, args) => TraceNotification(on, "BeginRequest");
             on.AuthenticateRequest += (sender, args) => TraceNotification(on, "AuthenticateRequest");
             on.PostAuthenticateRequest += (sender, args) => TraceNotification(on, "PostAuthenticateRequest");
             on.AuthorizeRequest += (sender, args) => TraceNotification(on, "AuthorizeRequest");
@@ -92,39 +82,61 @@ namespace MvcLib.HttpModules
             //The MapRequestHandler, LogRequest, and PostLogRequest events are supported only if the application is running in Integrated mode in IIS 7.0 and with the .NET Framework 3.0 or later.
             on.LogRequest += (sender, args) => TraceNotification(on, "LogRequest"); //iis7
             on.PostLogRequest += (sender, args) => TraceNotification(on, "PostLogRequest"); //iis7
-            on.EndRequest += (sender, args) => OnEndRequest(on);
+            on.EndRequest += (sender, args) => TraceNotification(on, "EndRequest");
             on.PreSendRequestHeaders += (sender, args) => TraceNotification(on, "PreSendRequestHeaders");
             on.PreSendRequestContent += (sender, args) => TraceNotification(on, "PreSendRequestContent");
         }
 
-        private void TraceNotification(HttpApplication application, string eventName)
+        private static void TraceNotification(HttpApplication application, string eventName)
         {
             if (!MustLog(eventName))
                 return;
 
             var rid = application.Context.Items[RequestId];
-            Trace.TraceInformation("[{0}]:[{1}] Evento {2}, Handler: [{3}], Filter: {4}, User: {5}, Memory: {6}",
-                application.Context.CurrentNotification, rid, eventName, application.Context.CurrentHandler,
-                application.Context.Response.Filter, application.User != null ? application.User.Identity.Name : "-",
-                GC.GetTotalMemory(false));
+            Trace.TraceInformation("[TracerHttpModule]:[{0}]:[{1}] {2}, [{3}], {4}",
+                application.Context.CurrentNotification, rid, application.Context.IsPostNotification ? "POST" : "PRE", application.Context.CurrentHandler,
+                application.User != null ? application.User.Identity.Name : "-");
 
-            //case RequestNotification.PreExecuteRequestHandler:
-            if (RequestNotification.PreExecuteRequestHandler == application.Context.CurrentNotification)
+            switch (application.Context.CurrentNotification)
             {
-                var mvcHandler = application.Context.Handler as MvcHandler;
-                if (mvcHandler != null)
-                {
-                    var controller = mvcHandler.RequestContext.RouteData.GetRequiredString("controller");
-                    var action = mvcHandler.RequestContext.RouteData.GetRequiredString("action");
-                    var area = mvcHandler.RequestContext.RouteData.DataTokens["area"];
+                case RequestNotification.BeginRequest:
+                    {
+                        OnBeginRequest(application);
+                        break;
+                    }
+                case RequestNotification.PreExecuteRequestHandler:
+                    {
+                        var mvcHandler = application.Context.Handler as MvcHandler;
+                        if (mvcHandler != null)
+                        {
+                            var controller = mvcHandler.RequestContext.RouteData.GetRequiredString("controller");
+                            var action = mvcHandler.RequestContext.RouteData.GetRequiredString("action");
+                            var area = mvcHandler.RequestContext.RouteData.DataTokens["area"];
 
-                    Trace.TraceInformation("Entering MVC Pipeline. Area: '{0}', Controller: '{1}', Action: '{2}'", area,
-                        controller, action);
-                }
+                            Trace.TraceInformation("Entering MVC Pipeline. Area: '{0}', Controller: '{1}', Action: '{2}'", area,
+                                controller, action);
+                        }
+                    }
+                    break;
+                case RequestNotification.ExecuteRequestHandler:
+                    {
+                        Trace.TraceInformation("Executing ProcessRequest of Handler {0}", application.Context.CurrentHandler);
+                        break;
+                    }
+                case RequestNotification.ReleaseRequestState:
+                    {
+                        Trace.TraceInformation("Response Filter: {0}", application.Context.Response.Filter);
+                        break;
+                    }
+                case RequestNotification.EndRequest:
+                    {
+                        OnEndRequest(application);
+                        break;
+                    }
             }
         }
 
-        private void OnBeginRequest(HttpApplication application)
+        private static void OnBeginRequest(HttpApplication application)
         {
             var context = application.Context;
 
@@ -140,7 +152,7 @@ namespace MvcLib.HttpModules
                 context.Response.SuppressFormsAuthenticationRedirect = true;
             }
 
-            if (context.Items.Contains("IIS_WasUrlRewritten"))
+            if (context.Items.Contains("IIS_WasUrlRewritten") || context.Items.Contains("HTTP_X_ORIGINAL_URL"))
             {
                 Trace.TraceInformation("Url was rewriten from '{0}' to '{1}'", context.Request.ServerVariables["HTTP_X_ORIGINAL_URL"], context.Request.ServerVariables["SCRIPT_NAME"]);
             }
@@ -148,17 +160,16 @@ namespace MvcLib.HttpModules
             Trace.TraceInformation("[BeginRequest]:[{0}] {1} {2} {3}", rid, context.Request.HttpMethod, context.Request.RawUrl, isAjax ? "Ajax: True" : "");
         }
 
-        private void OnEndRequest(HttpApplication application)
+        private static void OnEndRequest(HttpApplication application)
         {
             StopTimer(application);
             Trace.Flush();
 
             var context = application.Context;
-            var handler = context.Handler;
 
             var rid = context.Items[RequestId];
 
-            var msg = string.Format("[EndRequest]:[{0}] handler: {1}, Content-Type: {2}, Status: {3}, Render: {4}, url: {5}", rid, handler, context.Response.ContentType, context.Response.StatusCode, GetTime(application), context.Request.RawUrl);
+            var msg = string.Format("[EndRequest]:[{0}], Content-Type: {1}, Status: {2}, Render: {3}, url: {4}", rid, context.Response.ContentType, context.Response.StatusCode, GetTime(application), context.Request.Url);
             Trace.TraceInformation(msg);
 
             if (context.Request.IsAuthenticated && context.Response.StatusCode == 403)
@@ -171,20 +182,19 @@ namespace MvcLib.HttpModules
             }
         }
 
-        private void OnError(HttpApplication application)
+        private static void OnError(object sender)
         {
-            if (BootstrapperSection.Instance.StopMonitoring)
+            var application = (HttpApplication)sender;
             StopTimer(application);
             Trace.Flush();
-
             var rid = application.Context.Items[RequestId];
-            Trace.TraceInformation("[{0}]:[{1}] Evento {2}, Handler: [{3}], User: {4}", application.Context.CurrentNotification, rid, "Error: ", application.Context.CurrentHandler, application.User != null ? application.User.Identity.Name : "-");
+            Trace.TraceInformation("[TracerHttpModule]: Error at {0}, request {1}, Handler: {2}, Message:'{3}'", application.Context.CurrentNotification, rid, application.Context.CurrentHandler, application.Context.Error);
         }
 
-        private static void StopTimer(HttpApplication _application)
+        private static void StopTimer(HttpApplication application)
         {
-            if (_application == null || _application.Context == null) return;
-            var stopwatch = _application.Context.Items[Stopwatch] as Stopwatch;
+            if (application == null || application.Context == null) return;
+            var stopwatch = application.Context.Items[Stopwatch] as Stopwatch;
             if (stopwatch != null)
                 stopwatch.Stop();
         }

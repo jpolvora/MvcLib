@@ -182,10 +182,12 @@ namespace MvcLib.Bootstrapper
                     var application = HttpContext.Current.ApplicationInstance;
 
                     var modules = application.Modules;
+                    Trace.Indent();
                     foreach (var module in modules)
                     {
                         Trace.TraceInformation("Module Loaded: {0}", module);
                     }
+                    Trace.Unindent();
                 }
 
                 //dump routes
@@ -195,12 +197,13 @@ namespace MvcLib.Bootstrapper
                 {
                     var i = routes.Count;
                     Trace.TraceInformation("Found {0} routes in RouteTable", i);
-
+                    Trace.Indent();
                     foreach (var routeBase in routes)
                     {
                         var route = (Route)routeBase;
                         Trace.TraceInformation("Handler: {0} at URL: {1}", route.RouteHandler, route.Url);
                     }
+                    Trace.Unindent();
                 }
 
                 //viewengine locations
@@ -254,10 +257,12 @@ namespace MvcLib.Bootstrapper
 
                     if (cfg.Verbose)
                     {
+                        Trace.Indent();
                         foreach (var locationFormat in razorViewEngine.ViewLocationFormats)
                         {
-                            Trace.WriteLine(locationFormat);
+                            Trace.TraceInformation(locationFormat);
                         }
+                        Trace.Unindent();
                     }
 
                     ViewEngines.Engines.Clear();
